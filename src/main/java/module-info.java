@@ -10,8 +10,11 @@ module com.secinfostore.secureinfostore {
     requires java.naming;
     requires javafx.swing;
 
-
-    opens com.secinfostore.secureinfostore to javafx.fxml;
+    opens com.secinfostore.secureinfostore.controller;
+    opens com.secinfostore.secureinfostore.exception;
     opens com.secinfostore.secureinfostore.model;
+    opens com.secinfostore.secureinfostore.util;
+
     exports com.secinfostore.secureinfostore;
+    exports com.secinfostore.secureinfostore.controller;
 }

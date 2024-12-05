@@ -38,7 +38,7 @@ public class ConfigHandler {
             configData.put("default_passwordCharSet", rootNode.get("default_passwordCharSet").asText());
         } catch (Exception e) {
         }
-        return  configData;
+        return configData;
     }
 
     public static void createDefaultConfig(File configFile) {

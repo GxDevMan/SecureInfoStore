@@ -16,7 +16,8 @@ import java.util.Base64;
 
 public class EncryptionDecryption {
     private static final String AES_ALGORITHM = "AES";
-    private static final String AES_CIPHER = "AES/GCM/NoPadding";
+    private static final String AES_GCM_MODE = "AES/GCM/NoPadding";
+    private static final String AES_ECB_MODE = "AES/ECB/PKCS5Padding";
     private static final int KEY_SIZE = 256;
     private static final int GCM_TAG_LENGTH = 128; // in bits
     private static final int GCM_IV_LENGTH = 12;  // in bytes
@@ -28,10 +29,21 @@ public class EncryptionDecryption {
         return keyGenerator.generateKey();
     }
 
+    public static SecretKey loadKeyFromFile(String filename) throws Exception {
+        byte[] keyBytes = Files.readAllBytes(Paths.get(filename));
+        return new SecretKeySpec(keyBytes, AES_ALGORITHM);
+    }
+
     // Convert a key to Base64 text
     public static String keyToBase64Text(Key key) {
         byte[] keyBytes = key.getEncoded();
         return Base64.getEncoder().encodeToString(keyBytes);
+    }
+
+    // Convert a string representation of a key to a SecretKey object
+    public static SecretKey convertStringToSecretKey(String keyString) throws Exception {
+        byte[] decodedKey = Base64.getDecoder().decode(keyString);
+        return new SecretKeySpec(decodedKey, AES_ALGORITHM);
     }
 
     // Save the key in text format
@@ -48,27 +60,16 @@ public class EncryptionDecryption {
         Files.write(filePath, keyBytes);
     }
 
-    // Convert a string representation of a key to a SecretKey object
-    public static SecretKey convertStringToSecretKey(String keyString) throws Exception {
-        byte[] decodedKey = Base64.getDecoder().decode(keyString);
-        return new SecretKeySpec(decodedKey, AES_ALGORITHM);
-    }
-
-    // Load the key from a file
-    public static SecretKey loadKeyFromFile(String filename) throws Exception {
-        byte[] keyBytes = Files.readAllBytes(Paths.get(filename));
-        return new SecretKeySpec(keyBytes, AES_ALGORITHM);
-    }
-
-    // Encrypt a message using the specified key
-    public static String encrypt(String message, SecretKey secretKey) throws Exception {
-        Cipher cipher = Cipher.getInstance(AES_CIPHER);
+    // Encrypt using AES-GCM
+    public static String encryptAESGCM(String message, SecretKey secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance(AES_GCM_MODE);
         byte[] iv = new byte[GCM_IV_LENGTH];
         SecureRandom random = new SecureRandom();
         random.nextBytes(iv);
-        GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
 
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
+
         byte[] encryptedBytes = cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
         byte[] encryptedMessage = new byte[iv.length + encryptedBytes.length];
         System.arraycopy(iv, 0, encryptedMessage, 0, iv.length);
@@ -77,18 +78,36 @@ public class EncryptionDecryption {
         return Base64.getEncoder().encodeToString(encryptedMessage);
     }
 
-    // Decrypt a message using the specified key
-    public static String decrypt(String encryptedMessage, SecretKey secretKey) throws Exception {
+    // Decrypt using AES-GCM
+    public static String decryptAESGCM(String encryptedMessage, SecretKey secretKey) throws Exception {
         byte[] encryptedBytesWithIv = Base64.getDecoder().decode(encryptedMessage);
         byte[] iv = new byte[GCM_IV_LENGTH];
         byte[] encryptedBytes = new byte[encryptedBytesWithIv.length - iv.length];
+
         System.arraycopy(encryptedBytesWithIv, 0, iv, 0, iv.length);
         System.arraycopy(encryptedBytesWithIv, iv.length, encryptedBytes, 0, encryptedBytes.length);
 
-        Cipher cipher = Cipher.getInstance(AES_CIPHER);
+        Cipher cipher = Cipher.getInstance(AES_GCM_MODE);
         GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
+
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+        return new String(decryptedBytes, StandardCharsets.UTF_8);
+    }
+
+    // Encrypt using AES-ECB
+    public static String encryptAESECB(String message, SecretKey secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance(AES_ECB_MODE);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] encryptedBytes = cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(encryptedBytes);
+    }
+
+    // Decrypt using AES-ECB
+    public static String decryptAESECB(String encryptedMessage, SecretKey secretKey) throws Exception {
+        Cipher cipher = Cipher.getInstance(AES_ECB_MODE);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedMessage));
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 }

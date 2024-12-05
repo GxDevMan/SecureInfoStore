@@ -10,18 +10,18 @@ public class Validation {
     private long valid_id;
 
     @Column(columnDefinition = "TEXT")
-    private String testTest;
+    private String testText;
 
     public Validation() {
     }
 
     public Validation(long valid_id, String testTest) {
         this.valid_id = valid_id;
-        this.testTest = testTest;
+        this.testText = testTest;
     }
 
     public Validation(String testTest) {
-        this.testTest = testTest;
+        this.testText = testTest;
     }
 
     public long getValid_id() {
@@ -32,11 +32,11 @@ public class Validation {
         this.valid_id = valid_id;
     }
 
-    public String getTestTest() {
-        return testTest;
+    public String getTestText() {
+        return testText;
     }
 
-    public void setTestTest(String testTest) {
-        this.testTest = testTest;
+    public void setTestText(String testText) {
+        this.testText = testText;
     }
 }
