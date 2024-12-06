@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.AddUpdateAccountController">
+    <stylesheets>
+        <URL value="@styles/dark-theme.css" />
+    </stylesheets>
+   <children>
+      <ScrollPane VBox.vgrow="ALWAYS">
+         <content>
+            <VBox>
+               <children>
+                  <HBox VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label text="User Platform:" />
+                        <TextField fx:id="platformTxtField" />
+                     </children>
+                  </HBox>
+                  <HBox VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label text="User Name:" />
+                        <TextField fx:id="usernameTxtField" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label text="Email:" />
+                        <TextField fx:id="emailTxtField" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label text="Password:" />
+                        <PasswordField fx:id="passwordField" />
+                        <CheckBox fx:id="revealCheckbox" mnemonicParsing="false" onAction="#revealPassword" text="Reveal" />
+                     </children>
+                  </HBox>
+                  <Button fx:id="pastecopiedBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Copied Password" />
+                  <TitledPane text="Thumbnail">
+                     <content>
+                        <VBox>
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <ImageView fx:id="thumbnailImage" pickOnBounds="true" preserveRatio="true" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Button fx:id="pasteimageBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Image" />
+                                    <Button fx:id="selectimageBTN" mnemonicParsing="false" onAction="#buttonClick" text="Select Image" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+                  <HBox>
+                     <children>
+                        <Button fx:id="addUpdateBTN" onAction="#buttonClick" mnemonicParsing="false" text="Add/Update" />
+                        <Button fx:id="cancelBTN" onAction="#buttonClick" mnemonicParsing="false" text="Cancel" />
+                     </children>
+                  </HBox>
+                  <StackPane fx:id="passwordgenSTACKP" />
+               </children>
+            </VBox>
+         </content></ScrollPane>
+   </children>
+
+</VBox>

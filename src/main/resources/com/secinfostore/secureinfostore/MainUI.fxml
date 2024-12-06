@@ -33,6 +33,24 @@
             </VBox>
          </content>
       </TitledPane>
+      <TitledPane text="Search Actions">
+         <content>
+            <VBox>
+               <children>
+                  <HBox>
+                     <children>
+                        <TextField fx:id="searchTxtField" promptText="Enter Platform Search Key" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Button fx:id="searchBTN" mnemonicParsing="false" text="Search" />
+                        <Button fx:id="refreshBTN" mnemonicParsing="false" text="Reset" />
+                        <Button fx:id="clearsearchBTN" mnemonicParsing="false" text="Clear Search" />
+                     </children></HBox>
+               </children>
+            </VBox>
+         </content></TitledPane>
    </children>
 
 

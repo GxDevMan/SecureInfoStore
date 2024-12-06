@@ -252,7 +252,7 @@ public class EntryUIController {
                 String base64key = EncryptionDecryption.keyToBase64Text(key);
                 keyTextField.setText(base64key);
             } catch (Exception e) {
-                e.printStackTrace();
+               ErrorDialog.showErrorDialog(new Exception("Key loading error"), "Key Load error","Error loading key");
             }
         }
     }

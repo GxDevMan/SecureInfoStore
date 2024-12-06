@@ -2,11 +2,14 @@ package com.secinfostore.secureinfostore.util;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ImageConversion {
     public static Image byteArraytoImage(byte[] imageBytes) {
@@ -37,5 +40,15 @@ public class ImageConversion {
             return new byte[0];
         }
     }
+    public static Image convertBufferedImageToImage(BufferedImage bufferedImage) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpg", byteArrayOutputStream);
+        byte[] imageData = byteArrayOutputStream.toByteArray();
+
+        InputStream inputStream = new ByteArrayInputStream(imageData);
+
+        return new Image(inputStream);
+    }
+
 
 }

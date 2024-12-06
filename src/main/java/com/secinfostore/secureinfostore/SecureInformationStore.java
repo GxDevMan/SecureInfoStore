@@ -1,6 +1,8 @@
 package com.secinfostore.secureinfostore;
 
+import com.secinfostore.secureinfostore.controller.AddUpdateAccountController;
 import com.secinfostore.secureinfostore.controller.EntryUIController;
+import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.model.Validation;
 import com.secinfostore.secureinfostore.util.*;
 import javafx.application.Application;
@@ -16,8 +18,13 @@ import java.util.Map;
 public class SecureInformationStore extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("EntryUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateAccountUI.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 400, 400);
+
+        AccountObj objtest = new AccountObj("sample platform name", "sample username","sample email","sample password",null);
+
+        AddUpdateAccountController controller = fxmlLoader.getController();
+        controller.setAddUpdateAccount(objtest,stage);
 
         DataStore dataStore = DataStore.getInstance();
         dataStore.insertObject("default_title", "Secure Information Store");
