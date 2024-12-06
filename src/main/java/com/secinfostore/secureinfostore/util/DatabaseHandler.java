@@ -5,6 +5,8 @@ import com.secinfostore.secureinfostore.model.Validation;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import javax.crypto.SecretKey;
+import java.util.Optional;
 
 public class DatabaseHandler {
     private static Session getSession() {
@@ -14,11 +16,21 @@ public class DatabaseHandler {
         return session;
     }
 
+    public static boolean createValidation(SecretKey key){
+        Validation validation = new Validation(1,"sampleText");
+        try {
+            validation.setTestText(EncryptionDecryption.encryptAESGCM(validation.getTestText(),key));
+            return saveValidation(validation);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static boolean saveValidation(Validation validation) throws ValidationExistsException {
-        Validation validationCheck = getValidation();
+       Optional<Validation> validationOptional = getValidation();
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
-        if (validationCheck == null) {
+        if (!validationOptional.isPresent()) {
             try {
                 session.save(validation);
                 transaction.commit();
@@ -32,18 +44,19 @@ public class DatabaseHandler {
         throw new ValidationExistsException("Validation already exists");
     }
 
-    public static Validation getValidation() {
+    public static Optional<Validation> getValidation() {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
+        Validation validation = null;
         try {
-            Validation validation = session.get(Validation.class, 1L);
+            validation = session.get(Validation.class, 1L);
             transaction.commit();
-            return validation;
+
         } catch (Exception e) {
             transaction.rollback();
             e.printStackTrace();
-            return null;
         }
+        return Optional.ofNullable(validation);
     }
 
     public static boolean deleteValidation(Validation validation) {

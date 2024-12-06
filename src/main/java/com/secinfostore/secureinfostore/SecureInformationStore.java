@@ -27,7 +27,7 @@ public class SecureInformationStore extends Application {
     }
 
     public static void main(String[] args) {
-        //testCode();
+        testCode();
         launch();
     }
 
@@ -35,7 +35,7 @@ public class SecureInformationStore extends Application {
         DataStore dataStore = DataStore.getInstance();
         Map<String, String> config = ConfigHandler.getConfig();
         dataStore.insertObject("default_db", config.get("default_db"));
-        dataStore.insertObject("default_password", config.get("default_passwordCharSet"));
+        dataStore.insertObject("default_passwordCharSet", config.get("default_passwordCharSet"));
         String dbUrl = (String) dataStore.getObject("default_db");
 //        HibernateUtil.getInstance(dbUrl);
 //

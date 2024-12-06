@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.MainUIController">
+    <stylesheets>
+        <URL value="@styles/dark-theme.css" />
+    </stylesheets>
+   <children>
+      <StackPane fx:id="passwordgenPositionSTACKP" />
+      <TitledPane text="Account Actions">
+         <content>
+            <VBox>
+               <children>
+                  <HBox>
+                     <children>
+                        <Button mnemonicParsing="false" text="Add Account Record" />
+                        <Button mnemonicParsing="false" text="Import Accounts (JSON)" />
+                        <Button mnemonicParsing="false" text="Change Log" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Button mnemonicParsing="false" text="Export To Text" />
+                        <Button layoutX="260.0" layoutY="20.0" mnemonicParsing="false" text="Export Accounts (JSON)" />
+                        <Button layoutX="294.0" layoutY="20.0" mnemonicParsing="false" text="Re Encrypt" />
+                        <Button layoutX="328.0" layoutY="20.0" mnemonicParsing="false" text="Go Back" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </content>
+      </TitledPane>
+   </children>
+
+
+</VBox>

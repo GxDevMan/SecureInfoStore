@@ -2,11 +2,15 @@ package com.secinfostore.secureinfostore.controller;
 
 import com.secinfostore.secureinfostore.SecureInformationStore;
 import com.secinfostore.secureinfostore.customskin.KeyTextFieldSkin;
+import com.secinfostore.secureinfostore.model.Validation;
 import com.secinfostore.secureinfostore.util.DataStore;
+import com.secinfostore.secureinfostore.util.DatabaseHandler;
 import com.secinfostore.secureinfostore.util.EncryptionDecryption;
+import com.secinfostore.secureinfostore.util.HibernateUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,6 +22,8 @@ import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
 public class EntryUIController {
     @FXML
@@ -43,6 +49,12 @@ public class EntryUIController {
     private Button settingsBTN;
 
     @FXML
+    private Button createBTN;
+
+    @FXML
+    private Button proceedBTN;
+
+    @FXML
     private void initialize() {
         keyTextFieldSkin = new KeyTextFieldSkin(keyTextField);
         keyTextField.setSkin(keyTextFieldSkin);
@@ -56,8 +68,65 @@ public class EntryUIController {
             pointToDatabase();
         } else if (event.getSource().equals(resetBTN)) {
             reset();
-        } else if (event.getSource().equals(settingsBTN)){
+        } else if (event.getSource().equals(settingsBTN)) {
             goToSettings();
+        } else if (event.getSource().equals(createBTN)) {
+            createNewDatabaseAndKey();
+        } else if (event.getSource().equals(proceedBTN)) {
+            goToMainUI(event);
+
+        }
+    }
+
+    private void createNewDatabaseAndKey() {
+        Stage stage = new Stage();
+
+        DataStore dataStore = DataStore.getInstance();
+        stage.setTitle((String) dataStore.getObject("default_title"));
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Key File", "*.key"));
+        fileChooser.setInitialFileName("newKey.key");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        File keyFile = fileChooser.showSaveDialog(stage);
+
+        if (keyFile == null) {
+            return;
+        }
+
+        SecretKey key;
+        try {
+            String keyFilePath = keyFile.getAbsolutePath();
+            key = EncryptionDecryption.generateAESKey();
+            EncryptionDecryption.saveKeyToFile(key, keyFilePath);
+        } catch (NoSuchAlgorithmException e) {
+            ErrorDialog.showErrorDialog(e, "Key Generation Exception", "Something went wrong saving the key");
+            return;
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "Key Write Error", "Something went wrong writing the key");
+            return;
+        }
+
+        Stage databaseStage = new Stage();
+        databaseStage.setTitle((String) dataStore.getObject("default_title"));
+
+        FileChooser fileChooserDb = new FileChooser();
+        fileChooserDb.getExtensionFilters().add(new FileChooser.ExtensionFilter("Database File", "*.db"));
+        fileChooserDb.setInitialFileName("newDatabase.db");
+        fileChooserDb.setInitialDirectory(new File(System.getProperty("user.dir")));
+        File dbFile = fileChooserDb.showSaveDialog(databaseStage);
+
+        if (dbFile == null) {
+            return;
+        }
+
+        try {
+            String dbFilePath = dbFile.getAbsolutePath();
+            HibernateUtil hibernateUtil = HibernateUtil.getInstance(dbFilePath);
+            DatabaseHandler.createValidation(key);
+            hibernateUtil.shutdown();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "Database Creation Error", "Something went wrong creating the database");
         }
     }
 
@@ -80,7 +149,7 @@ public class EntryUIController {
     private void goToSettings() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("SettingsUI.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 500,300);
+            Scene scene = new Scene(fxmlLoader.load(), 500, 300);
 
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -95,7 +164,60 @@ public class EntryUIController {
 
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading Settings fxml");
+        }
+    }
+
+    private void goToMainUI(ActionEvent event) {
+        DataStore dataStore = DataStore.getInstance();
+        String dbUrl = (String) dataStore.getObject("default_db");
+        String keyBase64 = keyTextField.getText().trim();
+
+        if (dbUrl.equals("") || dbUrl.equals(null)) {
+            ErrorDialog.showErrorDialog(new Exception("URL Error"), "Database Connection Error", "Database has not been set");
+            return;
+        }
+
+        SecretKey defaultKey;
+        try {
+            defaultKey = EncryptionDecryption.convertStringToSecretKey(keyBase64);
+            dataStore.insertObject("default_key", defaultKey);
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "Key Conversion Error", "Base64 key conversion to Secret key has failed");
+            return;
+        }
+
+        HibernateUtil hibernateUtil = HibernateUtil.getInstance((String) dataStore.getObject("default_db"));
+        Optional<Validation> optionalValidation = DatabaseHandler.getValidation();
+        if(optionalValidation.isPresent()){
+            Validation validation = optionalValidation.get();
+            try {
+                EncryptionDecryption.decryptAESGCM(validation.getTestText(),defaultKey);
+            } catch (Exception e) {
+                ErrorDialog.showErrorDialog(e, "Database Key Mismatch Error", "The key provided does not match the database validation");
+                hibernateUtil.shutdown();
+                return;
+            }
+        } else{
+            ErrorDialog.showErrorDialog(new Exception("Validation does not exist for this db"), "Validation Existence Error","Validation check has failed for this database");
+            hibernateUtil.shutdown();
+            return;
+        }
+
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("MainUI.fxml"));
+            Parent viewParent = fxmlLoader.load();
+            Scene viewScene = new Scene(viewParent);
+            Stage sourceWin = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            sourceWin.setScene(viewScene);
+
+            MainUIController controller = fxmlLoader.getController();
+            controller.setMainUIController();
+
+            sourceWin.show();
+
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading Main UI");
         }
     }
 

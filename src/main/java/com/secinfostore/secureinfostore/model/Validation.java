@@ -20,8 +20,8 @@ public class Validation {
         this.testText = testTest;
     }
 
-    public Validation(String testTest) {
-        this.testText = testTest;
+    public Validation(String testText) {
+        this.testText = testText;
     }
 
     public long getValid_id() {
