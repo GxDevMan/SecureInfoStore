@@ -10,10 +10,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.util.List;
 
 public class MainUIController implements AddUpdateContract {
 
@@ -38,9 +42,11 @@ public class MainUIController implements AddUpdateContract {
     @FXML
     private TextField searchTxtField;
 
-
     @FXML
     private StackPane passwordgenPositionSTACKP;
+
+    @FXML
+    private TilePane accountsViewTilePane;
 
 
     public void setMainUIController() {
@@ -51,13 +57,14 @@ public class MainUIController implements AddUpdateContract {
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading password generation utility");
         }
+        displayAccounts(DatabaseHandler.getAccounts());
     }
 
     public void buttonClick(ActionEvent event) {
         if (event.getSource().equals(addAccountBTN)) {
             addAccount();
         } else if (event.getSource().equals(refreshBTN)) {
-
+            displayAccounts(DatabaseHandler.getAccounts());
         } else if (event.getSource().equals(clearsearchBTN)) {
 
         } else if (event.getSource().equals(searchBTN)) {
@@ -68,7 +75,7 @@ public class MainUIController implements AddUpdateContract {
     private void addAccount() {
         try {
             FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateAccountUI.fxml"));
-            Scene scene = new Scene(loader.load(), 400,400);
+            Scene scene = new Scene(loader.load(), 400, 400);
             Stage stage = new Stage();
 
             DataStore dataStore = DataStore.getInstance();
@@ -85,10 +92,32 @@ public class MainUIController implements AddUpdateContract {
         }
     }
 
+    private void displayAccounts(List<AccountObj> accountObjList) {
+        if(accountObjList == null)
+            return;
+        if(accountObjList.isEmpty())
+            return;
+
+        accountsViewTilePane.getChildren().clear();
+        try {
+            for (AccountObj account : accountObjList) {
+                FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AccountsPreviewComponent.fxml"));
+                AnchorPane anchorPane = loader.load();
+
+                AccountsPreviewComponentController controller = loader.getController();
+                controller.setAccountPreview(account);
+
+                accountsViewTilePane.getChildren().add(anchorPane);
+            }
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "Accounts Loading Error", "There was an error displaying the Error");
+        }
+    }
+
     @Override
     public void saveAccountToDB(AccountObj account) {
         DatabaseHandler.saveAccount(account);
-        //refresh
+        displayAccounts(DatabaseHandler.getAccounts());
     }
 
 }

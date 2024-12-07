@@ -23,13 +23,10 @@
                   </HBox>
                   <HBox>
                      <children>
-                        <Button fx:id="exportToTxtBTN" mnemonicParsing="false" onAction="#buttonClick" text="Export To Text"  />
-                        <Button layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick"
-                                text="Export Accounts (JSON)" />
-                        <Button fx:id="reEncryptBTN" layoutX="294.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick"
-                                text="Re Encrypt" />
-                        <Button fx:id="goToEntryUIBTN" layoutX="328.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick"
-                                text="Go Back" />
+                        <Button fx:id="exportToTxtBTN" mnemonicParsing="false" onAction="#buttonClick" text="Export To Text" />
+                        <Button layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Export Accounts (JSON)" />
+                        <Button fx:id="reEncryptBTN" layoutX="294.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Re Encrypt" />
+                        <Button fx:id="goToEntryUIBTN" layoutX="328.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Go Back" />
                      </children>
                   </HBox>
                </children>
@@ -54,6 +51,15 @@
                </children>
             </VBox>
          </content></TitledPane>
+      <ScrollPane pannable="true">
+        <content>
+          <AnchorPane>
+               <children>
+                  <TilePane fx:id="accountsViewTilePane" />
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
    </children>
 
 

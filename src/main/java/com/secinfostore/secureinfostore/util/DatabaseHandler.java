@@ -10,6 +10,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import javax.crypto.SecretKey;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class DatabaseHandler {
@@ -97,5 +103,44 @@ public class DatabaseHandler {
             transaction.rollback();
             return false;
         }
+    }
+
+    public static List<AccountObj> getAccounts() {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        List<AccountObj> encAccountList = null;
+        List<AccountObj> decAccountList = null;
+
+        try {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<AccountObj> cq = cb.createQuery(AccountObj.class);
+            Root<AccountObj> root = cq.from(AccountObj.class);
+
+            cq.select(cb.construct(
+                    AccountObj.class,
+                    root.get("accountId"),
+                    root.get("platformName"),
+                    root.get("userName"),
+                    root.get("email"),
+                    root.get("password"),
+                    root.get("platformThumbnail")
+            ));
+
+            TypedQuery<AccountObj> query = session.createQuery(cq);
+            encAccountList = query.getResultList();
+
+            if(transaction != null)
+                transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        }
+
+        if((encAccountList != null) && !encAccountList.isEmpty()){
+            decAccountList = new ArrayList<>();
+            for(AccountObj encAccount : encAccountList){
+                decAccountList.add(InformationFactory.decAccount(encAccount));
+            }
+        }
+        return decAccountList;
     }
 }
