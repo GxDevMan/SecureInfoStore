@@ -105,7 +105,7 @@ public class DatabaseHandler {
         }
     }
 
-    public static List<AccountObj> getAccounts() {
+    public static Optional<List<AccountObj>> getAccounts() {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
         List<AccountObj> encAccountList = null;
@@ -141,6 +141,6 @@ public class DatabaseHandler {
                 decAccountList.add(InformationFactory.decAccount(encAccount));
             }
         }
-        return decAccountList;
+        return Optional.ofNullable(decAccountList);
     }
 }

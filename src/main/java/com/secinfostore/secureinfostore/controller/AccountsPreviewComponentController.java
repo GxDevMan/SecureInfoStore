@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 
 public class AccountsPreviewComponentController {
     private AccountObj account;
+    private UpdateDeleteViewConfirmContract contract;
 
     @FXML
     private Button copyPlatformBTN;
@@ -57,8 +58,9 @@ public class AccountsPreviewComponentController {
         passwordTxtField.setSkin(passwordSkin);
     }
 
-    public void setAccountPreview(AccountObj accountObj) {
+    public void setAccountPreview(AccountObj accountObj, UpdateDeleteViewConfirmContract contract) {
         this.account = accountObj;
+        this.contract = contract;
         platformLBL.setText(account.getPlatformName());
         userNameLBL.setText(account.getUserName());
         passwordTxtField.setText(account.getPassword());
@@ -79,7 +81,9 @@ public class AccountsPreviewComponentController {
         } else if (event.getSource().equals(copyPasswordBTN)) {
             ClipboardHandler.pasteTextToClipboard(passwordTxtField.getText());
         } else if (event.getSource().equals(updateBTN)) {
+            this.contract.viewUpdateAccount(this.account);
         } else if (event.getSource().equals(deleteBTN)) {
+            this.contract.confirmDeleteAccount(this.account);
         }
     }
 

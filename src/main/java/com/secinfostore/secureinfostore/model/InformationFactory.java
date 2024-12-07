@@ -62,21 +62,42 @@ public class InformationFactory {
         return accountObj;
     }
 
-    public static ChangeLogObj newChangeLog(AccountObj account) {
-        LocalDate localDate = LocalDate.now();
-        LocalTime localTime = LocalTime.now();
-        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-        java.sql.Timestamp date = java.sql.Timestamp.valueOf(localDateTime);
-        return new ChangeLogObj(account, date, account.getPlatformName(), account.getUserName(), account.getEmail(), account.getPassword());
+    public static ChangeLogObj decChangeLog(ChangeLogObj changeLogObj) {
+        SecretKey key = getKey();
+        try {
+            changeLogObj.setUserName(EncryptionDecryption.decryptAESGCM(changeLogObj.getUserName(), key));
+            changeLogObj.setEmail(EncryptionDecryption.decryptAESGCM(changeLogObj.getEmail(), key));
+            changeLogObj.setPassword(EncryptionDecryption.decryptAESGCM(changeLogObj.getPassword(), key));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return changeLogObj;
     }
 
-    public static TextObj newTextEntry(Timestamp timeModified, String textTitle, String textInformation) {
-        return new TextObj(timeModified, textTitle, textInformation);
+    public static ChangeLogObj newChangeLog(AccountObj account) {
+        return new ChangeLogObj(account, getNowDate(), account.getPlatformName(), account.getUserName(), account.getEmail(), account.getPassword());
+    }
+
+    public static TextObj newTextEntry(String textTitle, String textInformation) {
+        return new TextObj(getNowDate(), textTitle, textInformation);
+    }
+
+    public static TextObj updateTextEntry(TextObj textObj){
+        textObj.setTimeModified(getNowDate());
+        return textObj;
     }
 
     private static SecretKey getKey() {
         DataStore dataStore = DataStore.getInstance();
         SecretKey key = (SecretKey) dataStore.getObject("default_key");
         return key;
+    }
+
+    private static java.sql.Timestamp getNowDate(){
+        LocalDate localDate = LocalDate.now();
+        LocalTime localTime = LocalTime.now();
+        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
+        java.sql.Timestamp date = java.sql.Timestamp.valueOf(localDateTime);
+        return date;
     }
 }

@@ -18,8 +18,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.List;
+import java.util.Optional;
 
-public class MainUIController implements AddUpdateContract {
+public class MainUIController implements AddUpdateContract, UpdateDeleteViewConfirmContract {
 
     @FXML
     private Button searchBTN;
@@ -92,20 +93,21 @@ public class MainUIController implements AddUpdateContract {
         }
     }
 
-    private void displayAccounts(List<AccountObj> accountObjList) {
-        if(accountObjList == null)
-            return;
+    private void displayAccounts(Optional<List<AccountObj>> accountObjList) {
         if(accountObjList.isEmpty())
+            return;
+
+        if(accountObjList.get().isEmpty())
             return;
 
         accountsViewTilePane.getChildren().clear();
         try {
-            for (AccountObj account : accountObjList) {
+            for (AccountObj account : accountObjList.get()) {
                 FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AccountsPreviewComponent.fxml"));
                 AnchorPane anchorPane = loader.load();
 
                 AccountsPreviewComponentController controller = loader.getController();
-                controller.setAccountPreview(account);
+                controller.setAccountPreview(account, this);
 
                 accountsViewTilePane.getChildren().add(anchorPane);
             }
@@ -120,4 +122,30 @@ public class MainUIController implements AddUpdateContract {
         displayAccounts(DatabaseHandler.getAccounts());
     }
 
+
+    @Override
+    public void viewUpdateAccount(AccountObj account) {
+        try {
+            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateAccountUI.fxml"));
+            Scene scene = new Scene(loader.load(), 400, 400);
+            Stage stage = new Stage();
+
+            DataStore dataStore = DataStore.getInstance();
+            String title = (String) dataStore.getObject("default_title");
+            stage.setScene(scene);
+            stage.setTitle(String.format("%s - %s", title, "Update Account Information"));
+            stage.initModality(Modality.APPLICATION_MODAL);
+
+            AddUpdateAccountController controller = loader.getController();
+            controller.setAddUpdateAccount(stage, this, account);
+            stage.show();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading AddUpdateAccountUI.fxml");
+        }
+    }
+
+    @Override
+    public void confirmDeleteAccount(AccountObj account) {
+        System.out.println("DELETING ATTEMPT");
+    }
 }
