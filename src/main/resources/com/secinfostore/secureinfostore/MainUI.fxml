@@ -16,17 +16,20 @@
                <children>
                   <HBox>
                      <children>
-                        <Button mnemonicParsing="false" text="Add Account Record" />
-                        <Button mnemonicParsing="false" text="Import Accounts (JSON)" />
-                        <Button mnemonicParsing="false" text="Change Log" />
+                        <Button fx:id="addAccountBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add Account Record" />
+                        <Button fx:id="importAccountsBTN" mnemonicParsing="false" onAction="#buttonClick" text="Import Accounts (JSON)" />
+                        <Button fx:id="gotoChangelogBTN" mnemonicParsing="false" onAction="#buttonClick" text="Change Log" />
                      </children>
                   </HBox>
                   <HBox>
                      <children>
-                        <Button mnemonicParsing="false" text="Export To Text" />
-                        <Button layoutX="260.0" layoutY="20.0" mnemonicParsing="false" text="Export Accounts (JSON)" />
-                        <Button layoutX="294.0" layoutY="20.0" mnemonicParsing="false" text="Re Encrypt" />
-                        <Button layoutX="328.0" layoutY="20.0" mnemonicParsing="false" text="Go Back" />
+                        <Button fx:id="exportToTxtBTN" mnemonicParsing="false" onAction="#buttonClick" text="Export To Text"  />
+                        <Button layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick"
+                                text="Export Accounts (JSON)" />
+                        <Button fx:id="reEncryptBTN" layoutX="294.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick"
+                                text="Re Encrypt" />
+                        <Button fx:id="goToEntryUIBTN" layoutX="328.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick"
+                                text="Go Back" />
                      </children>
                   </HBox>
                </children>
@@ -44,9 +47,9 @@
                   </HBox>
                   <HBox>
                      <children>
-                        <Button fx:id="searchBTN" mnemonicParsing="false" text="Search" />
-                        <Button fx:id="refreshBTN" mnemonicParsing="false" text="Reset" />
-                        <Button fx:id="clearsearchBTN" mnemonicParsing="false" text="Clear Search" />
+                        <Button fx:id="searchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Search" />
+                        <Button fx:id="refreshBTN" mnemonicParsing="false" onAction="#buttonClick" text="Reset" />
+                        <Button fx:id="clearsearchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Clear Search" />
                      </children></HBox>
                </children>
             </VBox>

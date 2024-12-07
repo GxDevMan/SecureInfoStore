@@ -3,6 +3,7 @@ package com.secinfostore.secureinfostore.controller;
 import com.secinfostore.secureinfostore.SecureInformationStore;
 import com.secinfostore.secureinfostore.customskin.KeyTextFieldSkin;
 import com.secinfostore.secureinfostore.model.AccountObj;
+import com.secinfostore.secureinfostore.model.InformationFactory;
 import com.secinfostore.secureinfostore.util.ClipboardHandler;
 import com.secinfostore.secureinfostore.util.ImageConversion;
 import com.secinfostore.secureinfostore.util.ImageNormalizer;
@@ -28,6 +29,7 @@ import java.io.IOException;
 public class AddUpdateAccountController {
     private AccountObj accountObj;
     private Stage stage;
+    private AddUpdateContract contract;
 
     @FXML
     private TextField platformTxtField;
@@ -72,7 +74,8 @@ public class AddUpdateAccountController {
         passwordField.setSkin(passwordSkin);
     }
 
-    public void setAddUpdateAccount(Stage stage) {
+    public void setAddUpdateAccount(Stage stage, AddUpdateContract contract) {
+        this.contract = contract;
         this.stage = stage;
         addUpdateBTN.setText("Add");
         try {
@@ -84,7 +87,8 @@ public class AddUpdateAccountController {
         }
     }
 
-    public void setAddUpdateAccount(AccountObj account, Stage stage) {
+    public void setAddUpdateAccount(Stage stage, AddUpdateContract contract, AccountObj account) {
+        this.contract = contract;
         this.stage = stage;
         accountObj = account;
         platformTxtField.setText(accountObj.getPlatformName());
@@ -116,6 +120,7 @@ public class AddUpdateAccountController {
         } else if (event.getSource().equals(selectimageBTN)) {
             setThumbnailImageviaFile();
         } else if (event.getSource().equals(addUpdateBTN)) {
+            addorUpdateAccountToDB();
         } else if (event.getSource().equals(cancelBTN)) {
             stage.close();
         }
@@ -130,7 +135,6 @@ public class AddUpdateAccountController {
         Image clipboardImage = ClipboardHandler.getImageFromClipboard();
         setTheImage(clipboardImage);
     }
-
 
     private void setThumbnailImageviaFile() {
         FileChooser fileChooser = new FileChooser();
@@ -161,5 +165,37 @@ public class AddUpdateAccountController {
             return;
         }
         thumbnailImage.setImage(image);
+    }
+
+    private void addorUpdateAccountToDB(){
+        if(this.accountObj != null){
+            this.accountObj.setPlatformName(platformTxtField.getText().trim());
+            this.accountObj.setPassword(passwordField.getText().trim());
+            this.accountObj.setEmail(emailTxtField.getText().trim());
+            this.accountObj.setUserName(usernameTxtField.getText().trim());
+
+            Image image = this.thumbnailImage.getImage();
+            BufferedImage bfrImage = SwingFXUtils.fromFXImage(image, null);
+            BufferedImage normalizedbfrImage = ImageNormalizer.normalizedImage(bfrImage, 215,215);
+            try {
+                image = ImageConversion.convertBufferedImageToImage(normalizedbfrImage);
+            } catch (IOException e) {
+                ErrorDialog.showErrorDialog(e, "Image Conversion Error", "There was a problem converting image to bytes");
+                return;
+            }
+            byte[] imageBytes = ImageConversion.convertImageToByteArray(image);
+            this.accountObj.setPlatformThumbnail(imageBytes);
+            this.contract.saveAccountToDB(accountObj);
+            this.stage.close();
+        } else {
+            String platform = platformTxtField.getText().trim();
+            String password = passwordField.getText().trim();
+            String email = emailTxtField.getText().trim();
+            String userName = usernameTxtField.getText().trim();
+            AccountObj newAccount = InformationFactory.newAccount(platform,userName,email,password,this.thumbnailImage.getImage());
+            this.contract.saveAccountToDB(newAccount);
+            this.stage.close();
+        }
+
     }
 }

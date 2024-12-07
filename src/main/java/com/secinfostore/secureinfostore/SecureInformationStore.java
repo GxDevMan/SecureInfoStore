@@ -19,11 +19,8 @@ import java.util.Map;
 public class SecureInformationStore extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("MainUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("EntryUI.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 400, 400);
-
-        MainUIController controller = fxmlLoader.getController();
-        controller.setMainUIController();
 
         DataStore dataStore = DataStore.getInstance();
         dataStore.insertObject("default_title", "Secure Information Store");
