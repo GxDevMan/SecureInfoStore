@@ -1,74 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.AddUpdateAccountController">
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.AddUpdateAccountController">
     <stylesheets>
         <URL value="@styles/dark-theme.css" />
     </stylesheets>
-   <children>
-      <ScrollPane VBox.vgrow="ALWAYS">
-         <content>
-            <VBox>
-               <children>
-                  <HBox VBox.vgrow="ALWAYS">
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+   <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+            <ScrollPane VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox alignment="TOP_CENTER" spacing="10.0">
                      <children>
-                        <Label text="User Platform:" />
-                        <TextField fx:id="platformTxtField" />
-                     </children>
-                  </HBox>
-                  <HBox VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label text="User Name:" />
-                        <TextField fx:id="usernameTxtField" />
-                     </children>
-                  </HBox>
-                  <HBox>
-                     <children>
-                        <Label text="Email:" />
-                        <TextField fx:id="emailTxtField" />
-                     </children>
-                  </HBox>
-                  <HBox>
-                     <children>
-                        <Label text="Password:" />
-                        <PasswordField fx:id="passwordField" />
-                        <CheckBox fx:id="revealCheckbox" mnemonicParsing="false" onAction="#revealPassword" text="Reveal" />
-                     </children>
-                  </HBox>
-                  <Button fx:id="pastecopiedBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Copied Password" />
-                  <TitledPane text="Thumbnail">
-                     <content>
-                        <VBox>
+                        <HBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <HBox>
-                                 <children>
-                                    <ImageView fx:id="thumbnailImage" pickOnBounds="true" preserveRatio="true" />
-                                 </children>
-                              </HBox>
-                              <HBox>
-                                 <children>
-                                    <Button fx:id="pasteimageBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Image" />
-                                    <Button fx:id="selectimageBTN" mnemonicParsing="false" onAction="#buttonClick" text="Select Image" />
-                                 </children>
-                              </HBox>
+                              <Label text="User Platform:" />
+                              <TextField fx:id="platformTxtField" />
                            </children>
-                        </VBox>
-                     </content>
-                  </TitledPane>
-                  <HBox>
-                     <children>
-                        <Button fx:id="addUpdateBTN" onAction="#buttonClick" mnemonicParsing="false" text="Add/Update" />
-                        <Button fx:id="cancelBTN" onAction="#buttonClick" mnemonicParsing="false" text="Cancel" />
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label text="User Name:" />
+                              <TextField fx:id="usernameTxtField" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </HBox>
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <Label text="Email:" />
+                              <TextField fx:id="emailTxtField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <Label text="Password:" />
+                              <PasswordField fx:id="passwordField" />
+                              <CheckBox fx:id="revealCheckbox" mnemonicParsing="false" onAction="#revealPassword" text="Reveal" />
+                           </children>
+                        </HBox>
+                        <Button fx:id="pastecopiedBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Copied Password" />
+                        <TitledPane text="Thumbnail" VBox.vgrow="ALWAYS">
+                           <content>
+                              <VBox>
+                                 <children>
+                                    <HBox>
+                                       <children>
+                                          <ImageView fx:id="thumbnailImage" pickOnBounds="true" preserveRatio="true" />
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Button fx:id="pasteimageBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Image" />
+                                          <Button fx:id="selectimageBTN" mnemonicParsing="false" onAction="#buttonClick" text="Select Image" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </TitledPane>
+                        <HBox alignment="TOP_CENTER">
+                           <children>
+                              <Button fx:id="addUpdateBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add/Update" />
+                              <Button fx:id="cancelBTN" mnemonicParsing="false" onAction="#buttonClick" text="Cancel" />
+                           </children>
+                        </HBox>
+                        <StackPane fx:id="passwordgenSTACKP" alignment="TOP_CENTER" />
                      </children>
-                  </HBox>
-                  <StackPane fx:id="passwordgenSTACKP" />
-               </children>
-            </VBox>
-         </content></ScrollPane>
-   </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+         </ScrollPane>
+      </children>
+   </VBox>
 
-</VBox>
+</AnchorPane>
