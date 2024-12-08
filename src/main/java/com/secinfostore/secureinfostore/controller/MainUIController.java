@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javax.crypto.SecretKey;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,9 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
 
     @FXML
     private Button goToEntryUIBTN;
+
+    @FXML
+    private Button encryptorBTN;
 
     @FXML
     private Button importAccountsJSONBTN;
@@ -83,11 +87,35 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
             importaccountsFromJson();
         } else if (event.getSource().equals(exportAccountsJSONBTN)) {
             exportAccountstoJson();
+        } else if (event.getSource().equals(encryptorBTN)){
+            goToEncryptor();
         }
+
     }
 
     private void searchAccounts(String searchKey){
         displayAccounts(DatabaseHandler.getAccounts(searchKey));
+    }
+
+    private void goToEncryptor(){
+        try {
+            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("TextENCDECUI.fxml"));
+            Scene scene = new Scene(loader.load(), 400, 400);
+            Stage stage = new Stage();
+
+            DataStore dataStore = DataStore.getInstance();
+            String title = (String) dataStore.getObject("default_title");
+            stage.setScene(scene);
+            stage.setTitle(String.format("%s - %s", title, "Encryptor"));
+            stage.initModality(Modality.WINDOW_MODAL);
+
+            TextENCDECController controller = loader.getController();
+            controller.setTextENCDECController((SecretKey) dataStore.getObject("default_key"));
+
+            stage.show();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading TextENCDECUI.fxml");
+        }
     }
 
     private void exportAccountstoJson() {

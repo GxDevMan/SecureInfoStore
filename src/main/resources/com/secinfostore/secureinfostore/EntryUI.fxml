@@ -47,6 +47,7 @@
                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                         </padding>
                     </HBox>
+               <Button fx:id="encryptorBTN" mnemonicParsing="false" onAction="#buttonClick" text="Encryptor" />
                 </children>
             </VBox>
       </content>

@@ -55,6 +55,9 @@ public class EntryUIController {
     private Button proceedBTN;
 
     @FXML
+    private Button encryptorBTN;
+
+    @FXML
     private void initialize() {
         keyTextFieldSkin = new KeyTextFieldSkin(keyTextField);
         keyTextField.setSkin(keyTextFieldSkin);
@@ -74,7 +77,8 @@ public class EntryUIController {
             createNewDatabaseAndKey();
         } else if (event.getSource().equals(proceedBTN)) {
             goToMainUI(event);
-
+        } else if (event.getSource().equals(encryptorBTN)){
+            goToEncryptor();
         }
     }
 
@@ -267,6 +271,24 @@ public class EntryUIController {
             } catch (Exception e) {
                 ErrorDialog.showErrorDialog(new Exception("Key loading error"), "Key Load error", "Error loading key");
             }
+        }
+    }
+
+    private void goToEncryptor(){
+        try {
+            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("TextENCDECUI.fxml"));
+            Scene scene = new Scene(loader.load(), 400, 400);
+            Stage stage = new Stage();
+
+            DataStore dataStore = DataStore.getInstance();
+            String title = (String) dataStore.getObject("default_title");
+            stage.setScene(scene);
+            stage.setTitle(String.format("%s - %s", title, "Encryptor"));
+            stage.initModality(Modality.WINDOW_MODAL);
+
+            stage.show();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading TextENCDECUI.fxml");
         }
     }
 }

@@ -16,6 +16,7 @@
                <children>
                   <HBox>
                      <children>
+                        <Button fx:id="encryptorBTN" layoutX="37.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Go to Encryptor" />
                         <Button fx:id="addAccountBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add Account Record" />
                         <Button fx:id="importAccountsJSONBTN" mnemonicParsing="false" onAction="#buttonClick" text="Import Accounts (JSON)" />
                         <Button fx:id="gotoChangelogBTN" mnemonicParsing="false" onAction="#buttonClick" text="Change Log" />
