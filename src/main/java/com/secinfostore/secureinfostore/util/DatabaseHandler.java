@@ -166,4 +166,18 @@ public class DatabaseHandler {
         }
         return Optional.ofNullable(decAccountList);
     }
+
+    public static boolean deleteAccount(AccountObj accountObj) {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            session.delete(accountObj);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            transaction.rollback();
+            return false;
+        }
+
+    }
 }

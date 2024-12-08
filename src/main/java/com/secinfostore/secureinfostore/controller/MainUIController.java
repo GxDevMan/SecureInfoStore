@@ -9,8 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -222,6 +221,27 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
 
     @Override
     public void confirmDeleteAccount(AccountObj account) {
-        System.out.println("DELETING ATTEMPT");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Deletion");
+        alert.setHeaderText("Are you sure you want to delete this account?");
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+
+        Label accountNameLabel = new Label("Account User Name: " + account.getUserName());
+        Label accountEmailLabel = new Label("Account Email: " + account.getEmail());
+        vbox.getChildren().addAll(accountNameLabel, accountEmailLabel);
+
+        alert.getDialogPane().setContent(vbox);
+
+        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+        if(result == ButtonType.OK){
+            DatabaseHandler.deleteAccount(account);
+            displayAccounts(DatabaseHandler.getAccounts());
+        }
     }
 }
