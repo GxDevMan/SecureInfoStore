@@ -45,7 +45,7 @@
                   <HBox>
                      <children>
                         <Button fx:id="searchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Search" />
-                        <Button fx:id="refreshBTN" mnemonicParsing="false" onAction="#buttonClick" text="Reset" />
+                        <Button fx:id="resetBTN" mnemonicParsing="false" onAction="#buttonClick" text="Reset" />
                         <Button fx:id="clearsearchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Clear Search" />
                      </children></HBox>
                </children>

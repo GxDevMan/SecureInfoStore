@@ -13,6 +13,7 @@ import javax.crypto.SecretKey;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +139,50 @@ public class DatabaseHandler {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<AccountObj> cq = cb.createQuery(AccountObj.class);
             Root<AccountObj> root = cq.from(AccountObj.class);
+
+            cq.select(cb.construct(
+                    AccountObj.class,
+                    root.get("accountId"),
+                    root.get("platformName"),
+                    root.get("userName"),
+                    root.get("email"),
+                    root.get("password"),
+                    root.get("platformThumbnail")
+            ));
+
+            TypedQuery<AccountObj> query = session.createQuery(cq);
+            encAccountList = query.getResultList();
+
+            if (transaction != null)
+                transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        }
+
+        if ((encAccountList != null) && !encAccountList.isEmpty()) {
+            decAccountList = new ArrayList<>();
+            for (AccountObj encAccount : encAccountList) {
+                decAccountList.add(InformationFactory.decAccount(encAccount));
+            }
+        }
+        return Optional.ofNullable(decAccountList);
+    }
+
+    public static Optional<List<AccountObj>> getAccounts(String searchQuery){
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        List<AccountObj> encAccountList = null;
+        List<AccountObj> decAccountList = null;
+
+        try {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<AccountObj> cq = cb.createQuery(AccountObj.class);
+            Root<AccountObj> root = cq.from(AccountObj.class);
+
+            Predicate filter = cb.or(
+                    cb.like(cb.lower(root.get("platformName")), "%" + searchQuery + "%")
+            );
+            cq.where(filter);
 
             cq.select(cb.construct(
                     AccountObj.class,

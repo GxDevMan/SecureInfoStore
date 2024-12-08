@@ -28,7 +28,7 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
     private Button searchBTN;
 
     @FXML
-    private Button refreshBTN;
+    private Button resetBTN;
 
     @FXML
     private Button clearsearchBTN;
@@ -72,15 +72,22 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
     public void buttonClick(ActionEvent event) {
         if (event.getSource().equals(addAccountBTN)) {
             addAccount();
-        } else if (event.getSource().equals(refreshBTN)) {
+        } else if (event.getSource().equals(resetBTN)) {
+            searchTxtField.setText("");
             displayAccounts(DatabaseHandler.getAccounts());
         } else if (event.getSource().equals(clearsearchBTN)) {
+            searchTxtField.setText("");
         } else if (event.getSource().equals(searchBTN)) {
+            searchAccounts(searchTxtField.getText().trim());
         } else if (event.getSource().equals(importAccountsJSONBTN)) {
             importaccountsFromJson();
         } else if (event.getSource().equals(exportAccountsJSONBTN)) {
             exportAccountstoJson();
         }
+    }
+
+    private void searchAccounts(String searchKey){
+        displayAccounts(DatabaseHandler.getAccounts(searchKey));
     }
 
     private void exportAccountstoJson() {
