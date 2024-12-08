@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import java.net.URL?>
+<VBox spacing="10" prefHeight="412.0" prefWidth="813.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.ChangeLogController" style="-fx-background-color: #444444;">
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20" />
+    </padding>
+    <stylesheets>
+        <URL value="@styles/dark-theme.css" />
+    </stylesheets>
+
+    <Label alignment="CENTER" VBox.vgrow="NEVER">
+        <VBox.margin>
+            <Insets bottom="20" />
+        </VBox.margin>
+    </Label>
+
+    <Button mnemonicParsing="false" onAction="#deleteAllLogs" text="Delete all Logs" />
+
+    <TableView fx:id="databaseTable">
+        <columns>
+            <TableColumn fx:id="timeChange" prefWidth="179.0" text="Time"/>
+            <TableColumn fx:id="userPlatformColumn" prefWidth="111.0" text="User Platform"/>
+            <TableColumn fx:id="userNameColumn" prefWidth="129.0" text="User Name"/>
+            <TableColumn fx:id="userEmailColumn" minWidth="0.0" prefWidth="116.0" text="User Email"/>
+            <TableColumn fx:id="userPasswordColumn" prefWidth="116.0" text="User Password"/>
+            <TableColumn fx:id="actionColumn" prefWidth="96.0" text="Action"/>
+        </columns>
+    </TableView>
+
+    <Button mnemonicParsing="false" onAction="#changeScene" text="Go back" />
+</VBox>

@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name ="Accounts")
 public class AccountObj {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

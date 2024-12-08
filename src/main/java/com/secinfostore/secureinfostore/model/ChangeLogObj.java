@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "ChangeLog")
 public class ChangeLogObj {
 
     @Id
@@ -12,7 +11,7 @@ public class ChangeLogObj {
     private long changeId;
 
     @ManyToOne
-    @JoinColumn(name = "accountId")
+    @JoinColumn(name = "accountId", nullable = false)
     private AccountObj account;
 
     @Column(nullable = false)

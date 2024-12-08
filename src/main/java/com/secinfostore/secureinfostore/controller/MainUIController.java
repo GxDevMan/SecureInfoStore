@@ -8,6 +8,8 @@ import com.secinfostore.secureinfostore.util.JsonHandler;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -45,6 +47,9 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
 
     @FXML
     private Button encryptorBTN;
+
+    @FXML
+    private Button gotoChangelogBTN;
 
     @FXML
     private Button importAccountsJSONBTN;
@@ -89,8 +94,9 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
             exportAccountstoJson();
         } else if (event.getSource().equals(encryptorBTN)){
             goToEncryptor();
+        } else if (event.getSource().equals(gotoChangelogBTN)){
+            goToChangeLog(event);
         }
-
     }
 
     private void searchAccounts(String searchKey){
@@ -138,10 +144,12 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         File jsonFile = fileChooser.showSaveDialog(stage);
 
-        try {
-            JsonHandler.writeToJsonToFile(accountList,jsonFile);
-        } catch (Exception e){
-            ErrorDialog.showErrorDialog(e,"Accounts Export Error", "There was a problem writing to the File");
+        if(jsonFile != null){
+            try {
+                JsonHandler.writeToJsonToFile(accountList,jsonFile);
+            } catch (Exception e){
+                ErrorDialog.showErrorDialog(e,"Accounts Export Error", "There was a problem writing to the File");
+            }
         }
     }
 
@@ -224,6 +232,24 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
             }
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "Accounts Loading Error", "There was an error displaying the Error");
+        }
+    }
+
+    private void goToChangeLog(ActionEvent event){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("ChangeLogUI.fxml"));
+            Parent viewParent = fxmlLoader.load();
+            Scene viewScene = new Scene(viewParent);
+            Stage sourceWin = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            sourceWin.setScene(viewScene);
+
+            ChangeLogController controller = fxmlLoader.getController();
+            controller.setChangeLogController();
+
+            sourceWin.show();
+
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading ChangeLog UI");
         }
     }
 

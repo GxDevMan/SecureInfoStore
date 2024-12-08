@@ -222,7 +222,7 @@ public class EntryUIController {
         }
 
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("MainUI.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("MainUIAccounts.fxml"));
             Parent viewParent = fxmlLoader.load();
             Scene viewScene = new Scene(viewParent);
             Stage sourceWin = (Stage) ((Node) event.getSource()).getScene().getWindow();

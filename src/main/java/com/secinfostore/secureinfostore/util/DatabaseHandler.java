@@ -10,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import javax.crypto.SecretKey;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -115,6 +116,8 @@ public class DatabaseHandler {
             for (AccountObj account : accountList) {
                 AccountObj newAccount = InformationFactory.newAccount(account.getPlatformName(), account.getUserName(), account.getEmail(), account.getPassword(), null);
                 session.save(newAccount);
+                ChangeLogObj changeLogObj = InformationFactory.newChangeLog(newAccount);
+                session.save(changeLogObj);
                 if (i % 50 == 0) {
                     session.flush();
                     session.clear();
@@ -168,6 +171,31 @@ public class DatabaseHandler {
         return Optional.ofNullable(decAccountList);
     }
 
+    public static Optional<List<ChangeLogObj>> getChangeLogs() {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        List<ChangeLogObj> decChangeLogList = null;
+        try {
+            CriteriaQuery<ChangeLogObj> criteriaQuery = session.getCriteriaBuilder().createQuery(ChangeLogObj.class);
+            criteriaQuery.from(ChangeLogObj.class);
+
+            Query query = session.createQuery(criteriaQuery);
+            List<ChangeLogObj> objList = query.getResultList();
+            transaction.commit();
+
+            if(objList != null && !(objList.isEmpty())){
+                decChangeLogList = new ArrayList<>();
+                for (ChangeLogObj eachChangeLog : objList){
+                    decChangeLogList.add(InformationFactory.decChangeLog(eachChangeLog));
+                }
+            }
+            return Optional.ofNullable(decChangeLogList);
+        } catch (Exception e) {
+            transaction.rollback();
+            return Optional.empty();
+        }
+    }
+
     public static Optional<List<AccountObj>> getAccounts(String searchQuery){
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
@@ -216,7 +244,24 @@ public class DatabaseHandler {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
         try {
+            long accountId = accountObj.getAccountId();
             session.delete(accountObj);
+            transaction.commit();
+            deleteChangeLogsByAccountId(accountId);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return false;
+        }
+
+    }
+
+    public static boolean deleteChangeLog(ChangeLogObj changeLogObj) {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            session.delete(changeLogObj);
             transaction.commit();
             return true;
         } catch (Exception e) {
@@ -224,5 +269,41 @@ public class DatabaseHandler {
             return false;
         }
 
+    }
+
+    public static boolean deleteAllChangeLog(){
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            Query query = session.createQuery("DELETE FROM ChangeLogObj");
+            query.executeUpdate();
+
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return false;
+        }
+
+    }
+
+    private static boolean deleteChangeLogsByAccountId(long accountId) {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            String hql = "DELETE FROM ChangeLogObj c WHERE c.account.accountId = :accountId";
+            int result = session.createQuery(hql)
+                    .setParameter("accountId", accountId)
+                    .executeUpdate();
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        }
     }
 }
