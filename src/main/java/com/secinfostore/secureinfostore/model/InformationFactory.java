@@ -6,10 +6,8 @@ import com.secinfostore.secureinfostore.util.ImageConversion;
 import com.secinfostore.secureinfostore.util.ImageNormalizer;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-
 import javax.crypto.SecretKey;
 import java.awt.image.BufferedImage;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

@@ -173,11 +173,6 @@ public class EntryUIController {
         String dbUrl = (String) dataStore.getObject("default_db");
         String keyBase64 = keyTextField.getText().trim();
 
-        if (dbUrl.equals("") || dbUrl.equals(null)) {
-            ErrorDialog.showErrorDialog(new Exception("URL Error"), "Database Connection Error", "Database has not been set");
-            return;
-        }
-
         SecretKey defaultKey;
         try {
             defaultKey = EncryptionDecryption.convertStringToSecretKey(keyBase64);
@@ -187,19 +182,37 @@ public class EntryUIController {
             return;
         }
 
+
+
+        if ((dbUrl == null)) {
+            ErrorDialog.showErrorDialog(new Exception("URL Error"), "Database Connection Error", "Database has not been set");
+            return;
+        }
+
+        if(dbUrl.equals("")){
+            ErrorDialog.showErrorDialog(new Exception("URL Error"), "Database Connection Error", "Database has not been set");
+            return;
+        }
+
+        File file = new File(dbUrl);
+        if (!file.exists()) {
+            ErrorDialog.showErrorDialog(new Exception("URL Error"), "Database Connection Error", "Database has not Been Created");
+            return;
+        }
+
         HibernateUtil hibernateUtil = HibernateUtil.getInstance((String) dataStore.getObject("default_db"));
         Optional<Validation> optionalValidation = DatabaseHandler.getValidation();
-        if(optionalValidation.isPresent()){
+        if (optionalValidation.isPresent()) {
             Validation validation = optionalValidation.get();
             try {
-                EncryptionDecryption.decryptAESGCM(validation.getTestText(),defaultKey);
+                EncryptionDecryption.decryptAESGCM(validation.getTestText(), defaultKey);
             } catch (Exception e) {
                 ErrorDialog.showErrorDialog(e, "Database Key Mismatch Error", "The key provided does not match the database validation");
                 hibernateUtil.shutdown();
                 return;
             }
-        } else{
-            ErrorDialog.showErrorDialog(new Exception("Validation does not exist for this db"), "Validation Existence Error","Validation check has failed for this database");
+        } else {
+            ErrorDialog.showErrorDialog(new Exception("Validation does not exist for this db"), "Validation Existence Error", "Validation check has failed for this database");
             hibernateUtil.shutdown();
             return;
         }
@@ -252,7 +265,7 @@ public class EntryUIController {
                 String base64key = EncryptionDecryption.keyToBase64Text(key);
                 keyTextField.setText(base64key);
             } catch (Exception e) {
-               ErrorDialog.showErrorDialog(new Exception("Key loading error"), "Key Load error","Error loading key");
+                ErrorDialog.showErrorDialog(new Exception("Key loading error"), "Key Load error", "Error loading key");
             }
         }
     }

@@ -1,5 +1,8 @@
 package com.secinfostore.secureinfostore.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.secinfostore.secureinfostore.util.Views;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -9,15 +12,22 @@ public class AccountObj {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long accountId;
+
+    @JsonView(Views.Public.class)
     private String platformName;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView(Views.Public.class)
     private String userName;
 
-    @Column(columnDefinition = "TEXT")
-    private String email;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView(Views.Public.class)
+    private String email;
+
+
+    @Column(columnDefinition = "TEXT")
+    @JsonView(Views.Public.class)
     private String password;
 
     private byte[] platformThumbnail;

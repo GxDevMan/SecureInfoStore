@@ -4,6 +4,7 @@ import com.secinfostore.secureinfostore.SecureInformationStore;
 import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.util.DataStore;
 import com.secinfostore.secureinfostore.util.DatabaseHandler;
+import com.secinfostore.secureinfostore.util.JsonHandler;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,9 +15,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +42,12 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
 
     @FXML
     private Button goToEntryUIBTN;
+
+    @FXML
+    private Button importAccountsJSONBTN;
+
+    @FXML
+    private Button exportAccountsJSONBTN;
 
     @FXML
     private TextField searchTxtField;
@@ -67,10 +76,78 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
         } else if (event.getSource().equals(refreshBTN)) {
             displayAccounts(DatabaseHandler.getAccounts());
         } else if (event.getSource().equals(clearsearchBTN)) {
-
         } else if (event.getSource().equals(searchBTN)) {
-
+        } else if (event.getSource().equals(importAccountsJSONBTN)) {
+            importaccountsFromJson();
+        } else if (event.getSource().equals(exportAccountsJSONBTN)) {
+            exportAccountstoJson();
         }
+    }
+
+    private void exportAccountstoJson() {
+        Optional<List<AccountObj>> accountOptionalList = DatabaseHandler.getAccounts();
+        if (!accountOptionalList.isPresent()) {
+            ErrorDialog.showErrorDialog(new Exception("Empty List"), "Accounts Export Error", "No Accounts to Export");
+            return;
+        }
+        List<AccountObj> accountList = accountOptionalList.get();
+
+        Stage stage = new Stage();
+        DataStore dataStore = DataStore.getInstance();
+        String dataStoreTitle = (String) dataStore.getObject("default_title");
+        String stageTitle = String.format("%s -%s", dataStoreTitle, "Export Accounts To Json");
+        stage.setTitle(stageTitle);
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Export File","*.json"));
+        fileChooser.setInitialFileName("ExportedAccounts.json");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        File jsonFile = fileChooser.showSaveDialog(stage);
+
+        try {
+            JsonHandler.writeToJsonToFile(accountList,jsonFile);
+        } catch (Exception e){
+            ErrorDialog.showErrorDialog(e,"Accounts Export Error", "There was a problem writing to the File");
+        }
+    }
+
+    private void importaccountsFromJson() {
+        Stage stage = new Stage();
+
+        DataStore dataStore = DataStore.getInstance();
+
+        String dataStoreTitle = (String) dataStore.getObject("default_title");
+        String stageTitle = String.format("%s -%s", dataStoreTitle, "Import Accounts From Json");
+        stage.setTitle(stageTitle);
+
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("Import Accounts", "*.json");
+        fileChooser.getExtensionFilters().add(jsonFilter);
+
+        String currentDir = System.getProperty("user.dir");
+        fileChooser.setInitialDirectory(new File(currentDir));
+
+        File selectedJSON = fileChooser.showOpenDialog(stage);
+
+        if (selectedJSON == null)
+            return;
+
+        try {
+            Optional<List<AccountObj>> importedAccountsOpt = JsonHandler.getAccountsFromJson(selectedJSON);
+
+            if (!importedAccountsOpt.isPresent()){
+                return;
+            }
+
+            saveImportedAccountsToDB(importedAccountsOpt.get());
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "JSON Import Error", "There was an error loading the accounts");
+        }
+    }
+
+    private void saveImportedAccountsToDB(List<AccountObj> accountList){
+        DatabaseHandler.saveAccount(accountList);
+        displayAccounts(DatabaseHandler.getAccounts());
     }
 
     private void addAccount() {
@@ -94,10 +171,10 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
     }
 
     private void displayAccounts(Optional<List<AccountObj>> accountObjList) {
-        if(accountObjList.isEmpty())
+        if (accountObjList.isEmpty())
             return;
 
-        if(accountObjList.get().isEmpty())
+        if (accountObjList.get().isEmpty())
             return;
 
         accountsViewTilePane.getChildren().clear();
@@ -121,7 +198,6 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
         DatabaseHandler.saveAccount(account);
         displayAccounts(DatabaseHandler.getAccounts());
     }
-
 
     @Override
     public void viewUpdateAccount(AccountObj account) {

@@ -105,6 +105,29 @@ public class DatabaseHandler {
         }
     }
 
+    public static boolean saveAccount(List<AccountObj> accountList) {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+
+        int i = 0;
+        try {
+            for (AccountObj account : accountList) {
+                AccountObj newAccount = InformationFactory.newAccount(account.getPlatformName(), account.getUserName(), account.getEmail(), account.getPassword(), null);
+                session.save(newAccount);
+                if (i % 50 == 0) {
+                    session.flush();
+                    session.clear();
+                }
+                i++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        transaction.commit();
+        return true;
+    }
+
     public static Optional<List<AccountObj>> getAccounts() {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
@@ -129,15 +152,15 @@ public class DatabaseHandler {
             TypedQuery<AccountObj> query = session.createQuery(cq);
             encAccountList = query.getResultList();
 
-            if(transaction != null)
+            if (transaction != null)
                 transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
         }
 
-        if((encAccountList != null) && !encAccountList.isEmpty()){
+        if ((encAccountList != null) && !encAccountList.isEmpty()) {
             decAccountList = new ArrayList<>();
-            for(AccountObj encAccount : encAccountList){
+            for (AccountObj encAccount : encAccountList) {
                 decAccountList.add(InformationFactory.decAccount(encAccount));
             }
         }

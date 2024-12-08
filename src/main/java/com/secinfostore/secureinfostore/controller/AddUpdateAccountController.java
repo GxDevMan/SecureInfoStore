@@ -78,13 +78,7 @@ public class AddUpdateAccountController {
         this.contract = contract;
         this.stage = stage;
         addUpdateBTN.setText("Add");
-        try {
-            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("PasswordgenComponent.fxml"));
-            VBox passwordgenComponent = loader.load();
-            passwordgenSTACKP.getChildren().add(passwordgenComponent);
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading password generation utility");
-        }
+        loadPasswordGeneration();
     }
 
     public void setAddUpdateAccount(Stage stage, AddUpdateContract contract, AccountObj account) {
@@ -102,14 +96,7 @@ public class AddUpdateAccountController {
             Image image = ImageConversion.byteArraytoImage(thumbnailByte);
             thumbnailImage.setImage(image);
         }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("PasswordgenComponent.fxml"));
-            VBox passwordgenComponent = loader.load();
-            passwordgenSTACKP.getChildren().add(passwordgenComponent);
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading password generation utility");
-        }
+        loadPasswordGeneration();
     }
 
     public void buttonClick(ActionEvent event) {
@@ -153,7 +140,7 @@ public class AddUpdateAccountController {
     }
 
     private void setTheImage(Image image) {
-        if(image == null)
+        if (image == null)
             return;
 
         BufferedImage bfrImage = SwingFXUtils.fromFXImage(image, null);
@@ -167,23 +154,35 @@ public class AddUpdateAccountController {
         thumbnailImage.setImage(image);
     }
 
-    private void addorUpdateAccountToDB(){
-        if(this.accountObj != null){
+    private void addorUpdateAccountToDB() {
+        if (this.accountObj != null) {
             this.accountObj.setPlatformName(platformTxtField.getText().trim());
             this.accountObj.setPassword(passwordField.getText().trim());
             this.accountObj.setEmail(emailTxtField.getText().trim());
             this.accountObj.setUserName(usernameTxtField.getText().trim());
 
             Image image = this.thumbnailImage.getImage();
-            BufferedImage bfrImage = SwingFXUtils.fromFXImage(image, null);
-            BufferedImage normalizedbfrImage = ImageNormalizer.normalizedImage(bfrImage, 215,215);
-            try {
-                image = ImageConversion.convertBufferedImageToImage(normalizedbfrImage);
-            } catch (IOException e) {
-                ErrorDialog.showErrorDialog(e, "Image Conversion Error", "There was a problem converting image to bytes");
-                return;
+            byte[] imageBytes = null;
+
+            if (image != null) {
+                byte[] originalBytes = accountObj.getPlatformThumbnail();
+                byte[] newImageBytes = ImageConversion.convertImageToByteArray(image);
+
+                if (originalBytes != newImageBytes) {
+                    BufferedImage bfrImage = SwingFXUtils.fromFXImage(image, null);
+                    BufferedImage normalizedbfrImage = ImageNormalizer.normalizedImage(bfrImage, 215, 215);
+                    try {
+                        image = ImageConversion.convertBufferedImageToImage(normalizedbfrImage);
+                        imageBytes = ImageConversion.convertImageToByteArray(image);
+                    } catch (IOException e) {
+                        ErrorDialog.showErrorDialog(e, "Image Conversion Error", "There was a problem converting image to bytes");
+                        return;
+                    }
+                } else {
+                    imageBytes = originalBytes;
+                }
             }
-            byte[] imageBytes = ImageConversion.convertImageToByteArray(image);
+
             this.accountObj.setPlatformThumbnail(imageBytes);
             this.contract.saveAccountToDB(accountObj);
             this.stage.close();
@@ -192,10 +191,20 @@ public class AddUpdateAccountController {
             String password = passwordField.getText().trim();
             String email = emailTxtField.getText().trim();
             String userName = usernameTxtField.getText().trim();
-            AccountObj newAccount = InformationFactory.newAccount(platform,userName,email,password,this.thumbnailImage.getImage());
+            AccountObj newAccount = InformationFactory.newAccount(platform, userName, email, password, this.thumbnailImage.getImage());
             this.contract.saveAccountToDB(newAccount);
             this.stage.close();
         }
 
+    }
+
+    private void loadPasswordGeneration() {
+        try {
+            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("PasswordgenComponent.fxml"));
+            VBox passwordgenComponent = loader.load();
+            passwordgenSTACKP.getChildren().add(passwordgenComponent);
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading password generation utility");
+        }
     }
 }

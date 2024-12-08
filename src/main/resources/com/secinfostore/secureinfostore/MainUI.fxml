@@ -17,14 +17,14 @@
                   <HBox>
                      <children>
                         <Button fx:id="addAccountBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add Account Record" />
-                        <Button fx:id="importAccountsBTN" mnemonicParsing="false" onAction="#buttonClick" text="Import Accounts (JSON)" />
+                        <Button fx:id="importAccountsJSONBTN" mnemonicParsing="false" onAction="#buttonClick" text="Import Accounts (JSON)" />
                         <Button fx:id="gotoChangelogBTN" mnemonicParsing="false" onAction="#buttonClick" text="Change Log" />
                      </children>
                   </HBox>
                   <HBox>
                      <children>
                         <Button fx:id="exportToTxtBTN" mnemonicParsing="false" onAction="#buttonClick" text="Export To Text" />
-                        <Button layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Export Accounts (JSON)" />
+                        <Button fx:id="exportAccountsJSONBTN" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Export Accounts (JSON)" />
                         <Button fx:id="reEncryptBTN" layoutX="294.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Re Encrypt" />
                         <Button fx:id="goToEntryUIBTN" layoutX="328.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Go Back" />
                      </children>
