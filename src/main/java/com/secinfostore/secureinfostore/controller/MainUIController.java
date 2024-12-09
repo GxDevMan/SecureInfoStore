@@ -115,7 +115,8 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             dataStore.insertObject("default_key", key);
 
         }
-        dataStore.clearData();
+        dataStore.deleteObject("default_key");
+        dataStore.deleteObject("default_db");
         mediator.switchTo("entryUI", null);
     }
 

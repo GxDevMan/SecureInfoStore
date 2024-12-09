@@ -5,32 +5,38 @@
 
 <?import javafx.geometry.Insets?>
 <?import java.net.URL?>
-<VBox spacing="10" prefHeight="412.0" prefWidth="813.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.ChangeLogController" style="-fx-background-color: #444444;">
-    <padding>
-        <Insets bottom="20" left="20" right="20" top="20" />
-    </padding>
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.secinfostore.secureinfostore.controller.ChangeLogController"
+            style="-fx-background-color: #2c2f33;">
     <stylesheets>
-        <URL value="@styles/dark-theme.css" />
+        <URL value="@styles/dark-theme.css"/>
     </stylesheets>
+    <children>
+        <VBox spacing="20" AnchorPane.topAnchor="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <children>
+                <!-- Header Section -->
+                <HBox alignment="CENTER" spacing="20" style="-fx-padding: 10; -fx-background-color: #444444; -fx-border-radius: 5; -fx-background-radius: 5;">
+                    <Label text="Change Log" style="-fx-font-size: 20px; -fx-text-fill: #ffffff; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                    <Button mnemonicParsing="false" onAction="#deleteAllLogs" text="Delete All Logs" style="-fx-background-color: #ff5555; -fx-text-fill: #ffffff;"/>
+                </HBox>
 
-    <Label alignment="CENTER" VBox.vgrow="NEVER">
-        <VBox.margin>
-            <Insets bottom="20" />
-        </VBox.margin>
-    </Label>
+                <!-- Table Section -->
+                <TableView fx:id="databaseTable" VBox.vgrow="ALWAYS" style="-fx-border-color: #99aab5; -fx-border-width: 1; -fx-border-radius: 5;">
+                    <columns>
+                        <TableColumn fx:id="timeChange" prefWidth="180.0" text="Time" style="-fx-text-fill: #ffffff;"/>
+                        <TableColumn fx:id="userPlatformColumn" prefWidth="130.0" text="User Platform" style="-fx-text-fill: #ffffff;"/>
+                        <TableColumn fx:id="userNameColumn" prefWidth="140.0" text="User Name" style="-fx-text-fill: #ffffff;"/>
+                        <TableColumn fx:id="userEmailColumn" prefWidth="140.0" text="User Email" style="-fx-text-fill: #ffffff;"/>
+                        <TableColumn fx:id="userPasswordColumn" prefWidth="140.0" text="User Password" style="-fx-text-fill: #ffffff;"/>
+                        <TableColumn fx:id="actionColumn" prefWidth="100.0" text="Action" style="-fx-text-fill: #ffffff;"/>
+                    </columns>
+                </TableView>
 
-    <Button mnemonicParsing="false" onAction="#deleteAllLogs" text="Delete all Logs" />
-
-    <TableView fx:id="databaseTable">
-        <columns>
-            <TableColumn fx:id="timeChange" prefWidth="179.0" text="Time"/>
-            <TableColumn fx:id="userPlatformColumn" prefWidth="111.0" text="User Platform"/>
-            <TableColumn fx:id="userNameColumn" prefWidth="129.0" text="User Name"/>
-            <TableColumn fx:id="userEmailColumn" minWidth="0.0" prefWidth="116.0" text="User Email"/>
-            <TableColumn fx:id="userPasswordColumn" prefWidth="116.0" text="User Password"/>
-            <TableColumn fx:id="actionColumn" prefWidth="96.0" text="Action"/>
-        </columns>
-    </TableView>
-
-    <Button mnemonicParsing="false" onAction="#changeScene" text="Go back" />
-</VBox>
+                <!-- Footer Section -->
+                <HBox alignment="CENTER_RIGHT" spacing="20">
+                    <Button mnemonicParsing="false" onAction="#changeScene" text="Go Back" style="-fx-background-color: #7289da; -fx-text-fill: #ffffff;"/>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

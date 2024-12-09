@@ -17,9 +17,6 @@ public class AccountsPreviewComponentController {
     private UpdateDeleteViewConfirmContract contract;
 
     @FXML
-    private Button copyPlatformBTN;
-
-    @FXML
     private Label platformLBL;
 
     @FXML
@@ -72,9 +69,7 @@ public class AccountsPreviewComponentController {
     }
 
     public void buttonClick(ActionEvent event) {
-        if (event.getSource().equals(copyPlatformBTN)) {
-            ClipboardHandler.pasteTextToClipboard(platformLBL.getText());
-        } else if (event.getSource().equals(copyEmailBTN)) {
+        if (event.getSource().equals(copyEmailBTN)) {
             ClipboardHandler.pasteTextToClipboard(emailLBL.getText());
         } else if (event.getSource().equals(copyUsernameBTN)) {
             ClipboardHandler.pasteTextToClipboard(userNameLBL.getText());

@@ -1,9 +1,9 @@
 .root {
-    -fx-base: #0F0F0F;
-    -fx-accent: #005B41;
-    -fx-default-button: #008170;
-    -fx-focus-color: #008170;
-    -fx-faint-focus-color: #232D3F22;
+    -fx-base: #000000; /* Black base background */
+    -fx-accent: #7D7D7D; /* Light gray accent */
+    -fx-default-button: #4B4B4B; /* Mid-gray button background */
+    -fx-focus-color: #7D7D7D; /* Light gray focus color */
+    -fx-faint-focus-color: #2E2E2E; /* Dark gray faint focus color */
     -fx-focused-text-base-color: ladder(
         -fx-selection-bar,
         -fx-light-text-color 45%,
@@ -25,40 +25,40 @@
 }
 
 Button {
-    -fx-background-color: #005B41;
-    -fx-text-fill: #FFFFFF;
-    -fx-border-color: #008170;
-    -fx-border-radius: 3;
-    -fx-background-radius: 3;
-    -fx-padding: 5 10;
+    -fx-background-color: #4B4B4B; /* Mid-gray button background */
+    -fx-text-fill: #BFBFBF; /* Very light gray text */
+    -fx-border-color: #7D7D7D; /* Light gray border */
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
 }
 
 Button:hover {
-    -fx-background-color: #008170;
+    -fx-background-color: #7D7D7D; /* Light gray button hover */
 }
 
 TextField {
-    -fx-background-color: #232D3F;
-    -fx-text-fill: #FFFFFF;
-    -fx-border-color: #005B41;
+    -fx-background-color: #2E2E2E; /* Dark gray input background */
+    -fx-text-fill: #BFBFBF; /* Very light gray text */
+    -fx-border-color: #4B4B4B; /* Mid-gray border */
     -fx-border-radius: 3;
     -fx-background-radius: 3;
-    -fx-prompt-text-fill: #a0a0a0;
+    -fx-prompt-text-fill: #7D7D7D; /* Light gray placeholder text */
 }
 
 ScrollPane {
-    -fx-background: #0F0F0F;
-    -fx-border-color: #005B41;
+    -fx-background: #000000; /* Black scroll pane background */
+    -fx-border-color: #7D7D7D; /* Light gray border around the scroll pane */
 }
 
 TilePane {
-    -fx-background-color: #0F0F0F;
+    -fx-background-color: #000000; /* Black tile pane background */
 }
 
 Pagination {
     -fx-page-information-visible: false;
-    -fx-background-color: #232D3F;
-    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #2E2E2E; /* Dark gray pagination background */
+    -fx-text-fill: #BFBFBF; /* Very light gray text */
 }
 
 HBox, VBox {
@@ -68,33 +68,33 @@ HBox, VBox {
 }
 
 Label {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #BFBFBF; /* Very light gray text */
     -fx-font-size: 14px;
     -fx-font-weight: normal;
 }
 
 .text-area {
-    -fx-background-radius: 0;
+    -fx-background-radius: 3;
     -fx-border-width: 1;
-    -fx-border-color: #232D3F;
-    -fx-text-fill: #AFB1B3;
-    -fx-highlight-fill: #005B41;
-    -fx-background-color: #0F0F0F;
+    -fx-border-color: #4B4B4B; /* Mid-gray border */
+    -fx-text-fill: #BFBFBF; /* Very light gray text */
+    -fx-highlight-fill: #7D7D7D; /* Light gray highlight fill */
+    -fx-background-color: #000000; /* Black background */
 }
 
 .text-area:hover {
-    -fx-border-color: #005B41;
+    -fx-border-color: #7D7D7D; /* Light gray border on hover */
 }
 
 .text-area:focused {
-    -fx-border-color: #008170;
-    -fx-background-color: #232D3F;
+    -fx-border-color: #7D7D7D; /* Light gray border when focused */
+    -fx-background-color: #2E2E2E; /* Dark gray background when focused */
 }
 
 .text-area .content {
-    -fx-background-radius: 0;
+    -fx-background-radius: 3;
     -fx-border-width: 0;
-    -fx-background-color: #0F0F0F;
+    -fx-background-color: #000000; /* Black background for the text content */
 }
 
 .text-area .scroll-bar {
@@ -103,22 +103,22 @@ Label {
 
 .text-area .scroll-bar .thumb {
     -fx-background-insets: 0 2 0 2;
-    -fx-background-color: #005B41;
+    -fx-background-color: #7D7D7D; /* Light gray thumb color */
 }
 
 .dialog-pane {
-    -fx-background-color: #232D3F;
+    -fx-background-color: #2E2E2E; /* Dark gray dialog background */
     -fx-border-radius: 10;
     -fx-padding: 20;
 }
 
 .dialog-pane .title {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #BFBFBF; /* Very light gray title text */
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
 .dialog-pane .content {
-    -fx-text-fill: #AFB1B3;
+    -fx-text-fill: #7D7D7D; /* Light gray content text */
     -fx-font-size: 14px;
 }

@@ -4,39 +4,54 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.TextENCDECController">
-    <stylesheets>
-        <URL value="@styles/dark-theme.css" />
-    </stylesheets>
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.secinfostore.secureinfostore.controller.TextENCDECController">
+   <stylesheets>
+      <URL value="@styles/dark-theme.css" />
+   </stylesheets>
    <children>
-      <VBox>
+      <!-- Root container with responsive resizing -->
+      <VBox spacing="15" alignment="TOP_CENTER" VBox.vgrow="ALWAYS"
+            AnchorPane.topAnchor="5.0"
+            AnchorPane.bottomAnchor="5.0"
+            AnchorPane.leftAnchor="5.0"
+            AnchorPane.rightAnchor="5.0">
          <children>
-            <HBox>
+            <!-- Key Load and Reveal Section -->
+            <HBox spacing="10" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
                   <Button fx:id="loadKeyBTN" mnemonicParsing="false" onAction="#buttonClick" text="Load Key" />
-                  <PasswordField fx:id="keyFieldTxtField" />
+                  <PasswordField fx:id="keyFieldTxtField" promptText="Enter Key" HBox.hgrow="ALWAYS" />
                   <CheckBox fx:id="revealKeyCheckBox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Reveal" />
                </children>
             </HBox>
-            <HBox>
+
+            <!-- Input Text Area Section -->
+            <HBox spacing="10" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
-                  <TextArea fx:id="inputTextArea" prefHeight="200.0" prefWidth="300.0" />
+                  <TextArea fx:id="inputTextArea" promptText="Enter text to encrypt/decrypt" prefHeight="200" wrapText="true" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-            <HBox>
+
+            <!-- Buttons and Checkboxes Section -->
+            <HBox spacing="15" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="pasteBTN" layoutX="87.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Paste Text to Input" />
-                  <Button fx:id="computeOutputBTN" mnemonicParsing="false" onAction="#buttonClick" />
+                  <Button fx:id="pasteBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Text to Input" />
+                  <Button fx:id="computeOutputBTN" mnemonicParsing="false" onAction="#buttonClick" text="Process" />
                   <CheckBox fx:id="encCheckbox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Encrypt" />
                   <CheckBox fx:id="decCheckbox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Decrypt" />
                </children>
             </HBox>
-            <HBox>
+
+            <!-- Output Text Area Section -->
+            <HBox spacing="10" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
-                  <TextArea fx:id="outputTextArea" prefHeight="200.0" prefWidth="300.0" />
+                  <TextArea fx:id="outputTextArea" promptText="Processed Output" prefHeight="200" wrapText="true" editable="false" HBox.hgrow="ALWAYS"/>
                </children>
             </HBox>
-            <HBox>
+
+            <!-- Copy Output Button -->
+            <HBox spacing="10" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
                   <Button fx:id="copyOutputBTN" mnemonicParsing="false" onAction="#buttonClick" text="Copy Output" />
                </children>
@@ -44,5 +59,6 @@
          </children>
       </VBox>
    </children>
-
 </AnchorPane>
+
+
