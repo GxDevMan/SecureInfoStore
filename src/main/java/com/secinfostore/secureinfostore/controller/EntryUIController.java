@@ -1,6 +1,5 @@
 package com.secinfostore.secureinfostore.controller;
 
-import com.secinfostore.secureinfostore.SecureInformationStore;
 import com.secinfostore.secureinfostore.customskin.KeyTextFieldSkin;
 import com.secinfostore.secureinfostore.model.Validation;
 import com.secinfostore.secureinfostore.util.DataStore;
@@ -9,15 +8,10 @@ import com.secinfostore.secureinfostore.util.EncryptionDecryption;
 import com.secinfostore.secureinfostore.util.HibernateUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
@@ -25,7 +19,7 @@ import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
-public class EntryUIController {
+public class EntryUIController extends BaseController {
     @FXML
     private PasswordField keyTextField;
     private KeyTextFieldSkin keyTextFieldSkin;
@@ -63,6 +57,10 @@ public class EntryUIController {
         keyTextField.setSkin(keyTextFieldSkin);
     }
 
+    @Override
+    public void setupSelectedController(Object data) {
+    }
+
     @FXML
     protected void buttonClick(ActionEvent event) {
         if (event.getSource().equals(loadkeyBTN)) {
@@ -77,7 +75,7 @@ public class EntryUIController {
             createNewDatabaseAndKey();
         } else if (event.getSource().equals(proceedBTN)) {
             goToMainUI(event);
-        } else if (event.getSource().equals(encryptorBTN)){
+        } else if (event.getSource().equals(encryptorBTN)) {
             goToEncryptor();
         }
     }
@@ -152,21 +150,7 @@ public class EntryUIController {
 
     private void goToSettings() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("SettingsUI.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 300);
-
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.initModality(Modality.APPLICATION_MODAL);
-
-            DataStore dataStore = DataStore.getInstance();
-            String title = (String) dataStore.getObject("default_title");
-            stage.setTitle(title);
-
-            SettingsUIController controller = fxmlLoader.getController();
-            controller.setSettingUIController(stage);
-
-            stage.show();
+            ComponentFactory.settingsDisplay();
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading Settings fxml");
         }
@@ -186,14 +170,12 @@ public class EntryUIController {
             return;
         }
 
-
-
         if ((dbUrl == null)) {
             ErrorDialog.showErrorDialog(new Exception("URL Error"), "Database Connection Error", "Database has not been set");
             return;
         }
 
-        if(dbUrl.equals("")){
+        if (dbUrl.equals("")) {
             ErrorDialog.showErrorDialog(new Exception("URL Error"), "Database Connection Error", "Database has not been set");
             return;
         }
@@ -220,22 +202,8 @@ public class EntryUIController {
             hibernateUtil.shutdown();
             return;
         }
+        this.mediator.switchTo("mainUIAccount", null);
 
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("MainUIAccounts.fxml"));
-            Parent viewParent = fxmlLoader.load();
-            Scene viewScene = new Scene(viewParent);
-            Stage sourceWin = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            sourceWin.setScene(viewScene);
-
-            MainUIController controller = fxmlLoader.getController();
-            controller.setMainUIController();
-
-            sourceWin.show();
-
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading Main UI");
-        }
     }
 
     private void reset() {
@@ -274,21 +242,16 @@ public class EntryUIController {
         }
     }
 
-    private void goToEncryptor(){
+    private void goToEncryptor() {
         try {
-            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("TextENCDECUI.fxml"));
-            Scene scene = new Scene(loader.load(), 400, 400);
-            Stage stage = new Stage();
-
-            DataStore dataStore = DataStore.getInstance();
-            String title = (String) dataStore.getObject("default_title");
-            stage.setScene(scene);
-            stage.setTitle(String.format("%s - %s", title, "Encryptor"));
-            stage.initModality(Modality.WINDOW_MODAL);
-
-            stage.show();
+            ComponentFactory.loadEncryptor();
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading TextENCDECUI.fxml");
         }
+    }
+
+    @Override
+    public String getFxmlFileName() {
+        return "EntryUI.fxml";
     }
 }

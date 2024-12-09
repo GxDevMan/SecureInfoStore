@@ -8,10 +8,6 @@ import com.secinfostore.secureinfostore.model.ChangeLogObj;
 import com.secinfostore.secureinfostore.util.DatabaseHandler;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
@@ -19,7 +15,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
-public class ChangeLogController implements ChangeLogContract<ChangeLogObj> {
+public class ChangeLogController extends BaseController implements ChangeLogContract<ChangeLogObj> {
 
     @FXML
     private TableView<ChangeLogObj> databaseTable;
@@ -83,21 +79,7 @@ public class ChangeLogController implements ChangeLogContract<ChangeLogObj> {
     }
 
     public void changeScene(ActionEvent event) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("MainUIAccounts.fxml"));
-            Parent viewParent = fxmlLoader.load();
-            Scene viewScene = new Scene(viewParent);
-            Stage sourceWin = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            sourceWin.setScene(viewScene);
-
-            MainUIController controller = fxmlLoader.getController();
-            controller.setMainUIController();
-
-            sourceWin.show();
-
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading Main UI");
-        }
+        mediator.switchTo("mainUIAccount", null);
     }
 
     private void refreshTable(Optional<List<ChangeLogObj>> changeLogObjOptional){
@@ -135,5 +117,15 @@ public class ChangeLogController implements ChangeLogContract<ChangeLogObj> {
                 }
             }
         });
+    }
+
+    @Override
+    public String getFxmlFileName() {
+        return "ChangeLogUI.fxml";
+    }
+
+    @Override
+    public void setupSelectedController(Object data) {
+        refreshTable(DatabaseHandler.getChangeLogs());
     }
 }

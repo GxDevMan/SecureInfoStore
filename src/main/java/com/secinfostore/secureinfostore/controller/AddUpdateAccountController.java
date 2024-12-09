@@ -200,8 +200,7 @@ public class AddUpdateAccountController {
 
     private void loadPasswordGeneration() {
         try {
-            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("PasswordgenComponent.fxml"));
-            VBox passwordgenComponent = loader.load();
+            VBox passwordgenComponent = ComponentFactory.getPasswordComponent();
             passwordgenSTACKP.getChildren().add(passwordgenComponent);
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading password generation utility");

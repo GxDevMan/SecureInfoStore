@@ -17,6 +17,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -184,7 +185,7 @@ public class DatabaseHandler {
             transaction.commit();
 
             if(objList != null && !(objList.isEmpty())){
-                decChangeLogList = new ArrayList<>();
+                decChangeLogList = new LinkedList<>();
                 for (ChangeLogObj eachChangeLog : objList){
                     decChangeLogList.add(InformationFactory.decChangeLog(eachChangeLog));
                 }
@@ -232,7 +233,7 @@ public class DatabaseHandler {
         }
 
         if ((encAccountList != null) && !encAccountList.isEmpty()) {
-            decAccountList = new ArrayList<>();
+            decAccountList = new LinkedList<>();
             for (AccountObj encAccount : encAccountList) {
                 decAccountList.add(InformationFactory.decAccount(encAccount));
             }
@@ -241,13 +242,13 @@ public class DatabaseHandler {
     }
 
     public static boolean deleteAccount(AccountObj accountObj) {
+        deleteChangeLogsByAccountId(accountObj.getAccountId());
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
         try {
-            long accountId = accountObj.getAccountId();
             session.delete(accountObj);
             transaction.commit();
-            deleteChangeLogsByAccountId(accountId);
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();

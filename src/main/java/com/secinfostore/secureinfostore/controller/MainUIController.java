@@ -2,30 +2,24 @@ package com.secinfostore.secureinfostore.controller;
 
 import com.secinfostore.secureinfostore.SecureInformationStore;
 import com.secinfostore.secureinfostore.model.AccountObj;
-import com.secinfostore.secureinfostore.util.DataStore;
-import com.secinfostore.secureinfostore.util.DatabaseHandler;
-import com.secinfostore.secureinfostore.util.JsonHandler;
+import com.secinfostore.secureinfostore.util.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 
-public class MainUIController implements AddUpdateContract, UpdateDeleteViewConfirmContract {
+public class MainUIController extends BaseController implements AddUpdateContract, UpdateDeleteViewConfirmContract {
 
     @FXML
     private Button searchBTN;
@@ -68,14 +62,7 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
 
 
     public void setMainUIController() {
-        try {
-            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("PasswordgenComponent.fxml"));
-            VBox passwordgenComponent = loader.load();
-            passwordgenPositionSTACKP.getChildren().add(passwordgenComponent);
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading password generation utility");
-        }
-        displayAccounts(DatabaseHandler.getAccounts());
+
     }
 
     public void buttonClick(ActionEvent event) {
@@ -92,36 +79,45 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
             importaccountsFromJson();
         } else if (event.getSource().equals(exportAccountsJSONBTN)) {
             exportAccountstoJson();
-        } else if (event.getSource().equals(encryptorBTN)){
+        } else if (event.getSource().equals(encryptorBTN)) {
             goToEncryptor();
-        } else if (event.getSource().equals(gotoChangelogBTN)){
+        } else if (event.getSource().equals(gotoChangelogBTN)) {
             goToChangeLog(event);
+        } else if (event.getSource().equals(goToEntryUIBTN)) {
+            goToEntryUI();
         }
     }
 
-    private void searchAccounts(String searchKey){
+    private void searchAccounts(String searchKey) {
         displayAccounts(DatabaseHandler.getAccounts(searchKey));
     }
 
-    private void goToEncryptor(){
+    private void goToEncryptor() {
         try {
-            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("TextENCDECUI.fxml"));
-            Scene scene = new Scene(loader.load(), 400, 400);
-            Stage stage = new Stage();
-
             DataStore dataStore = DataStore.getInstance();
-            String title = (String) dataStore.getObject("default_title");
-            stage.setScene(scene);
-            stage.setTitle(String.format("%s - %s", title, "Encryptor"));
-            stage.initModality(Modality.WINDOW_MODAL);
-
-            TextENCDECController controller = loader.getController();
-            controller.setTextENCDECController((SecretKey) dataStore.getObject("default_key"));
-
-            stage.show();
+            ComponentFactory.loadEncryptor((SecretKey) dataStore.getObject("default_key"));
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading TextENCDECUI.fxml");
         }
+    }
+
+    private void goToEntryUI() {
+        HibernateUtil hibernateUtil = HibernateUtil.getInstance();
+        hibernateUtil.shutdown();
+        DataStore dataStore = DataStore.getInstance();
+
+        for (int i = 0; i < 5; i++) {
+            SecretKey key = null;
+            try {
+                key = EncryptionDecryption.generateAESKey();
+            } catch (NoSuchAlgorithmException e) {
+            }
+            dataStore.insertObject("default_key", key);
+        }
+        dataStore.clearData();
+        dataStore.DestroyStore();
+
+        mediator.switchTo("entryUI", null);
     }
 
     private void exportAccountstoJson() {
@@ -139,16 +135,16 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
         stage.setTitle(stageTitle);
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Export File","*.json"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Export File", "*.json"));
         fileChooser.setInitialFileName("ExportedAccounts.json");
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         File jsonFile = fileChooser.showSaveDialog(stage);
 
-        if(jsonFile != null){
+        if (jsonFile != null) {
             try {
-                JsonHandler.writeToJsonToFile(accountList,jsonFile);
-            } catch (Exception e){
-                ErrorDialog.showErrorDialog(e,"Accounts Export Error", "There was a problem writing to the File");
+                JsonHandler.writeToJsonToFile(accountList, jsonFile);
+            } catch (Exception e) {
+                ErrorDialog.showErrorDialog(e, "Accounts Export Error", "There was a problem writing to the File");
             }
         }
     }
@@ -177,7 +173,7 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
         try {
             Optional<List<AccountObj>> importedAccountsOpt = JsonHandler.getAccountsFromJson(selectedJSON);
 
-            if (!importedAccountsOpt.isPresent()){
+            if (!importedAccountsOpt.isPresent()) {
                 return;
             }
 
@@ -187,26 +183,14 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
         }
     }
 
-    private void saveImportedAccountsToDB(List<AccountObj> accountList){
+    private void saveImportedAccountsToDB(List<AccountObj> accountList) {
         DatabaseHandler.saveAccount(accountList);
         displayAccounts(DatabaseHandler.getAccounts());
     }
 
     private void addAccount() {
         try {
-            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateAccountUI.fxml"));
-            Scene scene = new Scene(loader.load(), 400, 400);
-            Stage stage = new Stage();
-
-            DataStore dataStore = DataStore.getInstance();
-            String title = (String) dataStore.getObject("default_title");
-            stage.setScene(scene);
-            stage.setTitle(String.format("%s - %s", title, "New Account Information"));
-            stage.initModality(Modality.APPLICATION_MODAL);
-
-            AddUpdateAccountController controller = loader.getController();
-            controller.setAddUpdateAccount(stage, this);
-            stage.show();
+            ComponentFactory.addUpdateAccountUI(this);
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading AddUpdateAccountUI.fxml");
         }
@@ -222,12 +206,7 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
         accountsViewTilePane.getChildren().clear();
         try {
             for (AccountObj account : accountObjList.get()) {
-                FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AccountsPreviewComponent.fxml"));
-                AnchorPane anchorPane = loader.load();
-
-                AccountsPreviewComponentController controller = loader.getController();
-                controller.setAccountPreview(account, this);
-
+                AnchorPane anchorPane = ComponentFactory.accountPreviewComponent(account, this);
                 accountsViewTilePane.getChildren().add(anchorPane);
             }
         } catch (Exception e) {
@@ -235,22 +214,8 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
         }
     }
 
-    private void goToChangeLog(ActionEvent event){
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("ChangeLogUI.fxml"));
-            Parent viewParent = fxmlLoader.load();
-            Scene viewScene = new Scene(viewParent);
-            Stage sourceWin = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            sourceWin.setScene(viewScene);
-
-            ChangeLogController controller = fxmlLoader.getController();
-            controller.setChangeLogController();
-
-            sourceWin.show();
-
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading ChangeLog UI");
-        }
+    private void goToChangeLog(ActionEvent event) {
+        mediator.switchTo("changeLogUI", null);
     }
 
     @Override
@@ -262,19 +227,7 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
     @Override
     public void viewUpdateAccount(AccountObj account) {
         try {
-            FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateAccountUI.fxml"));
-            Scene scene = new Scene(loader.load(), 400, 400);
-            Stage stage = new Stage();
-
-            DataStore dataStore = DataStore.getInstance();
-            String title = (String) dataStore.getObject("default_title");
-            stage.setScene(scene);
-            stage.setTitle(String.format("%s - %s", title, "Update Account Information"));
-            stage.initModality(Modality.APPLICATION_MODAL);
-
-            AddUpdateAccountController controller = loader.getController();
-            controller.setAddUpdateAccount(stage, this, account);
-            stage.show();
+            ComponentFactory.addUpdateAccountUI(account, this);
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading AddUpdateAccountUI.fxml");
         }
@@ -300,9 +253,26 @@ public class MainUIController implements AddUpdateContract, UpdateDeleteViewConf
 
         ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
 
-        if(result == ButtonType.OK){
+        if (result == ButtonType.OK) {
             DatabaseHandler.deleteAccount(account);
             displayAccounts(DatabaseHandler.getAccounts());
         }
+    }
+
+
+    @Override
+    public String getFxmlFileName() {
+        return "MainUIAccounts.fxml";
+    }
+
+    @Override
+    public void setupSelectedController(Object data) {
+        try {
+            VBox passwordgenComponent = ComponentFactory.getPasswordComponent();
+            passwordgenPositionSTACKP.getChildren().add(passwordgenComponent);
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading password generation utility");
+        }
+        displayAccounts(DatabaseHandler.getAccounts());
     }
 }
