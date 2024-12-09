@@ -30,7 +30,7 @@ public class ComponentFactory {
         Stage stage = new Stage();
 
         stage.setScene(scene);
-        setWindowsTitle(stage,"New Account Information");
+        setWindowsTitle(stage, "New Account Information");
         stage.initModality(Modality.APPLICATION_MODAL);
 
         AddUpdateAccountController controller = loader.getController();
@@ -44,7 +44,7 @@ public class ComponentFactory {
         Stage stage = new Stage();
 
         stage.setScene(scene);
-        setWindowsTitle(stage,"Update Account Information");
+        setWindowsTitle(stage, "Update Account Information");
         stage.initModality(Modality.APPLICATION_MODAL);
 
         AddUpdateAccountController controller = loader.getController();
@@ -58,7 +58,7 @@ public class ComponentFactory {
         Stage stage = new Stage();
 
         stage.setScene(scene);
-        setWindowsTitle(stage,"Encryptor");
+        setWindowsTitle(stage, "Encryptor");
         stage.initModality(Modality.WINDOW_MODAL);
         stage.show();
 
@@ -70,7 +70,7 @@ public class ComponentFactory {
         Stage stage = new Stage();
 
         stage.setScene(scene);
-        setWindowsTitle(stage,"Encryptor");
+        setWindowsTitle(stage, "Encryptor");
         stage.initModality(Modality.WINDOW_MODAL);
 
         TextENCDECController controller = loader.getController();
@@ -79,7 +79,7 @@ public class ComponentFactory {
         stage.show();
     }
 
-    public static void settingsDisplay() throws Exception{
+    public static void settingsDisplay() throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("SettingsUI.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
@@ -94,19 +94,36 @@ public class ComponentFactory {
         stage.show();
     }
 
-    public static VBox getPasswordComponent() throws Exception{
+    public static void settingsDisplaywithCharset() throws Exception {
+        DataStore dataStore = DataStore.getInstance();
+        String charSet = (String) dataStore.getObject("default_passwordCharSet");
+        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("SettingsUI.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        setWindowsTitle(stage);
+
+        SettingsUIController controller = fxmlLoader.getController();
+        controller.setSettingUIController(stage, charSet);
+
+        stage.show();
+    }
+
+    public static VBox getPasswordComponent() throws Exception {
         FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("PasswordgenComponent.fxml"));
         VBox passwordgenComponent = loader.load();
         return passwordgenComponent;
     }
 
-    private static void setWindowsTitle(Stage stage){
+    public static void setWindowsTitle(Stage stage) {
         DataStore dataStore = DataStore.getInstance();
         String title = (String) dataStore.getObject("default_title");
         stage.setTitle(title);
     }
 
-    private static void setWindowsTitle(Stage stage, String additional){
+    public static void setWindowsTitle(Stage stage, String additional) {
         DataStore dataStore = DataStore.getInstance();
         String title = (String) dataStore.getObject("default_title");
         title = String.format("%s - %s", title, additional);

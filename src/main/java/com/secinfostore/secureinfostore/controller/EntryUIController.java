@@ -80,6 +80,12 @@ public class EntryUIController extends BaseController {
         }
     }
 
+    @FXML
+    protected void checkBoxReveal() {
+        keyTextFieldSkin.setReveal(revealKeyCheckBox.isSelected());
+        keyTextField.setText(keyTextField.getText());
+    }
+
     private void createNewDatabaseAndKey() {
         Stage stage = new Stage();
 
@@ -148,6 +154,36 @@ public class EntryUIController extends BaseController {
         }
     }
 
+    private void loadKeyFromFile() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter keyFilter = new FileChooser.ExtensionFilter("Load Key", "*.key");
+        fileChooser.getExtensionFilters().add(keyFilter);
+        String currentDir = System.getProperty("user.dir");
+        fileChooser.setInitialDirectory(new File(currentDir));
+
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            String filePath = selectedFile.getAbsolutePath();
+            try {
+                SecretKey key = EncryptionDecryption.loadKeyFromFile(filePath);
+                String base64key = EncryptionDecryption.keyToBase64Text(key);
+                keyTextField.setText(base64key);
+            } catch (Exception e) {
+                ErrorDialog.showErrorDialog(new Exception("Key loading error"), "Key Load error", "Error loading key");
+            }
+        }
+    }
+
+    private void reset() {
+        DataStore dataStore = DataStore.getInstance();
+        dataStore.insertObject("default_db", "");
+        loadedCheckbox.setSelected(false);
+        revealKeyCheckBox.setSelected(false);
+        keyTextField.setText("");
+        checkBoxReveal();
+    }
+
     private void goToSettings() {
         try {
             ComponentFactory.settingsDisplay();
@@ -206,52 +242,11 @@ public class EntryUIController extends BaseController {
 
     }
 
-    private void reset() {
-        DataStore dataStore = DataStore.getInstance();
-        dataStore.insertObject("default_db", "");
-        loadedCheckbox.setSelected(false);
-        revealKeyCheckBox.setSelected(false);
-        keyTextField.setText("");
-        checkBoxReveal();
-    }
-
-    @FXML
-    protected void checkBoxReveal() {
-        keyTextFieldSkin.setReveal(revealKeyCheckBox.isSelected());
-        keyTextField.setText(keyTextField.getText());
-    }
-
-    private void loadKeyFromFile() {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter keyFilter = new FileChooser.ExtensionFilter("Load Key", "*.key");
-        fileChooser.getExtensionFilters().add(keyFilter);
-        String currentDir = System.getProperty("user.dir");
-        fileChooser.setInitialDirectory(new File(currentDir));
-
-        File selectedFile = fileChooser.showOpenDialog(null);
-
-        if (selectedFile != null) {
-            String filePath = selectedFile.getAbsolutePath();
-            try {
-                SecretKey key = EncryptionDecryption.loadKeyFromFile(filePath);
-                String base64key = EncryptionDecryption.keyToBase64Text(key);
-                keyTextField.setText(base64key);
-            } catch (Exception e) {
-                ErrorDialog.showErrorDialog(new Exception("Key loading error"), "Key Load error", "Error loading key");
-            }
-        }
-    }
-
     private void goToEncryptor() {
         try {
             ComponentFactory.loadEncryptor();
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading TextENCDECUI.fxml");
         }
-    }
-
-    @Override
-    public String getFxmlFileName() {
-        return "EntryUI.fxml";
     }
 }

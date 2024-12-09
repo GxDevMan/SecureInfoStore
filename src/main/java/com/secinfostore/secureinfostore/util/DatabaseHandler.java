@@ -8,7 +8,6 @@ import com.secinfostore.secureinfostore.model.Validation;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-
 import javax.crypto.SecretKey;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;

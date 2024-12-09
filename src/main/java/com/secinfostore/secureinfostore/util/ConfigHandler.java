@@ -25,16 +25,14 @@ public class ConfigHandler {
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode rootNode = mapper.readTree(configFile);
-            boolean default_db = rootNode.has("default_db");
             boolean default_passwordCharSet = rootNode.has("default_passwordCharSet");
 
-            boolean fieldsCheck = default_db && default_passwordCharSet;
+            boolean fieldsCheck = default_passwordCharSet;
 
             if(!fieldsCheck){
                 createDefaultConfig(configFile);
                 return getConfig();
             }
-            configData.put("default_db", rootNode.get("default_db").asText());
             configData.put("default_passwordCharSet", rootNode.get("default_passwordCharSet").asText());
         } catch (Exception e) {
         }
@@ -43,7 +41,6 @@ public class ConfigHandler {
 
     public static void createDefaultConfig(File configFile) {
         Map<String, String> defaultConfig = new HashMap<>();
-        defaultConfig.put("default_db", "informationStore.db");
         defaultConfig.put("default_passwordCharSet", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()");
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();

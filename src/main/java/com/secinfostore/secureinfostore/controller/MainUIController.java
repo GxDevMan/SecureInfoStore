@@ -46,6 +46,9 @@ public class MainUIController extends BaseController implements AddUpdateContrac
     private Button gotoChangelogBTN;
 
     @FXML
+    private Button settingsBTN;
+
+    @FXML
     private Button importAccountsJSONBTN;
 
     @FXML
@@ -59,11 +62,6 @@ public class MainUIController extends BaseController implements AddUpdateContrac
 
     @FXML
     private TilePane accountsViewTilePane;
-
-
-    public void setMainUIController() {
-
-    }
 
     public void buttonClick(ActionEvent event) {
         if (event.getSource().equals(addAccountBTN)) {
@@ -85,6 +83,8 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             goToChangeLog(event);
         } else if (event.getSource().equals(goToEntryUIBTN)) {
             goToEntryUI();
+        } else if (event.getSource().equals(settingsBTN)) {
+            goToSettings();
         }
     }
 
@@ -113,11 +113,18 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             } catch (NoSuchAlgorithmException e) {
             }
             dataStore.insertObject("default_key", key);
+
         }
         dataStore.clearData();
-        dataStore.DestroyStore();
-
         mediator.switchTo("entryUI", null);
+    }
+
+    private void goToSettings() {
+        try {
+            ComponentFactory.settingsDisplaywithCharset();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML loading Error","Error loading settings UI");
+        }
     }
 
     private void exportAccountstoJson() {
@@ -257,12 +264,6 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             DatabaseHandler.deleteAccount(account);
             displayAccounts(DatabaseHandler.getAccounts());
         }
-    }
-
-
-    @Override
-    public String getFxmlFileName() {
-        return "MainUIAccounts.fxml";
     }
 
     @Override

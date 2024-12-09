@@ -7,6 +7,5 @@ public abstract class BaseController {
         this.mediator = mediator;
     }
 
-    public abstract String getFxmlFileName();
     public abstract void setupSelectedController(Object data);
 }

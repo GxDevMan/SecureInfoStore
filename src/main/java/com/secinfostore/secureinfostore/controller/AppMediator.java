@@ -10,27 +10,26 @@ import java.util.Map;
 
 public class AppMediator implements WindowMediator {
     private final Stage primaryStage;
-    private final Map<String, BaseController> controllerMap = new HashMap<>();
+    private final Map<String, String> controllerMap = new HashMap<>();
     private DataStore dataStore = DataStore.getInstance();
 
     public AppMediator(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
-    //A loaded Controller from an FXML File != controller in the hashmap
     @Override
     public void switchTo(String screenName, Object data) {
-        BaseController controller = controllerMap.get(screenName);
-        if (controller != null) {
+        String fxmlName = controllerMap.get(screenName);
+        if (fxmlName != null) {
             try {
-                FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource(controller.getFxmlFileName()));
+                FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource(fxmlName));
                 primaryStage.setScene(new Scene(loader.load()));
 
                 primaryStage.setTitle((String) dataStore.getObject("default_title"));
-                BaseController controller2 = loader.getController();
+                BaseController controller = loader.getController();
 
-                controller2.setMediator(this);
-                controller2.setupSelectedController(data);
+                controller.setMediator(this);
+                controller.setupSelectedController(data);
 
                 primaryStage.show();
             } catch (Exception e) {
@@ -42,9 +41,8 @@ public class AppMediator implements WindowMediator {
     }
 
     @Override
-    public void registerController(String screenName, BaseController controller){
-        controller.setMediator(this);
-        controllerMap.put(screenName,controller);
+    public void registerFXMLName(String screenName, String fxmlName){
+        controllerMap.put(screenName,fxmlName);
     }
 
     @Override

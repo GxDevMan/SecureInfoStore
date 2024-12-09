@@ -48,11 +48,6 @@ public class ChangeLogController extends BaseController implements ChangeLogCont
         this.actionColumn.setCellFactory(cellFactory);
     }
 
-    public void setChangeLogController(){
-        refreshTable(DatabaseHandler.getChangeLogs());
-    }
-
-
     public void deleteAllLogs() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation Dialog");
@@ -117,11 +112,6 @@ public class ChangeLogController extends BaseController implements ChangeLogCont
                 }
             }
         });
-    }
-
-    @Override
-    public String getFxmlFileName() {
-        return "ChangeLogUI.fxml";
     }
 
     @Override

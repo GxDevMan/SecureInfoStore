@@ -2,28 +2,22 @@ package com.secinfostore.secureinfostore.controller;
 
 import com.secinfostore.secureinfostore.model.CharSet;
 import com.secinfostore.secureinfostore.util.ConfigHandler;
+import com.secinfostore.secureinfostore.util.DataStore;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SettingsUIController {
+    private boolean isSet;
     private Stage stage;
 
     @FXML
-    private TextField textFieldDatabaseLoc;
-
-    @FXML
     private TextField charsetField;
-
-    @FXML
-    private Button setDBLocBTN;
 
     @FXML
     private Button saveBTN;
@@ -48,9 +42,7 @@ public class SettingsUIController {
 
     @FXML
     protected void buttonClick(ActionEvent event) {
-        if (event.getSource().equals(setDBLocBTN)) {
-            setDefaultLoc();
-        } else if (event.getSource().equals(saveBTN)) {
+         if (event.getSource().equals(saveBTN)) {
             saveConfig();
         } else if (event.getSource().equals(cancelBTN)) {
             stage.close();
@@ -69,31 +61,28 @@ public class SettingsUIController {
     }
 
     public void setSettingUIController(Stage stage) {
+        isSet = false;
         this.stage = stage;
         Map<String, String> config = ConfigHandler.getConfig();
-        textFieldDatabaseLoc.setText(config.get("default_db"));
         charsetField.setText(config.get("default_passwordCharSet"));
     }
 
-    private void setDefaultLoc() {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter keyFilter = new FileChooser.ExtensionFilter("Select Database", "*.db");
-        fileChooser.getExtensionFilters().add(keyFilter);
-        String currentDir = System.getProperty("user.dir");
-        fileChooser.setInitialDirectory(new File(currentDir));
-
-        File selectedFile = fileChooser.showOpenDialog(null);
-        if (selectedFile != null) {
-            String absolutePath = selectedFile.getAbsolutePath();
-            textFieldDatabaseLoc.setText(absolutePath);
-        }
+    public void setSettingUIController(Stage stage, String instanceCharset) {
+        isSet = true;
+        this.stage = stage;
+        charsetField.setText(instanceCharset);
     }
 
     private void saveConfig() {
         Map<String, String> newConfig = new HashMap<>();
-        newConfig.put("default_db", textFieldDatabaseLoc.getText().trim());
         newConfig.put("default_passwordCharSet", charsetField.getText().trim());
         ConfigHandler.createCustomConfigFile(newConfig);
+
+        if(isSet){
+            DataStore dataStore = DataStore.getInstance();
+            dataStore.insertObject("default_passwordCharSet", charsetField.getText().trim());
+        }
+
         stage.close();
     }
 }
