@@ -53,8 +53,8 @@ public class ChangeLogController extends BaseController implements ChangeLogCont
         alert.setTitle("Confirmation Dialog");
         alert.setHeaderText(null);
         alert.setContentText("Are you sure you want to delete all records?");
-
-        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        ComponentFactory.setStageIcon(stage);
 
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
@@ -95,7 +95,8 @@ public class ChangeLogController extends BaseController implements ChangeLogCont
         alert.setHeaderText(null);
         alert.setContentText("Are you sure you want to delete this record?");
 
-        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        ComponentFactory.setStageIcon(stage);
 
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());

@@ -141,6 +141,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         String dataStoreTitle = (String) dataStore.getObject("default_title");
         String stageTitle = String.format("%s -%s", dataStoreTitle, "Export Accounts To Json");
         stage.setTitle(stageTitle);
+        ComponentFactory.setStageIcon(stage);
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Export File", "*.json"));
@@ -172,6 +173,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
 
         String currentDir = System.getProperty("user.dir");
         fileChooser.setInitialDirectory(new File(currentDir));
+        ComponentFactory.setStageIcon(stage);
 
         File selectedJSON = fileChooser.showOpenDialog(stage);
 
@@ -249,9 +251,12 @@ public class MainUIController extends BaseController implements AddUpdateContrac
 
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        ComponentFactory.setStageIcon(stage);
 
         VBox vbox = new VBox();
         vbox.setSpacing(10);
+
 
         Label accountNameLabel = new Label("Account User Name: " + account.getUserName());
         Label accountEmailLabel = new Label("Account Email: " + account.getEmail());

@@ -62,7 +62,7 @@
                             </TitledPane>
                             <!-- Action Buttons -->
                             <HBox spacing="20" alignment="CENTER">
-                                <Button fx:id="addUpdateBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add/Update" style="-fx-background-color: #43b581; -fx-text-fill: #ffffff;"/>
+                                <Button fx:id="addUpdateBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add/Update"/>
                                 <Button fx:id="cancelBTN" mnemonicParsing="false" onAction="#buttonClick" text="Cancel" style="-fx-background-color: #ff5555; -fx-text-fill: #ffffff;"/>
                             </HBox>
                             <!-- Password Generator StackPane -->

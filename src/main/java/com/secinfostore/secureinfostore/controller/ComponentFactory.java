@@ -5,6 +5,7 @@ import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.util.DataStore;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -31,6 +32,7 @@ public class ComponentFactory {
 
         stage.setScene(scene);
         setWindowsTitle(stage, "New Account Information");
+        setStageIcon(stage);
         stage.initModality(Modality.APPLICATION_MODAL);
 
         AddUpdateAccountController controller = loader.getController();
@@ -45,6 +47,7 @@ public class ComponentFactory {
 
         stage.setScene(scene);
         setWindowsTitle(stage, "Update Account Information");
+        setStageIcon(stage);
         stage.initModality(Modality.APPLICATION_MODAL);
 
         AddUpdateAccountController controller = loader.getController();
@@ -59,6 +62,7 @@ public class ComponentFactory {
 
         stage.setScene(scene);
         setWindowsTitle(stage, "Encryptor");
+        setStageIcon(stage);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.show();
 
@@ -71,6 +75,7 @@ public class ComponentFactory {
 
         stage.setScene(scene);
         setWindowsTitle(stage, "Encryptor");
+        setStageIcon(stage);
         stage.initModality(Modality.WINDOW_MODAL);
 
         TextENCDECController controller = loader.getController();
@@ -87,6 +92,7 @@ public class ComponentFactory {
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
         setWindowsTitle(stage);
+        setStageIcon(stage);
 
         SettingsUIController controller = fxmlLoader.getController();
         controller.setSettingUIController(stage);
@@ -104,6 +110,7 @@ public class ComponentFactory {
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
         setWindowsTitle(stage);
+        setStageIcon(stage);
 
         SettingsUIController controller = fxmlLoader.getController();
         controller.setSettingUIController(stage, charSet);
@@ -128,5 +135,11 @@ public class ComponentFactory {
         String title = (String) dataStore.getObject("default_title");
         title = String.format("%s - %s", title, additional);
         stage.setTitle(title);
+    }
+
+    public static void setStageIcon(Stage stage){
+        DataStore dataStore = DataStore.getInstance();
+        Image icon = (Image) dataStore.getObject("default_icon");
+        stage.getIcons().add(icon);
     }
 }
