@@ -6,6 +6,7 @@ import com.secinfostore.secureinfostore.util.ImageConversion;
 import com.secinfostore.secureinfostore.util.ImageNormalizer;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+
 import javax.crypto.SecretKey;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
@@ -72,6 +73,38 @@ public class InformationFactory {
         return changeLogObj;
     }
 
+    public static AccountObj reEncryptAccountObj(AccountObj accountObj, SecretKey oldKey, SecretKey newKey) {
+        try {
+            accountObj.setUserName(EncryptionDecryption.decryptAESGCM(accountObj.getUserName(), oldKey));
+            accountObj.setPassword(EncryptionDecryption.decryptAESGCM(accountObj.getPassword(),oldKey));
+            accountObj.setEmail(EncryptionDecryption.decryptAESGCM(accountObj.getEmail(), oldKey));
+
+            accountObj.setUserName(EncryptionDecryption.encryptAESGCM(accountObj.getUserName(), newKey));
+            accountObj.setPassword(EncryptionDecryption.encryptAESGCM(accountObj.getPassword(),newKey));
+            accountObj.setEmail(EncryptionDecryption.encryptAESGCM(accountObj.getEmail(), newKey));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return accountObj;
+    }
+
+
+    public static ChangeLogObj reEncryptChangeLog(ChangeLogObj changeLogObj, SecretKey oldKey, SecretKey newKey) {
+        try {
+            changeLogObj.setUserName(EncryptionDecryption.decryptAESGCM(changeLogObj.getUserName(), oldKey));
+            changeLogObj.setPassword(EncryptionDecryption.decryptAESGCM(changeLogObj.getPassword(), oldKey));
+            changeLogObj.setEmail(EncryptionDecryption.decryptAESGCM(changeLogObj.getEmail(), oldKey));
+
+            changeLogObj.setUserName(EncryptionDecryption.encryptAESGCM(changeLogObj.getUserName(), newKey));
+            changeLogObj.setPassword(EncryptionDecryption.encryptAESGCM(changeLogObj.getPassword(), newKey));
+            changeLogObj.setEmail(EncryptionDecryption.encryptAESGCM(changeLogObj.getEmail(), newKey));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return changeLogObj;
+    }
+
     public static ChangeLogObj newChangeLog(AccountObj account) {
         return new ChangeLogObj(account, getNowDate(), account.getPlatformName(), account.getUserName(), account.getEmail(), account.getPassword());
     }
@@ -80,7 +113,7 @@ public class InformationFactory {
         return new TextObj(getNowDate(), textTitle, textInformation);
     }
 
-    public static TextObj updateTextEntry(TextObj textObj){
+    public static TextObj updateTextEntry(TextObj textObj) {
         textObj.setTimeModified(getNowDate());
         return textObj;
     }
@@ -91,7 +124,7 @@ public class InformationFactory {
         return key;
     }
 
-    private static java.sql.Timestamp getNowDate(){
+    private static java.sql.Timestamp getNowDate() {
         LocalDate localDate = LocalDate.now();
         LocalTime localTime = LocalTime.now();
         LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);

@@ -6,9 +6,9 @@ import com.secinfostore.secureinfostore.util.EncryptionDecryption;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
+
 import javax.crypto.SecretKey;
-import java.io.File;
+import java.util.Optional;
 
 public class TextENCDECController {
 
@@ -23,6 +23,9 @@ public class TextENCDECController {
 
     @FXML
     private Button pasteBTN;
+
+    @FXML
+    private Button createKeyBTN;
 
     @FXML
     private PasswordField keyFieldTxtField;
@@ -59,7 +62,6 @@ public class TextENCDECController {
         }
     }
 
-
     public void buttonClick(ActionEvent event) {
         if (event.getSource().equals(loadKeyBTN)) {
             loadKeyFromFile();
@@ -67,31 +69,38 @@ public class TextENCDECController {
             computeOutput();
         } else if (event.getSource().equals(copyOutputBTN)) {
             ClipboardHandler.pasteTextToClipboard(outputTextArea.getText().trim());
-        } else if (event.getSource().equals(pasteBTN)){
+        } else if (event.getSource().equals(pasteBTN)) {
             inputTextArea.setText(ClipboardHandler.getTextFromClipboard());
+        } else if (event.getSource().equals(createKeyBTN)) {
+            createKeyAction();
+        }
+    }
+
+    private void createKeyAction() {
+        try {
+            Optional<SecretKey> keyOptional = FileLoadSaving.createKeyFile();
+            if(keyOptional.isEmpty())
+                return;
+
+            String base64Txt = EncryptionDecryption.keyToBase64Text(keyOptional.get());
+            keyFieldTxtField.setText(base64Txt);
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "Key Creation Error","Error Creating AES KEY");
         }
     }
 
     private void loadKeyFromFile() {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter keyFilter = new FileChooser.ExtensionFilter("Load Key", "*.key");
-        fileChooser.getExtensionFilters().add(keyFilter);
-        String currentDir = System.getProperty("user.dir");
-        fileChooser.setInitialDirectory(new File(currentDir));
-
-        File selectedFile = fileChooser.showOpenDialog(null);
-
-        if (selectedFile != null) {
-            String filePath = selectedFile.getAbsolutePath();
-            try {
-                SecretKey key = EncryptionDecryption.loadKeyFromFile(filePath);
-                String base64key = EncryptionDecryption.keyToBase64Text(key);
-                keyFieldTxtField.setText(base64key);
-            } catch (Exception e) {
-                ErrorDialog.showErrorDialog(new Exception("Key loading error"), "Key Load error", "Error loading key");
+        try {
+            Optional<SecretKey> keyOptional = FileLoadSaving.loadKey();
+            if (keyOptional.isEmpty()) {
+                ErrorDialog.showErrorDialog(new Exception("Null Key"), "Key Load Key", "Key is Null");
+                return;
             }
+            String base64key = EncryptionDecryption.keyToBase64Text(keyOptional.get());
+            keyFieldTxtField.setText(base64key);
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "Key Load Error", "Error loading key");
         }
-
     }
 
     public void checkBoxHandle(ActionEvent event) {

@@ -24,7 +24,7 @@
                             </children>
                         </HBox>
                         <!-- Details Section -->
-                        <TitledPane text="Account Details" expanded="false">
+                        <TitledPane text="Account Details" expanded="true">
                             <content>
                                 <VBox spacing="10" alignment="CENTER_LEFT">
                                     <HBox spacing="10" alignment="CENTER_LEFT">

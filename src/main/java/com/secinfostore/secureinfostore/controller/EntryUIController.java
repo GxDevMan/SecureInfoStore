@@ -12,7 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 import java.io.File;
@@ -87,26 +86,9 @@ public class EntryUIController extends BaseController {
     }
 
     private void createNewDatabaseAndKey() {
-        Stage stage = new Stage();
-
-        DataStore dataStore = DataStore.getInstance();
-        stage.setTitle((String) dataStore.getObject("default_title"));
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Key File", "*.key"));
-        fileChooser.setInitialFileName("newKey.key");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        File keyFile = fileChooser.showSaveDialog(stage);
-
-        if (keyFile == null) {
-            return;
-        }
-
-        SecretKey key;
+        Optional<SecretKey> keyOptional;
         try {
-            String keyFilePath = keyFile.getAbsolutePath();
-            key = EncryptionDecryption.generateAESKey();
-            EncryptionDecryption.saveKeyToFile(key, keyFilePath);
+            keyOptional = FileLoadSaving.createKeyFile();
         } catch (NoSuchAlgorithmException e) {
             ErrorDialog.showErrorDialog(e, "Key Generation Exception", "Something went wrong saving the key");
             return;
@@ -114,27 +96,12 @@ public class EntryUIController extends BaseController {
             ErrorDialog.showErrorDialog(e, "Key Write Error", "Something went wrong writing the key");
             return;
         }
-
-        Stage databaseStage = new Stage();
-        databaseStage.setTitle((String) dataStore.getObject("default_title"));
-
-        FileChooser fileChooserDb = new FileChooser();
-        fileChooserDb.getExtensionFilters().add(new FileChooser.ExtensionFilter("Database File", "*.db"));
-        fileChooserDb.setInitialFileName("newDatabase.db");
-        fileChooserDb.setInitialDirectory(new File(System.getProperty("user.dir")));
-        File dbFile = fileChooserDb.showSaveDialog(databaseStage);
-
-        if (dbFile == null) {
+        if(keyOptional.isEmpty()){
             return;
         }
-
-        try {
-            String dbFilePath = dbFile.getAbsolutePath();
-            HibernateUtil hibernateUtil = HibernateUtil.getInstance(dbFilePath);
-            DatabaseHandler.createValidation(key);
-            hibernateUtil.shutdown();
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "Database Creation Error", "Something went wrong creating the database");
+        boolean dbCreated = FileLoadSaving.createDatabase(keyOptional.get());
+        if (!dbCreated) {
+            ErrorDialog.showErrorDialog(new Exception("Database Creation Error"), "Database Creation Error", "Something went wrong in the creation of the database");
         }
     }
 
@@ -155,23 +122,16 @@ public class EntryUIController extends BaseController {
     }
 
     private void loadKeyFromFile() {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter keyFilter = new FileChooser.ExtensionFilter("Load Key", "*.key");
-        fileChooser.getExtensionFilters().add(keyFilter);
-        String currentDir = System.getProperty("user.dir");
-        fileChooser.setInitialDirectory(new File(currentDir));
-
-        File selectedFile = fileChooser.showOpenDialog(null);
-
-        if (selectedFile != null) {
-            String filePath = selectedFile.getAbsolutePath();
-            try {
-                SecretKey key = EncryptionDecryption.loadKeyFromFile(filePath);
-                String base64key = EncryptionDecryption.keyToBase64Text(key);
-                keyTextField.setText(base64key);
-            } catch (Exception e) {
-                ErrorDialog.showErrorDialog(new Exception("Key loading error"), "Key Load error", "Error loading key");
+        try {
+            Optional<SecretKey> keyOptional = FileLoadSaving.loadKey();
+            if (keyOptional.isEmpty()) {
+                ErrorDialog.showErrorDialog(new Exception("Null Key"), "Key Load Key", "Key is Null");
+                return;
             }
+            String base64Key = EncryptionDecryption.keyToBase64Text(keyOptional.get());
+            keyTextField.setText(base64Key);
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "Key Load error", "Error loading key");
         }
     }
 

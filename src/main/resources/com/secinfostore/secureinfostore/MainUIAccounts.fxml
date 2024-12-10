@@ -14,7 +14,7 @@
             <VBox spacing="20">
                <children>
                   <StackPane fx:id="passwordgenPositionSTACKP" prefHeight="50"/>
-                  <TitledPane text="Account Actions" expanded="true">
+                  <TitledPane text="Account Actions" expanded="false">
                      <content>
                         <VBox spacing="10" alignment="CENTER">
                            <children>

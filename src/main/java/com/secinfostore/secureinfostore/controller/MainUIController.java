@@ -220,7 +220,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
                 accountsViewTilePane.getChildren().add(anchorPane);
             }
         } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "Accounts Loading Error", "There was an error displaying the Error");
+            ErrorDialog.showErrorDialog(e, "Accounts Loading Error", "There was an error displaying the Accounts Preview");
         }
     }
 
