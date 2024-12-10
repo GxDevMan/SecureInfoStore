@@ -4,77 +4,102 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.MainUIController">
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.secinfostore.secureinfostore.controller.MainUIController">
     <stylesheets>
-        <URL value="@styles/dark-theme.css" />
+        <URL value="@styles/dark-theme.css"/>
     </stylesheets>
-   <children>
-      <ScrollPane fitToWidth="true" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"  AnchorPane.bottomAnchor="0.0">
-         <content>
-            <VBox spacing="20">
-               <children>
-                  <StackPane fx:id="passwordgenPositionSTACKP" prefHeight="50"/>
-                  <TitledPane text="Account Actions" expanded="false">
-                     <content>
-                        <VBox spacing="10" alignment="CENTER">
-                           <children>
-                              <HBox spacing="10" alignment="CENTER">
-                                 <children>
-                                    <Button fx:id="encryptorBTN" layoutX="37.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Go to Encryptor" />
-                                    <Button fx:id="addAccountBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add Account Record" />
-                                    <Button fx:id="importAccountsJSONBTN" mnemonicParsing="false" onAction="#buttonClick" text="Import Accounts (JSON)" />
-                                    <Button fx:id="gotoChangelogBTN" mnemonicParsing="false" onAction="#buttonClick" text="Change Log" />
-                                 </children>
-                              </HBox>
-                              <HBox spacing="10" alignment="CENTER">
-                                 <children>
-                                    <Button fx:id="exportToTxtBTN" mnemonicParsing="false" onAction="#buttonClick" text="Export To Text" />
-                                    <Button fx:id="exportAccountsJSONBTN" layoutX="260.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Export Accounts (JSON)" />
-                                    <Button fx:id="reEncryptBTN" layoutX="294.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Re Encrypt" />
-                                    <Button fx:id="settingsBTN" layoutX="365.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Settings" />
-                                 </children>
-                              </HBox>
-                              <HBox spacing="10" alignment="CENTER">
-                                 <children>
-                                    <Button fx:id="goToEntryUIBTN" mnemonicParsing="false" onAction="#buttonClick" text="Go Back" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </VBox>
-                     </content>
-                  </TitledPane>
-                  <TitledPane text="Search Actions" expanded="true">
-                     <content>
-                        <VBox spacing="10">
-                           <children>
-                              <HBox spacing="10" alignment="CENTER">
-                                 <children>
-                                    <TextField fx:id="searchTxtField" promptText="Enter Platform Search Key" HBox.hgrow="ALWAYS" />
-                                 </children>
-                              </HBox>
-                              <HBox spacing="10" alignment="CENTER">
-                                 <children>
-                                    <Button fx:id="searchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Search" />
-                                    <Button fx:id="resetBTN" mnemonicParsing="false" onAction="#buttonClick" text="Reset" />
-                                    <Button fx:id="clearsearchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Clear Search" />
-                                 </children>
-                              </HBox>
-                           </children>
-                        </VBox>
-                     </content>
-                  </TitledPane>
-                  <TitledPane text="Accounts View" expanded="true">
-                     <content>
-                        <ScrollPane pannable="true" fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
-                           <content>
-                              <TilePane fx:id="accountsViewTilePane" />
-                           </content>
-                        </ScrollPane>
-                     </content>
-                  </TitledPane>
-               </children>
-            </VBox>
-         </content>
-      </ScrollPane>
-   </children>
+    <children>
+        <ScrollPane fitToWidth="true" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
+            <content>
+                <VBox spacing="20">
+                    <children>
+                        <StackPane fx:id="passwordgenPositionSTACKP" prefHeight="50"/>
+                        <TitledPane text="Account Actions" expanded="false">
+                            <content>
+                                <VBox spacing="10" alignment="CENTER">
+                                    <children>
+                                        <HBox spacing="10" alignment="CENTER">
+                                            <children>
+                                                <Button fx:id="encryptorBTN" layoutX="37.0" layoutY="20.0"
+                                                        mnemonicParsing="false" onAction="#buttonClick"
+                                                        text="Go to Encryptor"/>
+                                                <Button fx:id="addAccountBTN" mnemonicParsing="false"
+                                                        onAction="#buttonClick" text="Add Account Record"/>
+                                                <Button fx:id="importAccountsJSONBTN" mnemonicParsing="false"
+                                                        onAction="#buttonClick" text="Import Accounts (JSON)"/>
+                                                <Button fx:id="gotoChangelogBTN" mnemonicParsing="false"
+                                                        onAction="#buttonClick" text="Change Log"/>
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="10" alignment="CENTER">
+                                            <children>
+                                                <Button fx:id="exportToTxtBTN" mnemonicParsing="false"
+                                                        onAction="#buttonClick" text="Export To Text"/>
+                                                <Button fx:id="exportAccountsJSONBTN" layoutX="260.0" layoutY="20.0"
+                                                        mnemonicParsing="false" onAction="#buttonClick"
+                                                        text="Export Accounts (JSON)"/>
+                                                <Button fx:id="reEncryptBTN" layoutX="294.0" layoutY="20.0"
+                                                        mnemonicParsing="false" onAction="#buttonClick"
+                                                        text="Re Encrypt"/>
+                                                <Button fx:id="settingsBTN" layoutX="365.0" layoutY="20.0"
+                                                        mnemonicParsing="false" onAction="#buttonClick"
+                                                        text="Settings"/>
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="10" alignment="CENTER">
+                                            <children>
+                                                <Button fx:id="goToEntryUIBTN" mnemonicParsing="false"
+                                                        onAction="#buttonClick" text="Go Back"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </TitledPane>
+                        <TitledPane text="Search Actions" expanded="true">
+                            <content>
+                                <VBox spacing="10">
+                                    <children>
+                                        <HBox spacing="10" alignment="CENTER">
+                                            <children>
+                                                <TextField fx:id="searchTxtField" promptText="Enter Platform Search Key"
+                                                           HBox.hgrow="ALWAYS"/>
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="10" alignment="CENTER">
+                                            <children>
+                                                <Button fx:id="searchBTN" mnemonicParsing="false"
+                                                        onAction="#buttonClick" text="Search"/>
+                                                <Button fx:id="resetBTN" mnemonicParsing="false" onAction="#buttonClick"
+                                                        text="Reset"/>
+                                                <Button fx:id="clearsearchBTN" mnemonicParsing="false"
+                                                        onAction="#buttonClick" text="Clear Search"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </TitledPane>
+                        <TitledPane text="Accounts View" expanded="true">
+                            <content>
+                                <TableView fx:id="accountsTable" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="logoColumn" prefWidth="100.0" text="Logo"/>
+                                        <TableColumn fx:id="userPlatformColumn" prefWidth="200.0" text="User Platform"/>
+                                        <TableColumn fx:id="userNameColumn" prefWidth="200.0" text="User Name"/>
+                                        <TableColumn fx:id="userEmailColumn" prefWidth="200.0" text="User Email"/>
+                                        <TableColumn fx:id="userPasswordColumn" prefWidth="200.0" text="User Password"/>
+                                        <TableColumn fx:id="actionColumn" prefWidth="250.0" text="Action"/>
+                                    </columns>
+                                </TableView>
+
+                            </content>
+                        </TitledPane>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
 </AnchorPane>

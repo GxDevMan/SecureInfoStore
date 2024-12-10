@@ -109,4 +109,15 @@ public class AccountObj {
     public void setChangeLog(List<ChangeLogObj> changeLog) {
         this.changeLog = changeLog;
     }
+
+    @Override
+    public String toString() {
+        return "AccountObj{" +
+                "accountId=" + accountId +
+                ", platformName='" + platformName + '\'' +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", changeLogSize=" + (changeLog != null ? changeLog.size() : 0) +
+                '}';
+    }
 }

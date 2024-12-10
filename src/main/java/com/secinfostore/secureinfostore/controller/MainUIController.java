@@ -1,14 +1,20 @@
 package com.secinfostore.secureinfostore.controller;
 
 import com.secinfostore.secureinfostore.SecureInformationStore;
+import com.secinfostore.secureinfostore.cellfactories.ActionAccountsCellFactory;
+import com.secinfostore.secureinfostore.cellfactories.ImageLogoCellFactory;
+import com.secinfostore.secureinfostore.cellfactories.PasswordAccountCellFactory;
+import com.secinfostore.secureinfostore.cellfactories.TextCopyCellFactory;
 import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.util.*;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -16,10 +22,12 @@ import javafx.stage.Stage;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class MainUIController extends BaseController implements AddUpdateContract, UpdateDeleteViewConfirmContract {
+public class MainUIController extends BaseController implements AddUpdateContract, UpdateDeleteViewConfirmContract<AccountObj> {
 
     @FXML
     private Button searchBTN;
@@ -61,7 +69,50 @@ public class MainUIController extends BaseController implements AddUpdateContrac
     private StackPane passwordgenPositionSTACKP;
 
     @FXML
-    private TilePane accountsViewTilePane;
+    private TableView<AccountObj> accountsTable;
+
+    @FXML
+    private TableColumn<AccountObj, byte[]> logoColumn;
+
+    @FXML
+    private TableColumn<AccountObj, String> userPlatformColumn;
+
+    @FXML
+    private TableColumn<AccountObj, String> userNameColumn;
+
+    @FXML
+    private TableColumn<AccountObj, String> userEmailColumn;
+
+    @FXML
+    private TableColumn<AccountObj, String> userPasswordColumn;
+
+    @FXML
+    private TableColumn<AccountObj, Void> actionColumn;
+
+    public void initialize() {
+        TextCopyCellFactory<AccountObj> textCopyCellFactory = new TextCopyCellFactory<>();
+
+        this.userPlatformColumn.setCellValueFactory(new PropertyValueFactory<>("platformName"));
+        this.userPlatformColumn.setCellFactory(textCopyCellFactory);
+
+        this.userNameColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
+        this.userNameColumn.setCellFactory(textCopyCellFactory);
+
+        this.userEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        this.userEmailColumn.setCellFactory(textCopyCellFactory);
+
+        this.userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("platformName"));
+        this.logoColumn.setCellValueFactory(new PropertyValueFactory<>("platformThumbnail"));
+
+        PasswordAccountCellFactory<AccountObj> passwordCellfactory = new PasswordAccountCellFactory<>();
+        this.userPasswordColumn.setCellFactory(passwordCellfactory);
+
+        ImageLogoCellFactory<AccountObj> imageLogoCellFactory = new ImageLogoCellFactory<>();
+        this.logoColumn.setCellFactory(imageLogoCellFactory);
+
+        ActionAccountsCellFactory<AccountObj> accountObjActionsCellFactory = new ActionAccountsCellFactory<>(this);
+        this.actionColumn.setCellFactory(accountObjActionsCellFactory);
+    }
 
     public void buttonClick(ActionEvent event) {
         if (event.getSource().equals(addAccountBTN)) {
@@ -89,7 +140,15 @@ public class MainUIController extends BaseController implements AddUpdateContrac
     }
 
     private void searchAccounts(String searchKey) {
-        displayAccounts(DatabaseHandler.getAccounts(searchKey));
+        Thread thread = new Thread(() -> {
+            Optional<List<AccountObj>> accountObjListOptional;
+            accountObjListOptional = DatabaseHandler.getAccounts(searchKey);
+            Optional<List<AccountObj>> finalAccountObjListOptional = accountObjListOptional;
+            Platform.runLater(() -> {
+                displayAccounts(finalAccountObjListOptional);
+            });
+        });
+        thread.start();
     }
 
     private void goToEncryptor() {
@@ -124,7 +183,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         try {
             ComponentFactory.settingsDisplaywithCharset();
         } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML loading Error","Error loading settings UI");
+            ErrorDialog.showErrorDialog(e, "FXML loading Error", "Error loading settings UI");
         }
     }
 
@@ -194,8 +253,15 @@ public class MainUIController extends BaseController implements AddUpdateContrac
     }
 
     private void saveImportedAccountsToDB(List<AccountObj> accountList) {
-        DatabaseHandler.saveAccount(accountList);
-        displayAccounts(DatabaseHandler.getAccounts());
+        AtomicReference<Optional<List<AccountObj>>> accountObjListOptional = new AtomicReference<>(Optional.empty());
+        Thread thread = new Thread(() -> {
+            DatabaseHandler.saveAccount(accountList);
+            accountObjListOptional.set(DatabaseHandler.getAccounts());
+            Platform.runLater(() -> {
+                displayAccounts(accountObjListOptional.get());
+            });
+        });
+        thread.start();
     }
 
     private void addAccount() {
@@ -213,12 +279,14 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         if (accountObjList.get().isEmpty())
             return;
 
-        accountsViewTilePane.getChildren().clear();
+        accountsTable.getItems().clear();
+        accountsTable.refresh();
+
+        List<AccountObj> accountList = accountObjList.get();
         try {
-            for (AccountObj account : accountObjList.get()) {
-                AnchorPane anchorPane = ComponentFactory.accountPreviewComponent(account, this);
-                accountsViewTilePane.getChildren().add(anchorPane);
-            }
+            ObservableList<AccountObj> observableAccounts = FXCollections.observableList(accountList);
+            accountsTable.setItems(observableAccounts);
+            accountsTable.refresh();
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "Accounts Loading Error", "There was an error displaying the Accounts Preview");
         }
@@ -230,8 +298,16 @@ public class MainUIController extends BaseController implements AddUpdateContrac
 
     @Override
     public void saveAccountToDB(AccountObj account) {
-        DatabaseHandler.saveAccount(account);
-        displayAccounts(DatabaseHandler.getAccounts());
+        Thread thread = new Thread(() -> {
+            DatabaseHandler.saveAccount(account);
+            Optional<List<AccountObj>> accountObjListOptional;
+            accountObjListOptional = DatabaseHandler.getAccounts();
+            Optional<List<AccountObj>> finalAccountObjListOptional = accountObjListOptional;
+            Platform.runLater(() -> {
+                displayAccounts(finalAccountObjListOptional);
+            });
+        });
+        thread.start();
     }
 
     @Override
@@ -267,8 +343,16 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
 
         if (result == ButtonType.OK) {
-            DatabaseHandler.deleteAccount(account);
-            displayAccounts(DatabaseHandler.getAccounts());
+            Thread thread = new Thread(() -> {
+                DatabaseHandler.deleteAccount(account);
+                Optional<List<AccountObj>> accountObjListOptional;
+                accountObjListOptional = DatabaseHandler.getAccounts();
+                Optional<List<AccountObj>> finalAccountObjListOptional = accountObjListOptional;
+                Platform.runLater(() -> {
+                    displayAccounts(finalAccountObjListOptional);
+                });
+            });
+            thread.start();
         }
     }
 
@@ -280,6 +364,15 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML Loading Error", "Error loading password generation utility");
         }
-        displayAccounts(DatabaseHandler.getAccounts());
+
+        Thread thread = new Thread(() -> {
+            Optional<List<AccountObj>> accountObjListOptional;
+            accountObjListOptional = DatabaseHandler.getAccounts();
+            Optional<List<AccountObj>> finalAccountObjListOptional = accountObjListOptional;
+            Platform.runLater(() -> {
+                displayAccounts(finalAccountObjListOptional);
+            });
+        });
+        thread.start();
     }
 }

@@ -6,6 +6,8 @@ import com.secinfostore.secureinfostore.cellfactories.PasswordChangeLogCellFacto
 import com.secinfostore.secureinfostore.cellfactories.TimeStampChangeLogCellFactory;
 import com.secinfostore.secureinfostore.model.ChangeLogObj;
 import com.secinfostore.secureinfostore.util.DatabaseHandler;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -78,14 +80,17 @@ public class ChangeLogController extends BaseController implements ChangeLogCont
     }
 
     private void refreshTable(Optional<List<ChangeLogObj>> changeLogObjOptional){
-        databaseTable.getItems().clear();
         if(changeLogObjOptional.isEmpty())
             return;
 
+        databaseTable.getItems().clear();
+        databaseTable.refresh();
+
         List<ChangeLogObj> changeLogObjList = changeLogObjOptional.get();
-        for(ChangeLogObj changeLogObj : changeLogObjList){
-            databaseTable.getItems().add(changeLogObj);
-        }
+        ObservableList<ChangeLogObj> changeLogObjsObservable = FXCollections.observableList(changeLogObjList);
+
+        databaseTable.setItems(changeLogObjsObservable);
+        databaseTable.refresh();
     }
 
     @Override

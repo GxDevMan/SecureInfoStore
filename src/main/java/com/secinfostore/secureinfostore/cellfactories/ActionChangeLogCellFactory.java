@@ -18,6 +18,7 @@ public class ActionChangeLogCellFactory<S> implements Callback<TableColumn<S, Vo
     public TableCell<S, Void> call(TableColumn<S, Void> param) {
         return new TableCell<S, Void>() {
             private final Button deleteButton = new Button("Delete");
+            HBox buttonsBox = new HBox(deleteButton);
             {
                 deleteButton.setOnAction(event -> {
                     S rowData =  getTableRow().getItem();
@@ -31,7 +32,6 @@ public class ActionChangeLogCellFactory<S> implements Callback<TableColumn<S, Vo
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    HBox buttonsBox = new HBox(deleteButton);
                     buttonsBox.setSpacing(10);
                     setGraphic(buttonsBox);
                 }

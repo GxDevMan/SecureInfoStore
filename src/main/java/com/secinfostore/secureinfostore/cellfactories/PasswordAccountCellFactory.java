@@ -1,21 +1,19 @@
 package com.secinfostore.secureinfostore.cellfactories;
 
 import com.secinfostore.secureinfostore.customskin.KeyTextFieldSkin;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.CheckBox;
+import com.secinfostore.secureinfostore.util.ClipboardHandler;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
-
-public class PasswordChangeLogCellFactory<T> implements Callback<TableColumn<T, String>, TableCell<T, String>> {
+public class PasswordAccountCellFactory<T> implements Callback<TableColumn<T, String>, TableCell<T, String>> {
     @Override
     public TableCell<T, String> call(TableColumn<T, String> column) {
         return new TableCell<>() {
             private PasswordField passwordField;
             private KeyTextFieldSkin textFieldSkin;
             private CheckBox revealCheckBox;
+            private Button copyButton;
 
             @Override
             protected void updateItem(String passwordItem, boolean empty) {
@@ -26,6 +24,11 @@ public class PasswordChangeLogCellFactory<T> implements Callback<TableColumn<T, 
                     passwordField = new PasswordField();
                     textFieldSkin = new KeyTextFieldSkin(passwordField);
                     revealCheckBox = new CheckBox();
+                    copyButton = new Button("Copy");
+
+                    copyButton.setOnAction(event -> {
+                        ClipboardHandler.pasteTextToClipboard(passwordField.getText());
+                    });
 
                     passwordField.setSkin(textFieldSkin);
                     passwordField.setText(passwordItem);
@@ -37,7 +40,7 @@ public class PasswordChangeLogCellFactory<T> implements Callback<TableColumn<T, 
                         passwordField.setText(passwordField.getText());
                     }));
 
-                    HBox hBox = new HBox(10, passwordField, revealCheckBox);
+                    HBox hBox = new HBox(10, passwordField, revealCheckBox, copyButton);
                     setGraphic(hBox);
                 }
             }

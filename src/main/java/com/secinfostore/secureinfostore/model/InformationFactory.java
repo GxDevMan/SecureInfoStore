@@ -20,7 +20,7 @@ public class InformationFactory {
         byte[] thumbByte = null;
         if (thumbImage != null) {
             BufferedImage thumBfr = SwingFXUtils.fromFXImage(thumbImage, null);
-            thumBfr = ImageNormalizer.normalizedImage(thumBfr, 215, 215);
+            thumBfr = ImageNormalizer.normalizedImage(thumBfr, 100, 100);
             thumbImage = SwingFXUtils.toFXImage(thumBfr, null);
             thumbByte = ImageConversion.convertImageToByteArray(thumbImage);
         }

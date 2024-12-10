@@ -170,7 +170,7 @@ public class AddUpdateAccountController {
 
                 if (originalBytes != newImageBytes) {
                     BufferedImage bfrImage = SwingFXUtils.fromFXImage(image, null);
-                    BufferedImage normalizedbfrImage = ImageNormalizer.normalizedImage(bfrImage, 215, 215);
+                    BufferedImage normalizedbfrImage = ImageNormalizer.normalizedImage(bfrImage, 100, 100);
                     try {
                         image = ImageConversion.convertBufferedImageToImage(normalizedbfrImage);
                         imageBytes = ImageConversion.convertImageToByteArray(image);
