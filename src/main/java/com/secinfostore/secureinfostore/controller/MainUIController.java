@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class MainUIController extends BaseController implements AddUpdateContract, UpdateDeleteViewConfirmContract<AccountObj> {
+public class MainUIController extends BaseController implements AddUpdateContract<AccountObj>, UpdateDeleteViewConfirmContract<AccountObj> {
 
     @FXML
     private Button reEncryptBTN;

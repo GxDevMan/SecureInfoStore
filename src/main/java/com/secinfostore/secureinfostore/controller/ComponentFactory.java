@@ -2,6 +2,7 @@ package com.secinfostore.secureinfostore.controller;
 
 import com.secinfostore.secureinfostore.SecureInformationStore;
 import com.secinfostore.secureinfostore.model.AccountObj;
+import com.secinfostore.secureinfostore.model.TextObj;
 import com.secinfostore.secureinfostore.util.DataStore;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -53,6 +54,36 @@ public class ComponentFactory {
 
         AddUpdateAccountController controller = loader.getController();
         controller.setAddUpdateAccount(stage, contract, account);
+        stage.show();
+    }
+
+    public static void addUpdateTextUI(AddUpdateContract contract) throws Exception {
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateTextEntryUI.fxml"));
+        Scene scene = new Scene(loader.load());
+        Stage stage = new Stage();
+        stage.setScene(scene);
+
+        setWindowsTitle(stage, "New Text Entry Information");
+        setStageIcon(stage);
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        AddUpdateTextEntryUIController controller = loader.getController();
+        controller.setAddUpdateTextEntryUIController(stage,contract);
+        stage.show();
+    }
+
+    public static void addUpdateTextUI(AddUpdateContract contract, TextObj textObj) throws Exception {
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateTextEntryUI.fxml"));
+        Scene scene = new Scene(loader.load());
+        Stage stage = new Stage();
+        stage.setScene(scene);
+
+        setWindowsTitle(stage, "New Text Entry Information");
+        setStageIcon(stage);
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        AddUpdateTextEntryUIController controller = loader.getController();
+        controller.setAddUpdateTextEntryUIController(stage,contract, textObj);
         stage.show();
     }
 

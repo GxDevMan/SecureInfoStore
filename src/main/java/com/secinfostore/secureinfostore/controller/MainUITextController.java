@@ -1,5 +1,6 @@
 package com.secinfostore.secureinfostore.controller;
 
+import com.secinfostore.secureinfostore.model.TextObj;
 import com.secinfostore.secureinfostore.util.DataStore;
 import com.secinfostore.secureinfostore.util.EncryptionDecryption;
 import com.secinfostore.secureinfostore.util.HibernateUtil;
@@ -12,7 +13,7 @@ import javafx.scene.layout.TilePane;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 
-public class MainUITextController extends BaseController{
+public class MainUITextController extends BaseController implements AddUpdateContract<TextObj> {
 
     @FXML
     private Button goToEntryUIBTN;
@@ -43,6 +44,16 @@ public class MainUITextController extends BaseController{
             goToEntryUI();
         } else if(event.getSource().equals(goToAccountsBTN)){
             mediator.switchTo("mainUIAccount", null);
+        } else if(event.getSource().equals(addTextEntryBTN)){
+            addnewTextEntry();
+        }
+    }
+
+    private void addnewTextEntry(){
+        try {
+            ComponentFactory.addUpdateTextUI(this);
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML load error", "Error loading add/update text UI");
         }
     }
 
@@ -70,4 +81,8 @@ public class MainUITextController extends BaseController{
     }
 
 
+    @Override
+    public void saveAccountToDB(TextObj object) {
+
+    }
 }

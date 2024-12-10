@@ -15,6 +15,9 @@ public class TextObj {
     private String textTitle;
 
     @Column(columnDefinition = "TEXT")
+    private String tags;
+
+    @Column(columnDefinition = "TEXT")
     private String textInformation;
 
     public TextObj() {
@@ -63,5 +66,13 @@ public class TextObj {
 
     public void setTextInformation(String textInformation) {
         this.textInformation = textInformation;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }
