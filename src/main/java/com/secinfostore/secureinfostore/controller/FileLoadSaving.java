@@ -29,28 +29,32 @@ public class FileLoadSaving {
         return selectedJSON;
     }
 
-    public static void exportJson(Optional<List<AccountObj>> accountObjListOptional) throws Exception {
-        Boolean exportEnc = ComponentFactory.showExportDialog();
-        if(exportEnc == null)
-            return;
-
+    public static void exportToFileFormat(Optional<List<AccountObj>> accountObjListOptional, boolean json) throws Exception {
         if (!accountObjListOptional.isPresent()) {
             ErrorDialog.showErrorDialog(new Exception("Empty List"), "Accounts Export Error", "No Accounts to Export");
             return;
         }
+
+        Boolean exportEnc = ComponentFactory.showExportDialog(json);
+        if(exportEnc == null)
+            return;
+
         List<AccountObj> accountList = accountObjListOptional.get();
 
         Stage stage = new Stage();
         ComponentFactory.setWindowsTitle(stage, "Export Accounts to Json");
         ComponentFactory.setStageIcon(stage);
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Export File", "*.json"));
-        fileChooser.setInitialFileName("ExportedAccounts.json");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        File jsonFile = fileChooser.showSaveDialog(stage);
+        String fileFormat = json ? "Json" : "Txt";
+        String fileExtension = json ? "json" : "txt";
 
-        if (jsonFile == null)
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(String.format("%s Export File", fileFormat), String.format("*.%s",fileExtension)));
+        fileChooser.setInitialFileName(String.format("ExportedAccounts.%s",fileExtension));
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file == null)
             return;
 
         if(exportEnc){
@@ -59,40 +63,12 @@ public class FileLoadSaving {
             }
         }
 
-        DataExporterHandler.writeToJsonToFile(accountList,jsonFile);
-    }
-
-    public static void exportToTextFile(Optional<List<AccountObj>> accountObjListOptional) throws Exception {
-        Boolean exportEnc = ComponentFactory.showExportDialog();
-        if(exportEnc == null)
-            return;
-
-        if (!accountObjListOptional.isPresent()) {
-            ErrorDialog.showErrorDialog(new Exception("Empty List"), "Accounts Export Error", "No Accounts to Export");
-            return;
-        }
-        List<AccountObj> accountList = accountObjListOptional.get();
-
-        Stage stage = new Stage();
-        ComponentFactory.setWindowsTitle(stage, "Export Accounts to Text");
-        ComponentFactory.setStageIcon(stage);
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Txt Export File", "*.txt"));
-        fileChooser.setInitialFileName("ExportedAccounts.txt");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        File textFile = fileChooser.showSaveDialog(stage);
-
-        if (textFile == null)
-            return;
-
-        if(exportEnc){
-            for(AccountObj decAccount : accountObjListOptional.get()){
-                InformationFactory.updateAccount(decAccount);
-            }
+        if(json){
+            DataExporterHandler.writeToJsonToFile(accountList,file);
+        } else{
+            DataExporterHandler.writeAccountsToTextFile(accountList,file);
         }
 
-        DataExporterHandler.writeAccountsToTextFile(accountList,textFile);
     }
 
     public static Optional<SecretKey> loadKey() throws Exception {

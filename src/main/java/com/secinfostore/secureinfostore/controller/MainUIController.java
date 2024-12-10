@@ -42,7 +42,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
     private Button reEncryptBTN;
 
     @FXML
-    private Button goToEntryUIBTN;
+    private Button goTouiSelectorBTN;
 
     @FXML
     private Button encryptorBTN;
@@ -127,17 +127,17 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         } else if (event.getSource().equals(importAccountsJSONBTN)) {
             importAccountsFromJson();
         } else if (event.getSource().equals(exportAccountsJSONBTN)) {
-            exportAccountsToJson();
+            exportAccountsToJson(true);
         } else if (event.getSource().equals(encryptorBTN)) {
             goToEncryptor();
         } else if (event.getSource().equals(gotoChangelogBTN)) {
             goToChangeLog(event);
-        } else if (event.getSource().equals(goToEntryUIBTN)) {
+        } else if (event.getSource().equals(goTouiSelectorBTN)) {
             goToEntryUI();
         } else if (event.getSource().equals(settingsBTN)) {
             goToSettings();
         } else if (event.getSource().equals(exportToTxtBTN)){
-            exportAccountsToTextFile();
+            exportAccountsToJson(false);
         }
     }
 
@@ -153,7 +153,8 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         thread.start();
     }
 
-    private void exportAccountsToJson() {
+    private void exportAccountsToJson(boolean json) {
+        String fileFormat = json ? "JSON" : "TXT";
         Task<Optional<List<AccountObj>>> task = new Task<>() {
             @Override
             protected Optional<List<AccountObj>> call() {
@@ -169,44 +170,13 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             }
 
             try {
-                FileLoadSaving.exportJson(Optional.of(accountOptionalList.get()));
+                FileLoadSaving.exportToFileFormat(accountOptionalList, json);
             } catch (Exception e) {
-                ErrorDialog.showErrorDialog(e, "Export error", "Failed to export accounts to JSON.");
+                ErrorDialog.showErrorDialog(e, "Export error", String.format("Failed to export accounts to %s",fileFormat));
             }
         });
 
         // Handle failure
-        task.setOnFailed(event -> {
-            ErrorDialog.showErrorDialog(new Exception("Accounts Export Error"), "Accounts Exporting error", "There was a problem exporting the accounts");
-        });
-
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private void exportAccountsToTextFile() {
-        Task<Optional<List<AccountObj>>> task = new Task<>() {
-            @Override
-            protected Optional<List<AccountObj>> call() {
-                return DatabaseHandler.getAccounts();
-            }
-        };
-
-        task.setOnSucceeded(event -> {
-            Optional<List<AccountObj>> accountOptionalList = task.getValue();
-            if (accountOptionalList.isEmpty()) {
-                ErrorDialog.showErrorDialog(new Exception("No Accounts to export"), "Empty List", "No Accounts to Export");
-                return;
-            }
-
-            try {
-                FileLoadSaving.exportToTextFile(Optional.of(accountOptionalList.get()));
-            } catch (Exception e) {
-                ErrorDialog.showErrorDialog(e, "Export error", "Failed to export accounts to JSON.");
-            }
-        });
-
         task.setOnFailed(event -> {
             ErrorDialog.showErrorDialog(new Exception("Accounts Export Error"), "Accounts Exporting error", "There was a problem exporting the accounts");
         });

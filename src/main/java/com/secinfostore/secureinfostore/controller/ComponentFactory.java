@@ -92,7 +92,7 @@ public class ComponentFactory {
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
-        setWindowsTitle(stage);
+        setWindowsTitle(stage, "Settings");
         setStageIcon(stage);
 
         SettingsUIController controller = fxmlLoader.getController();
@@ -110,7 +110,7 @@ public class ComponentFactory {
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
-        setWindowsTitle(stage);
+        setWindowsTitle(stage, "Settings");
         setStageIcon(stage);
 
         SettingsUIController controller = fxmlLoader.getController();
@@ -142,7 +142,8 @@ public class ComponentFactory {
         return result == ButtonType.OK;
     }
 
-    public static Boolean showExportDialog(){
+    public static Boolean showExportDialog(boolean json){
+        String fileFormat = json ? "Json" : "Txt";
         String encryptedOption = "Encrypted";
         String unencryptedOption = "Unencrypted";
 
@@ -156,7 +157,7 @@ public class ComponentFactory {
         dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
 
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        setWindowsTitle(stage, "Exporting via Json");
+        setWindowsTitle(stage, String.format("Exporting via %s",fileFormat));
         setStageIcon(stage);
 
         Optional<String> result = dialog.showAndWait();

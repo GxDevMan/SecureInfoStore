@@ -50,7 +50,7 @@
                                         </HBox>
                                         <HBox spacing="10" alignment="CENTER">
                                             <children>
-                                                <Button fx:id="goToEntryUIBTN" mnemonicParsing="false"
+                                                <Button fx:id="goTouiSelectorBTN" mnemonicParsing="false"
                                                         onAction="#buttonClick" text="Go Back"/>
                                             </children>
                                         </HBox>

@@ -45,7 +45,10 @@ public class EntryUIController extends BaseController {
     private Button createBTN;
 
     @FXML
-    private Button proceedBTN;
+    private Button proceedtoAccountsBTN;
+
+    @FXML
+    private Button proceedtoTextBTN;
 
     @FXML
     private Button encryptorBTN;
@@ -72,10 +75,12 @@ public class EntryUIController extends BaseController {
             goToSettings();
         } else if (event.getSource().equals(createBTN)) {
             createNewDatabaseAndKey();
-        } else if (event.getSource().equals(proceedBTN)) {
+        } else if (event.getSource().equals(proceedtoAccountsBTN)) {
             goToMainUI(event);
         } else if (event.getSource().equals(encryptorBTN)) {
             goToEncryptor();
+        } else if (event.getSource().equals(proceedtoTextBTN)) {
+            System.out.println("Proceeding to Text BTN");
         }
     }
 

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefHeight="378.0" prefWidth="460.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.EntryUIController">
+<VBox prefHeight="378.0" prefWidth="500.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.EntryUIController">
     <stylesheets>
         <URL value="@styles/dark-theme.css" />
     </stylesheets>
@@ -31,7 +31,7 @@
                                     <CheckBox fx:id="loadedCheckbox" disable="true" mnemonicParsing="false" />
                                 </graphic>
                             </Button>
-                            <Button fx:id="proceedBTN" mnemonicParsing="false" onAction="#buttonClick" text="Proceed" />
+                            <Button fx:id="proceedtoAccountsBTN" mnemonicParsing="false" onAction="#buttonClick" text="Proceed to Accounts" />
                         </children>
                         <padding>
                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -42,6 +42,7 @@
                             <Button fx:id="resetBTN" mnemonicParsing="false" onAction="#buttonClick" text="Reset" />
                             <Button fx:id="createBTN" mnemonicParsing="false" onAction="#buttonClick" text="Create New" />
                             <Button fx:id="settingsBTN" mnemonicParsing="false" onAction="#buttonClick" text="Settings" />
+                            <Button fx:id="proceedtoTextBTN" mnemonicParsing="false" onAction="#buttonClick" text="Proceed to Text" />
                         </children>
                         <padding>
                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
