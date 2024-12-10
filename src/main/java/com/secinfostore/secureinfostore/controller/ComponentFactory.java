@@ -5,12 +5,14 @@ import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.util.DataStore;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javax.crypto.SecretKey;
+import java.util.Optional;
 
 public class ComponentFactory {
 
@@ -41,7 +43,7 @@ public class ComponentFactory {
 
     public static void addUpdateAccountUI(AccountObj account, AddUpdateContract contract) throws Exception {
         FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateAccountUI.fxml"));
-        Scene scene = new Scene(loader.load(), 400, 400);
+        Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
 
         stage.setScene(scene);
@@ -115,6 +117,51 @@ public class ComponentFactory {
         controller.setSettingUIController(stage, charSet);
 
         stage.show();
+    }
+
+    public static boolean confirmAccountDeletion(AccountObj account){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Deletion");
+        alert.setHeaderText("Are you sure you want to delete this account?");
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        setStageIcon(stage);
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+
+        Label accountNameLabel = new Label("Account User Name: " + account.getUserName());
+        Label accountEmailLabel = new Label("Account Email: " + account.getEmail());
+        vbox.getChildren().addAll(accountNameLabel, accountEmailLabel);
+
+        alert.getDialogPane().setContent(vbox);
+
+        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+        return result == ButtonType.OK;
+    }
+
+    public static Boolean showExportDialog(){
+        String encryptedOption = "Encrypted";
+        String unencryptedOption = "Unencrypted";
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(encryptedOption, encryptedOption, unencryptedOption);
+
+        dialog.setTitle("Export Options");
+        dialog.setHeaderText("Choose Export Type");
+        dialog.setContentText("How would you like to export the data?");
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
+
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        setWindowsTitle(stage, "Exporting via Json");
+        setStageIcon(stage);
+
+        Optional<String> result = dialog.showAndWait();
+
+        return result.map(choice -> choice.equals(encryptedOption)).orElse(null);
     }
 
     public static VBox getPasswordComponent() throws Exception {

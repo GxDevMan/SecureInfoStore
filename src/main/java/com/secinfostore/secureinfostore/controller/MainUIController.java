@@ -1,6 +1,5 @@
 package com.secinfostore.secureinfostore.controller;
 
-import com.secinfostore.secureinfostore.SecureInformationStore;
 import com.secinfostore.secureinfostore.cellfactories.ActionAccountsCellFactory;
 import com.secinfostore.secureinfostore.cellfactories.ImageLogoCellFactory;
 import com.secinfostore.secureinfostore.cellfactories.PasswordAccountCellFactory;
@@ -10,19 +9,17 @@ import com.secinfostore.secureinfostore.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,6 +58,9 @@ public class MainUIController extends BaseController implements AddUpdateContrac
 
     @FXML
     private Button exportAccountsJSONBTN;
+
+    @FXML
+    private Button exportToTxtBTN;
 
     @FXML
     private TextField searchTxtField;
@@ -125,9 +125,9 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         } else if (event.getSource().equals(searchBTN)) {
             searchAccounts(searchTxtField.getText().trim());
         } else if (event.getSource().equals(importAccountsJSONBTN)) {
-            importaccountsFromJson();
+            importAccountsFromJson();
         } else if (event.getSource().equals(exportAccountsJSONBTN)) {
-            exportAccountstoJson();
+            exportAccountsToJson();
         } else if (event.getSource().equals(encryptorBTN)) {
             goToEncryptor();
         } else if (event.getSource().equals(gotoChangelogBTN)) {
@@ -136,6 +136,8 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             goToEntryUI();
         } else if (event.getSource().equals(settingsBTN)) {
             goToSettings();
+        } else if (event.getSource().equals(exportToTxtBTN)){
+            exportAccountsToTextFile();
         }
     }
 
@@ -146,6 +148,113 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             Optional<List<AccountObj>> finalAccountObjListOptional = accountObjListOptional;
             Platform.runLater(() -> {
                 displayAccounts(finalAccountObjListOptional);
+            });
+        });
+        thread.start();
+    }
+
+    private void exportAccountsToJson() {
+        Task<Optional<List<AccountObj>>> task = new Task<>() {
+            @Override
+            protected Optional<List<AccountObj>> call() {
+                return DatabaseHandler.getAccounts();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            Optional<List<AccountObj>> accountOptionalList = task.getValue();
+            if (accountOptionalList.isEmpty()) {
+                ErrorDialog.showErrorDialog(new Exception("No Accounts to export"), "Empty List", "No Accounts to Export");
+                return;
+            }
+
+            try {
+                FileLoadSaving.exportJson(Optional.of(accountOptionalList.get()));
+            } catch (Exception e) {
+                ErrorDialog.showErrorDialog(e, "Export error", "Failed to export accounts to JSON.");
+            }
+        });
+
+        // Handle failure
+        task.setOnFailed(event -> {
+            ErrorDialog.showErrorDialog(new Exception("Accounts Export Error"), "Accounts Exporting error", "There was a problem exporting the accounts");
+        });
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void exportAccountsToTextFile() {
+        Task<Optional<List<AccountObj>>> task = new Task<>() {
+            @Override
+            protected Optional<List<AccountObj>> call() {
+                return DatabaseHandler.getAccounts();
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            Optional<List<AccountObj>> accountOptionalList = task.getValue();
+            if (accountOptionalList.isEmpty()) {
+                ErrorDialog.showErrorDialog(new Exception("No Accounts to export"), "Empty List", "No Accounts to Export");
+                return;
+            }
+
+            try {
+                FileLoadSaving.exportToTextFile(Optional.of(accountOptionalList.get()));
+            } catch (Exception e) {
+                ErrorDialog.showErrorDialog(e, "Export error", "Failed to export accounts to JSON.");
+            }
+        });
+
+        task.setOnFailed(event -> {
+            ErrorDialog.showErrorDialog(new Exception("Accounts Export Error"), "Accounts Exporting error", "There was a problem exporting the accounts");
+        });
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void importAccountsFromJson() {
+        File selectedJSON = FileLoadSaving.loadedJsonConfig();
+        if (selectedJSON == null)
+            return;
+
+        try {
+            Optional<List<AccountObj>> importedAccountsOpt = DataExporterHandler.getAccountsFromJson(selectedJSON);
+            if (importedAccountsOpt.isEmpty()) {
+                return;
+            }
+            Thread thread = new Thread(() -> {
+                saveImportedAccountsToDB(importedAccountsOpt.get());
+                Optional<List<AccountObj>> refreshedObjList = DatabaseHandler.getAccounts();
+                Platform.runLater(() -> {
+                    displayAccounts(refreshedObjList);
+                });
+            });
+            thread.start();
+
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "JSON Import Error", "There was an error loading the accounts");
+        }
+    }
+
+    private void addAccount() {
+        try {
+            ComponentFactory.addUpdateAccountUI(this);
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading AddUpdateAccountUI.fxml");
+        }
+    }
+
+    private void saveImportedAccountsToDB(List<AccountObj> accountList) {
+        AtomicReference<Optional<List<AccountObj>>> accountObjListOptional = new AtomicReference<>(Optional.empty());
+        Thread thread = new Thread(() -> {
+            DatabaseHandler.saveAccount(accountList);
+            accountObjListOptional.set(DatabaseHandler.getAccounts());
+            Platform.runLater(() -> {
+                displayAccounts(accountObjListOptional.get());
             });
         });
         thread.start();
@@ -187,111 +296,6 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         }
     }
 
-    private void exportAccountstoJson() {
-        Optional<List<AccountObj>> accountOptionalList = DatabaseHandler.getAccounts();
-        if (!accountOptionalList.isPresent()) {
-            ErrorDialog.showErrorDialog(new Exception("Empty List"), "Accounts Export Error", "No Accounts to Export");
-            return;
-        }
-        List<AccountObj> accountList = accountOptionalList.get();
-
-        Stage stage = new Stage();
-        DataStore dataStore = DataStore.getInstance();
-        String dataStoreTitle = (String) dataStore.getObject("default_title");
-        String stageTitle = String.format("%s -%s", dataStoreTitle, "Export Accounts To Json");
-        stage.setTitle(stageTitle);
-        ComponentFactory.setStageIcon(stage);
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Export File", "*.json"));
-        fileChooser.setInitialFileName("ExportedAccounts.json");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        File jsonFile = fileChooser.showSaveDialog(stage);
-
-        if (jsonFile != null) {
-            try {
-                JsonHandler.writeToJsonToFile(accountList, jsonFile);
-            } catch (Exception e) {
-                ErrorDialog.showErrorDialog(e, "Accounts Export Error", "There was a problem writing to the File");
-            }
-        }
-    }
-
-    private void importaccountsFromJson() {
-        Stage stage = new Stage();
-
-        DataStore dataStore = DataStore.getInstance();
-
-        String dataStoreTitle = (String) dataStore.getObject("default_title");
-        String stageTitle = String.format("%s -%s", dataStoreTitle, "Import Accounts From Json");
-        stage.setTitle(stageTitle);
-
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("Import Accounts", "*.json");
-        fileChooser.getExtensionFilters().add(jsonFilter);
-
-        String currentDir = System.getProperty("user.dir");
-        fileChooser.setInitialDirectory(new File(currentDir));
-        ComponentFactory.setStageIcon(stage);
-
-        File selectedJSON = fileChooser.showOpenDialog(stage);
-
-        if (selectedJSON == null)
-            return;
-
-        try {
-            Optional<List<AccountObj>> importedAccountsOpt = JsonHandler.getAccountsFromJson(selectedJSON);
-
-            if (!importedAccountsOpt.isPresent()) {
-                return;
-            }
-
-            saveImportedAccountsToDB(importedAccountsOpt.get());
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "JSON Import Error", "There was an error loading the accounts");
-        }
-    }
-
-    private void saveImportedAccountsToDB(List<AccountObj> accountList) {
-        AtomicReference<Optional<List<AccountObj>>> accountObjListOptional = new AtomicReference<>(Optional.empty());
-        Thread thread = new Thread(() -> {
-            DatabaseHandler.saveAccount(accountList);
-            accountObjListOptional.set(DatabaseHandler.getAccounts());
-            Platform.runLater(() -> {
-                displayAccounts(accountObjListOptional.get());
-            });
-        });
-        thread.start();
-    }
-
-    private void addAccount() {
-        try {
-            ComponentFactory.addUpdateAccountUI(this);
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading AddUpdateAccountUI.fxml");
-        }
-    }
-
-    private void displayAccounts(Optional<List<AccountObj>> accountObjList) {
-        if (accountObjList.isEmpty())
-            return;
-
-        if (accountObjList.get().isEmpty())
-            return;
-
-        accountsTable.getItems().clear();
-        accountsTable.refresh();
-
-        List<AccountObj> accountList = accountObjList.get();
-        try {
-            ObservableList<AccountObj> observableAccounts = FXCollections.observableList(accountList);
-            accountsTable.setItems(observableAccounts);
-            accountsTable.refresh();
-        } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "Accounts Loading Error", "There was an error displaying the Accounts Preview");
-        }
-    }
-
     private void goToChangeLog(ActionEvent event) {
         mediator.switchTo("changeLogUI", null);
     }
@@ -321,28 +325,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
 
     @Override
     public void confirmDeleteAccount(AccountObj account) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Deletion");
-        alert.setHeaderText("Are you sure you want to delete this account?");
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        ComponentFactory.setStageIcon(stage);
-
-        VBox vbox = new VBox();
-        vbox.setSpacing(10);
-
-
-        Label accountNameLabel = new Label("Account User Name: " + account.getUserName());
-        Label accountEmailLabel = new Label("Account Email: " + account.getEmail());
-        vbox.getChildren().addAll(accountNameLabel, accountEmailLabel);
-
-        alert.getDialogPane().setContent(vbox);
-
-        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
-
-        if (result == ButtonType.OK) {
+        if (ComponentFactory.confirmAccountDeletion(account)) {
             Thread thread = new Thread(() -> {
                 DatabaseHandler.deleteAccount(account);
                 Optional<List<AccountObj>> accountObjListOptional;
@@ -374,5 +357,25 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             });
         });
         thread.start();
+    }
+
+    private void displayAccounts(Optional<List<AccountObj>> accountObjList) {
+        if (accountObjList.isEmpty())
+            return;
+
+        if (accountObjList.get().isEmpty())
+            return;
+
+        accountsTable.getItems().clear();
+        accountsTable.refresh();
+
+        List<AccountObj> accountList = accountObjList.get();
+        try {
+            ObservableList<AccountObj> observableAccounts = FXCollections.observableList(accountList);
+            accountsTable.setItems(observableAccounts);
+            accountsTable.refresh();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "Accounts Loading Error", "There was an error displaying the Accounts Preview");
+        }
     }
 }
