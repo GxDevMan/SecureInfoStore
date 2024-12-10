@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.MainUITextController">
+    <stylesheets>
+        <URL value="@styles/dark-theme.css" />
+    </stylesheets>
+    <children>
+        <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <content>
+                <VBox>
+                    <children>
+                        <TitledPane expanded="false" text="Navigation">
+                            <content>
+                                <VBox>
+                                    <children>
+                                        <HBox>
+                                            <children>
+                                                <Button fx:id="goToEntryUIBTN" mnemonicParsing="false" onAction="#buttonClick" text="Go to Entry UI" />
+                                                <Button fx:id="goToAccountsBTN" mnemonicParsing="false" onAction="#buttonClick" text="Go To Accounts" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </TitledPane>
+                        <TitledPane text="Actions">
+                            <content>
+                                <VBox>
+                                    <children>
+                                        <HBox>
+                                            <children>
+                                                <Button fx:id="clearSearchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Clear Search" />
+                                                <Button fx:id="searchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Search" />
+                                                <TextField fx:id="searchTagsTextField" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                        <HBox>
+                                            <children>
+                                                <Button fx:id="addTextEntryBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add Text Entry" />
+                                                <Button fx:id="reEncryptBTN" mnemonicParsing="false" onAction="#buttonClick" text="Re Encrypt" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </TitledPane>
+                        <TitledPane text="Text Entries">
+                            <content>
+                                <AnchorPane>
+                                    <children>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <content>
+                                                <TilePane fx:id="textEntriesTile" />
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </TitledPane>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
+
+
+</AnchorPane>

@@ -27,19 +27,22 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MainUIController extends BaseController implements AddUpdateContract, UpdateDeleteViewConfirmContract<AccountObj> {
 
     @FXML
+    private Button reEncryptBTN;
+
+    @FXML
     private Button searchBTN;
 
     @FXML
     private Button resetBTN;
 
     @FXML
+    private Button goToTextUIBTN;
+
+    @FXML
     private Button clearsearchBTN;
 
     @FXML
     private Button addAccountBTN;
-
-    @FXML
-    private Button reEncryptBTN;
 
     @FXML
     private Button goTouiSelectorBTN;
@@ -131,13 +134,15 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         } else if (event.getSource().equals(encryptorBTN)) {
             goToEncryptor();
         } else if (event.getSource().equals(gotoChangelogBTN)) {
-            goToChangeLog(event);
+            mediator.switchTo("changeLogUI", null);
         } else if (event.getSource().equals(goTouiSelectorBTN)) {
             goToEntryUI();
         } else if (event.getSource().equals(settingsBTN)) {
             goToSettings();
         } else if (event.getSource().equals(exportToTxtBTN)){
             exportAccountsToJson(false);
+        } else if (event.getSource().equals(goToTextUIBTN)){
+            mediator.switchTo("textUIAccount", null);
         }
     }
 
@@ -264,10 +269,6 @@ public class MainUIController extends BaseController implements AddUpdateContrac
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML loading Error", "Error loading settings UI");
         }
-    }
-
-    private void goToChangeLog(ActionEvent event) {
-        mediator.switchTo("changeLogUI", null);
     }
 
     @Override

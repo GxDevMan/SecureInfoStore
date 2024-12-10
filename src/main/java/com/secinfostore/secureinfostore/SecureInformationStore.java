@@ -18,6 +18,7 @@ public class SecureInformationStore extends Application {
         AppMediator mediator = new AppMediator(stage);
         mediator.registerFXMLName("entryUI", "EntryUI.fxml");
         mediator.registerFXMLName("mainUIAccount", "MainUIAccounts.fxml");
+        mediator.registerFXMLName("textUIAccount","MainUIText.fxml");
         mediator.registerFXMLName("changeLogUI", "ChangeLogUI.fxml");
         mediator.switchTo("entryUI", null);
     }

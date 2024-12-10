@@ -53,6 +53,8 @@ public class EntryUIController extends BaseController {
     @FXML
     private Button encryptorBTN;
 
+
+
     @FXML
     private void initialize() {
         keyTextFieldSkin = new KeyTextFieldSkin(keyTextField);
@@ -76,11 +78,11 @@ public class EntryUIController extends BaseController {
         } else if (event.getSource().equals(createBTN)) {
             createNewDatabaseAndKey();
         } else if (event.getSource().equals(proceedtoAccountsBTN)) {
-            goToMainUI(event);
+            goToMainUI(event, "mainUIAccount");
         } else if (event.getSource().equals(encryptorBTN)) {
             goToEncryptor();
         } else if (event.getSource().equals(proceedtoTextBTN)) {
-            System.out.println("Proceeding to Text BTN");
+            goToMainUI(event, "textUIAccount");
         }
     }
 
@@ -157,7 +159,7 @@ public class EntryUIController extends BaseController {
         }
     }
 
-    private void goToMainUI(ActionEvent event) {
+    private void goToMainUI(ActionEvent event, String uiSelected) {
         DataStore dataStore = DataStore.getInstance();
         String dbUrl = (String) dataStore.getObject("default_db");
         String keyBase64 = keyTextField.getText().trim();
@@ -203,7 +205,7 @@ public class EntryUIController extends BaseController {
             hibernateUtil.shutdown();
             return;
         }
-        this.mediator.switchTo("mainUIAccount", null);
+        this.mediator.switchTo(uiSelected, null);
 
     }
 
