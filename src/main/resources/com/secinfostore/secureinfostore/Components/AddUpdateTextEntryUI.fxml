@@ -16,13 +16,13 @@
                   <Label text="Title" />
                   <TextField fx:id="titleTextField" VBox.vgrow="ALWAYS" />
                   <Label text="Text" />
-                  <TextArea fx:id="textEntryArea" wrapText="true" prefHeight="200.0" prefWidth="500.0" VBox.vgrow="ALWAYS" />
+                  <TextArea fx:id="textEntryArea" prefHeight="300.0" prefWidth="500.0" wrapText="true" VBox.vgrow="ALWAYS" />
                   <Label text="Tags" />
-                  <TextArea fx:id="tagsEntryArea" wrapText="true" prefHeight="100.0" prefWidth="500.0" VBox.vgrow="ALWAYS" />
+                  <TextArea fx:id="tagsEntryArea" prefHeight="70.0" prefWidth="500.0" wrapText="true" VBox.vgrow="ALWAYS" />
                   <HBox>
                      <children>
-                        <Button fx:id="addUpdateBTN" onAction="#buttonClick" mnemonicParsing="false" text="Add/Update" />
-                        <Button fx:id="cancelBTN" onAction="#buttonClick" mnemonicParsing="false" text="Cancel" />
+                        <Button fx:id="addUpdateBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add/Update" />
+                        <Button fx:id="cancelBTN" mnemonicParsing="false" onAction="#buttonClick" text="Cancel" />
                      </children>
                   </HBox>
                </children>

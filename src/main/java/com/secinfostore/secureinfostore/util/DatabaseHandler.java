@@ -1,13 +1,14 @@
 package com.secinfostore.secureinfostore.util;
 
+import com.secinfostore.secureinfostore.controller.interfaces.ProgressObserver;
 import com.secinfostore.secureinfostore.exception.ValidationExistsException;
 import com.secinfostore.secureinfostore.model.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import javax.crypto.SecretKey;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -349,6 +350,35 @@ public class DatabaseHandler {
         return Optional.ofNullable(decTextEntryList);
     }
 
+    public static Optional<List<TextObj>> getTextEntriesActual() {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        List<TextObj> encTextEntryList = null;
+        List<TextObj> decTextEntryList = null;
+
+        try {
+            String hql = "FROM TextObj";
+            encTextEntryList = session.createQuery(hql, TextObj.class).getResultList();
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        if ((encTextEntryList != null) && !encTextEntryList.isEmpty()) {
+            decTextEntryList = new LinkedList<>();
+            for (TextObj encTextEntry : encTextEntryList) {
+                decTextEntryList.add(InformationFactory.decTextEntry(encTextEntry));
+            }
+        }
+        return Optional.ofNullable(decTextEntryList);
+    }
+
     public static Optional<List<TextObjDTO>> getTextEntries(String tagSearchKey) {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
@@ -466,10 +496,212 @@ public class DatabaseHandler {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            //e.printStackTrace();
             return false;
         } finally {
             session.close();
         }
+    }
+
+    public static long totalAccountRecords() {
+        long totalRecords = 0;
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+        Root<AccountObj> root = cq.from(AccountObj.class);
+        cq.select(cb.count(root));
+
+        Query<Long> query = session.createQuery(cq);
+        totalRecords = query.getSingleResult();
+        transaction.commit();
+
+        return totalRecords;
+    }
+
+    public static long totalTextEntryRecords() {
+        long totalRecords = 0;
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+        Root<TextObj> root = cq.from(TextObj.class);
+        cq.select(cb.count(root));
+
+        Query<Long> query = session.createQuery(cq);
+        totalRecords = query.getSingleResult();
+        transaction.commit();
+
+        return totalRecords;
+    }
+
+    public static long totalChangeLogRecords() {
+        long totalRecords = 0;
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+        Root<ChangeLogObj> root = cq.from(ChangeLogObj.class);
+        cq.select(cb.count(root));
+
+        Query<Long> query = session.createQuery(cq);
+        totalRecords = query.getSingleResult();
+        transaction.commit();
+
+        return totalRecords;
+    }
+
+    public static boolean reEncryption(ProgressObserver observer, SecretKey newKey) {
+        long totalRecords = 0;
+        long totalRecordsProcessed = 0;
+        observer.updateProgress(0.0);
+        observer.updateStatus("Getting total Records");
+
+        totalRecords += totalAccountRecords();
+        totalRecords += totalTextEntryRecords();
+        totalRecords += totalChangeLogRecords();
+        totalRecords += 1;
+
+        DataStore dataStore = DataStore.getInstance();
+        SecretKey oldKey = (SecretKey) dataStore.getObject("default_key");
+
+        // Debugging: Check if oldKey and newKey are correctly retrieved
+        // System.out.println("Old Key: " + oldKey);
+        // System.out.println("New Key: " + newKey);
+
+        if (oldKey == null || newKey == null) {
+//            System.err.println("Error: Old key or new key is null.");
+            return false;
+        }
+
+        Optional<Validation> validationOptional = getValidation();
+        if (validationOptional.isPresent()) {
+            Validation validation = validationOptional.get();
+            try {
+//                System.out.println("Decrypting Validation with old key...");
+                validation.setTestText(EncryptionDecryption.decryptAESGCM(validation.getTestText(), oldKey));
+
+//                System.out.println("Encrypting Validation with new key...");
+                validation.setTestText(EncryptionDecryption.encryptAESGCM(validation.getTestText(), newKey));
+            } catch (Exception e) {
+             //   System.err.println("Error re-encrypting Validation:");
+              //  e.printStackTrace();
+                return false;
+            }
+
+            Session session = getSession();
+            Transaction transaction = session.beginTransaction();
+            session.saveOrUpdate(validation);
+            transaction.commit();
+            session.close();
+
+            totalRecordsProcessed++;
+            observer.updateStatus("Validation Re Encryption Finished");
+            if (totalRecords > 0) {
+                observer.updateProgress((double) totalRecordsProcessed / totalRecords);
+            }
+        } else {
+           // System.err.println("Validation data not found.");
+        }
+
+        observer.updateStatus("Re Encrypting Accounts");
+        Optional<List<AccountObj>> accountObjListOptional = getAccounts();
+        if (accountObjListOptional.isPresent()) {
+            Session session = getSession();
+            Transaction transaction = session.beginTransaction();
+
+            for (AccountObj account : accountObjListOptional.get()) {
+                try {
+                  //  System.out.println("Re-encrypting account: " + account.getAccountId());
+                    account = InformationFactory.reEncryptAccountObj(account, newKey);
+                    session.saveOrUpdate(account);
+                    totalRecordsProcessed++;
+                    if (totalRecords > 0) {
+                        observer.updateProgress((double) totalRecordsProcessed / totalRecords);
+                    }
+                } catch (Exception e) {
+                  //  System.err.println("Error re-encrypting account: " + account.getAccountId());
+                   // e.printStackTrace();
+                }
+            }
+
+            transaction.commit();
+            session.close();
+        } else {
+           // System.err.println("Accounts data not found.");
+        }
+
+        observer.updateStatus("Re Encrypting Change Log");
+        Optional<List<ChangeLogObj>> changeLogObjListOptional = getChangeLogs();
+        if (changeLogObjListOptional.isPresent()) {
+            Session session = getSession();
+            Transaction transaction = session.beginTransaction();
+
+            for (ChangeLogObj changeLogObj : changeLogObjListOptional.get()) {
+                try {
+                   // System.out.println("Re-encrypting Change Log: " + changeLogObj.getChangeId());
+                    changeLogObj = InformationFactory.reEncryptChangeLog(changeLogObj, newKey);
+                    session.saveOrUpdate(changeLogObj);
+                    totalRecordsProcessed++;
+                    if (totalRecords > 0) {
+                        observer.updateProgress((double) totalRecordsProcessed / totalRecords);
+                    }
+                } catch (Exception e) {
+                   // System.err.println("Error re-encrypting Change Log: " + changeLogObj.getChangeId());
+                    //e.printStackTrace();
+                }
+            }
+
+            transaction.commit();
+            session.close();
+        } else {
+            System.err.println("Change Log data not found.");
+        }
+
+        observer.updateStatus("Re Encrypting Text Entries");
+        Optional<List<TextObj>> textObjListOptional = getTextEntriesActual();
+        if (textObjListOptional.isPresent()) {
+            Session session = getSession();
+            Transaction transaction = session.beginTransaction();
+
+            for (TextObj textObj : textObjListOptional.get()) {
+                try {
+                    //System.out.println("Re-encrypting Text Entry: " + textObj.getTextId());
+                    textObj = InformationFactory.reEncryptTextEntry(textObj, newKey);
+                    session.saveOrUpdate(textObj);
+                    totalRecordsProcessed++;
+                    if (totalRecords > 0) {
+                        observer.updateProgress((double) totalRecordsProcessed / totalRecords);
+                    }
+                } catch (Exception e) {
+                    //System.err.println("Error re-encrypting Text Entry: " + textObj.getTextId());
+                    //e.printStackTrace();
+                }
+            }
+
+            transaction.commit();
+            session.close();
+        } else {
+            //System.err.println("Text Entries data not found.");
+        }
+
+        // Store the new key in DataStore
+        try {
+            //System.out.println("Saving new key to DataStore...");
+            dataStore.insertObject("default_key", newKey);
+        } catch (Exception e) {
+            //System.err.println("Error saving new key to DataStore:");
+            //e.printStackTrace();
+        }
+
+        observer.updateStatus("Re Encryption Complete");
+        observer.updateProgress(1.0);
+        return true;
     }
 }

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class MainUIController extends BaseController implements AddUpdateContract<AccountObj>, UpdateDeleteViewConfirmContract<AccountObj> {
+public class MainUIAccountsController extends BaseController implements AddUpdateContract<AccountObj>, UpdateDeleteViewConfirmContract<AccountObj> {
 
     @FXML
     private Button reEncryptBTN;
@@ -144,10 +144,25 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             goToEntryUI();
         } else if (event.getSource().equals(settingsBTN)) {
             goToSettings();
-        } else if (event.getSource().equals(exportToTxtBTN)){
+        } else if (event.getSource().equals(exportToTxtBTN)) {
             exportAccountsToJson(false);
-        } else if (event.getSource().equals(goToTextUIBTN)){
+        } else if (event.getSource().equals(goToTextUIBTN)) {
             mediator.switchTo("textUIAccount", null);
+        } else if (event.getSource().equals(reEncryptBTN)) {
+            reEncrypt();
+        }
+    }
+
+    private void reEncrypt() {
+        boolean confirmation = ComponentFactory.confirmReEncryption();
+        if (!confirmation) {
+            return;
+        }
+
+        try {
+            ComponentFactory.loadReEncryptionWindow();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e,"FXML loading Error", "Error loading Re Encryption Window");
         }
     }
 
@@ -182,11 +197,10 @@ public class MainUIController extends BaseController implements AddUpdateContrac
             try {
                 FileLoadSaving.exportToFileFormat(accountOptionalList, json);
             } catch (Exception e) {
-                ErrorDialog.showErrorDialog(e, "Export error", String.format("Failed to export accounts to %s",fileFormat));
+                ErrorDialog.showErrorDialog(e, "Export error", String.format("Failed to export accounts to %s", fileFormat));
             }
         });
 
-        // Handle failure
         task.setOnFailed(event -> {
             ErrorDialog.showErrorDialog(new Exception("Accounts Export Error"), "Accounts Exporting error", "There was a problem exporting the accounts");
         });

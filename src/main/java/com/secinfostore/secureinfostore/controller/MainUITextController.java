@@ -68,6 +68,8 @@ public class MainUITextController extends BaseController implements AddUpdateCon
             searchTagsTextField.setText("");
         } else if (event.getSource().equals(resetBTN)) {
             resetEntriesList();
+        } else if (event.getSource().equals(reEncryptBTN)) {
+            reEncrypt();
         }
     }
 
@@ -168,6 +170,19 @@ public class MainUITextController extends BaseController implements AddUpdateCon
         });
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private void reEncrypt() {
+        boolean confirmation = ComponentFactory.confirmReEncryption();
+        if (!confirmation) {
+            return;
+        }
+
+        try {
+            ComponentFactory.loadReEncryptionWindow();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e,"FXML loading Error", "Error loading Re Encryption Window");
+        }
     }
 
     private void displayTextEntries(Optional<List<TextObjDTO>> textEntriesOptional) {

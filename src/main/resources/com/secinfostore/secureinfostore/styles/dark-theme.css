@@ -122,3 +122,24 @@ Label {
     -fx-text-fill: #7D7D7D; /* Light gray content text */
     -fx-font-size: 14px;
 }
+
+ProgressBar {
+    -fx-accent: #fd7f20; /* Orange color for the progress fill */
+    -fx-control-inner-background: #2E2E2E; /* Dark gray background of the progress bar */
+    -fx-background-insets: 0;
+    -fx-border-color: #4B4B4B; /* Mid-gray border around the progress bar */
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 2;
+}
+
+ProgressBar .track {
+    -fx-background-color: #2E2E2E; /* Dark gray background track */
+    -fx-background-insets: 0;
+    -fx-background-radius: 5;
+}
+
+ProgressBar .bar {
+    -fx-background-color: #FFA500; /* Orange progress bar */
+    -fx-background-radius: 5;
+}

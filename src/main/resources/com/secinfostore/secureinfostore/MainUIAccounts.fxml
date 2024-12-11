@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.MainUIController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.secureinfostore.controller.MainUIAccountsController">
     <stylesheets>
         <URL value="@styles/dark-theme.css" />
     </stylesheets>
@@ -73,7 +73,7 @@
                             <content>
                                 <TableView fx:id="accountsTable" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="logoColumn" prefWidth="100.0" text="Logo" />
+                                        <TableColumn fx:id="logoColumn" prefWidth="150.0" text="Logo" />
                                         <TableColumn fx:id="userPlatformColumn" prefWidth="200.0" text="User Platform" />
                                         <TableColumn fx:id="userNameColumn" prefWidth="200.0" text="User Name" />
                                         <TableColumn fx:id="userEmailColumn" prefWidth="200.0" text="User Email" />

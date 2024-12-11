@@ -116,8 +116,22 @@ public class ComponentFactory {
 
         TextENCDECController controller = loader.getController();
         controller.setTextENCDECController(key);
-
         stage.show();
+    }
+
+    public static void loadReEncryptionWindow() throws Exception {
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/ReEncryptionUI.fxml"));
+        Scene scene = new Scene(loader.load());
+        Stage stage = new Stage();
+
+        stage.setScene(scene);
+        setWindowsTitle(stage, "Re Encrypting");
+        setStageIcon(stage);
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        ReEncryptionController controller = loader.getController();
+        stage.show();
+        controller.setReEncryptionController(stage);
     }
 
     public static void settingsDisplay() throws Exception {
@@ -172,6 +186,20 @@ public class ComponentFactory {
         vbox.getChildren().addAll(accountNameLabel, accountEmailLabel);
 
         alert.getDialogPane().setContent(vbox);
+
+        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+        return result == ButtonType.OK;
+    }
+
+    public static boolean confirmReEncryption() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Re Encryption");
+        alert.setHeaderText("Are you sure you want to Re Encrypt the entire Database?");
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        setStageIcon(stage);
 
         ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
         return result == ButtonType.OK;

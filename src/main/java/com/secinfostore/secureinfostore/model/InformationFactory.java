@@ -169,12 +169,8 @@ public class InformationFactory {
         return textObj;
     }
 
-    public static AccountObj reEncryptAccountObj(AccountObj accountObj, SecretKey oldKey, SecretKey newKey) {
+    public static AccountObj reEncryptAccountObj(AccountObj accountObj, SecretKey newKey) {
         try {
-            accountObj.setUserName(EncryptionDecryption.decryptAESGCM(accountObj.getUserName(), oldKey));
-            accountObj.setPassword(EncryptionDecryption.decryptAESGCM(accountObj.getPassword(), oldKey));
-            accountObj.setEmail(EncryptionDecryption.decryptAESGCM(accountObj.getEmail(), oldKey));
-
             accountObj.setUserName(EncryptionDecryption.encryptAESGCM(accountObj.getUserName(), newKey));
             accountObj.setPassword(EncryptionDecryption.encryptAESGCM(accountObj.getPassword(), newKey));
             accountObj.setEmail(EncryptionDecryption.encryptAESGCM(accountObj.getEmail(), newKey));
@@ -185,12 +181,8 @@ public class InformationFactory {
     }
 
 
-    public static ChangeLogObj reEncryptChangeLog(ChangeLogObj changeLogObj, SecretKey oldKey, SecretKey newKey) {
+    public static ChangeLogObj reEncryptChangeLog(ChangeLogObj changeLogObj, SecretKey newKey) {
         try {
-            changeLogObj.setUserName(EncryptionDecryption.decryptAESGCM(changeLogObj.getUserName(), oldKey));
-            changeLogObj.setPassword(EncryptionDecryption.decryptAESGCM(changeLogObj.getPassword(), oldKey));
-            changeLogObj.setEmail(EncryptionDecryption.decryptAESGCM(changeLogObj.getEmail(), oldKey));
-
             changeLogObj.setUserName(EncryptionDecryption.encryptAESGCM(changeLogObj.getUserName(), newKey));
             changeLogObj.setPassword(EncryptionDecryption.encryptAESGCM(changeLogObj.getPassword(), newKey));
             changeLogObj.setEmail(EncryptionDecryption.encryptAESGCM(changeLogObj.getEmail(), newKey));
@@ -201,10 +193,8 @@ public class InformationFactory {
         return changeLogObj;
     }
 
-    public static TextObj reEncryptTextEntry(TextObj textEntry, SecretKey oldKey, SecretKey newKey) {
+    public static TextObj reEncryptTextEntry(TextObj textEntry, SecretKey newKey) {
         try {
-            textEntry.setTextTitle(EncryptionDecryption.decryptAESGCM(textEntry.getTextTitle(), oldKey));
-            textEntry.setTextInformation(EncryptionDecryption.decryptAESGCM(textEntry.getTextInformation(), oldKey));
 
             textEntry.setTextTitle(EncryptionDecryption.encryptAESGCM(textEntry.getTextTitle(), newKey));
             textEntry.setTextInformation(EncryptionDecryption.encryptAESGCM(textEntry.getTextInformation(), newKey));
@@ -212,9 +202,8 @@ public class InformationFactory {
             StringBuilder compile = new StringBuilder();
             String[] tagsArr = textEntry.getTags().split(" ");
             for (String tag : tagsArr) {
-                String individualTag = EncryptionDecryption.decryptAESECB(tag, oldKey);
-                individualTag = EncryptionDecryption.encryptAESECB(individualTag, newKey);
-                compile.append(individualTag).append(" ");
+                tag = EncryptionDecryption.encryptAESECB(tag, newKey);
+                compile.append(tag).append(" ");
             }
 
             if (compile.length() > 0) {
