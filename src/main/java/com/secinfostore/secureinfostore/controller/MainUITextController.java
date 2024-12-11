@@ -10,7 +10,9 @@ import com.secinfostore.secureinfostore.util.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
@@ -49,6 +51,10 @@ public class MainUITextController extends BaseController implements AddUpdateCon
     @FXML
     private TilePane textEntriesTile;
 
+    @FXML
+    private ScrollPane scrollPane;
+
+
     public void buttonClick(ActionEvent event) {
         if (event.getSource().equals(goToEntryUIBTN)) {
             goToEntryUI();
@@ -58,7 +64,7 @@ public class MainUITextController extends BaseController implements AddUpdateCon
             addnewTextEntry();
         } else if (event.getSource().equals(searchBTN)) {
             searchEntryTags();
-        } else if (event.getSource().equals(clearSearchBTN)){
+        } else if (event.getSource().equals(clearSearchBTN)) {
             searchTagsTextField.setText("");
         } else if (event.getSource().equals(resetBTN)) {
             resetEntriesList();
@@ -153,7 +159,7 @@ public class MainUITextController extends BaseController implements AddUpdateCon
         }
     }
 
-    private void resetEntriesList(){
+    private void resetEntriesList() {
         Thread thread = new Thread(() -> {
             Optional<List<TextObjDTO>> textEntryListOptional = DatabaseHandler.getTextEntries();
             Platform.runLater(() -> {
@@ -165,6 +171,7 @@ public class MainUITextController extends BaseController implements AddUpdateCon
     }
 
     private void displayTextEntries(Optional<List<TextObjDTO>> textEntriesOptional) {
+
         textEntriesTile.getChildren().clear();
         if (!textEntriesOptional.isPresent())
             return;
@@ -174,6 +181,11 @@ public class MainUITextController extends BaseController implements AddUpdateCon
             for (TextObjDTO textEntry : textEntryList) {
                 AnchorPane textEntryAnchor = ComponentFactory.textPreviewComponent(this, textEntry);
                 textEntriesTile.getChildren().add(textEntryAnchor);
+            }
+
+            scrollPane.setCache(false);
+            for (Node n : scrollPane.getChildrenUnmodifiable()) {
+                n.setCache(false);
             }
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "Text Entry Load Error", "Error loading text entries");

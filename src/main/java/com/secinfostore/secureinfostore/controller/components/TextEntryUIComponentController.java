@@ -38,6 +38,9 @@ public class TextEntryUIComponentController {
         this.tagsTextArea.setText(textObj.getTags().trim());
         Date timeDate = textObj.getTimeModified();
 
+        this.tagsTextArea.setCache(false);
+        this.titleTextField.setCache(false);
+
         String timeDateStr = String.format("%s %s",
                 TimeFormatter.getFormattedDate(timeDate),
                 TimeFormatter.formatNumTime(timeDate));
