@@ -1,4 +1,4 @@
-package com.secinfostore.secureinfostore.controller;
+package com.secinfostore.secureinfostore.controller.components;
 
 import com.secinfostore.secureinfostore.SecureInformationStore;
 import javafx.scene.control.Alert;
@@ -13,6 +13,7 @@ public class ErrorDialog {
         alert.setContentText(e.getMessage());
 
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        ComponentFactory.setStageIcon(stage);
 
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());

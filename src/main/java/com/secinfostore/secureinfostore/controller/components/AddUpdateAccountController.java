@@ -1,6 +1,6 @@
-package com.secinfostore.secureinfostore.controller;
+package com.secinfostore.secureinfostore.controller.components;
 
-import com.secinfostore.secureinfostore.SecureInformationStore;
+import com.secinfostore.secureinfostore.controller.interfaces.AddUpdateContract;
 import com.secinfostore.secureinfostore.customskin.KeyTextFieldSkin;
 import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.model.InformationFactory;
@@ -10,7 +10,6 @@ import com.secinfostore.secureinfostore.util.ImageNormalizer;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -184,7 +183,7 @@ public class AddUpdateAccountController {
             }
 
             this.accountObj.setPlatformThumbnail(imageBytes);
-            this.contract.saveAccountToDB(accountObj);
+            this.contract.saveEntityToDB(accountObj);
             this.stage.close();
         } else {
             String platform = platformTxtField.getText().trim();
@@ -192,7 +191,7 @@ public class AddUpdateAccountController {
             String email = emailTxtField.getText().trim();
             String userName = usernameTxtField.getText().trim();
             AccountObj newAccount = InformationFactory.newAccount(platform, userName, email, password, this.thumbnailImage.getImage());
-            this.contract.saveAccountToDB(newAccount);
+            this.contract.saveEntityToDB(newAccount);
             this.stage.close();
         }
 

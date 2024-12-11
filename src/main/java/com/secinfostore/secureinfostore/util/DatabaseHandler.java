@@ -1,13 +1,11 @@
 package com.secinfostore.secureinfostore.util;
 
 import com.secinfostore.secureinfostore.exception.ValidationExistsException;
-import com.secinfostore.secureinfostore.model.AccountObj;
-import com.secinfostore.secureinfostore.model.ChangeLogObj;
-import com.secinfostore.secureinfostore.model.InformationFactory;
-import com.secinfostore.secureinfostore.model.Validation;
+import com.secinfostore.secureinfostore.model.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+
 import javax.crypto.SecretKey;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -53,6 +51,7 @@ public class DatabaseHandler {
             }
         }
         transaction.rollback();
+        session.close();
         throw new ValidationExistsException("Validation already exists");
     }
 
@@ -66,7 +65,8 @@ public class DatabaseHandler {
 
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+        } finally {
+            session.close();
         }
         return Optional.ofNullable(validation);
     }
@@ -82,6 +82,48 @@ public class DatabaseHandler {
             transaction.rollback();
             e.printStackTrace();
             return false;
+        } finally {
+            session.close();
+        }
+    }
+
+    public static boolean deleteTextEntry(TextObj textEntry) {
+        Session session = getSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.delete(textEntry);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
+    }
+
+    public static boolean saveTextEntry(TextObj textEntry) {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        long textEntryId = textEntry.getTextId();
+        try {
+            if (textEntryId == 0) {
+                session.saveOrUpdate(textEntry);
+            } else {
+                textEntry = InformationFactory.updateTextEntry(textEntry);
+                session.saveOrUpdate(textEntry);
+            }
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            transaction.rollback();
+            return false;
+        } finally {
+            session.close();
         }
     }
 
@@ -104,6 +146,8 @@ public class DatabaseHandler {
         } catch (Exception e) {
             transaction.rollback();
             return false;
+        } finally {
+            session.close();
         }
     }
 
@@ -124,11 +168,13 @@ public class DatabaseHandler {
                 }
                 i++;
             }
+            transaction.commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            transaction.rollback();
             return false;
+        } finally {
+            session.close();
         }
-        transaction.commit();
         return true;
     }
 
@@ -183,9 +229,9 @@ public class DatabaseHandler {
             List<ChangeLogObj> objList = query.getResultList();
             transaction.commit();
 
-            if(objList != null && !(objList.isEmpty())){
+            if (objList != null && !(objList.isEmpty())) {
                 decChangeLogList = new LinkedList<>();
-                for (ChangeLogObj eachChangeLog : objList){
+                for (ChangeLogObj eachChangeLog : objList) {
                     decChangeLogList.add(InformationFactory.decChangeLog(eachChangeLog));
                 }
             }
@@ -196,7 +242,7 @@ public class DatabaseHandler {
         }
     }
 
-    public static Optional<List<AccountObj>> getAccounts(String searchQuery){
+    public static Optional<List<AccountObj>> getAccounts(String searchQuery) {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
         List<AccountObj> encAccountList = null;
@@ -240,6 +286,118 @@ public class DatabaseHandler {
         return Optional.ofNullable(decAccountList);
     }
 
+    public static Optional<TextObj> getTextEntryById(long id) {
+        Session session = getSession();
+        Transaction transaction = null;
+        TextObj textObj = null;
+
+        try {
+            transaction = session.beginTransaction();
+            TextObj textObjdb = session.get(TextObj.class, id);
+            textObj = new TextObj(textObjdb);
+            transaction.commit();
+
+            textObj = InformationFactory.decTextEntry(textObj);
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            session.close();
+        }
+
+
+        return Optional.ofNullable(textObj);
+    }
+
+    public static Optional<List<TextObjDTO>> getTextEntries() {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        List<TextObjDTO> encTextEntryList = null;
+        List<TextObjDTO> decTextEntryList = null;
+
+        try {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<TextObjDTO> cq = cb.createQuery(TextObjDTO.class);
+            Root<TextObj> root = cq.from(TextObj.class);
+
+            cq.select(cb.construct(
+                    TextObjDTO.class,
+                    root.get("textId"),
+                    root.get("timeModified"),
+                    root.get("textTitle"),
+                    root.get("tags")
+            ));
+
+            TypedQuery<TextObjDTO> query = session.createQuery(cq);
+            encTextEntryList = query.getResultList();
+
+            if (transaction != null)
+                transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+        }
+
+        if ((encTextEntryList != null) && !encTextEntryList.isEmpty()) {
+            decTextEntryList = new LinkedList<>();
+            for (TextObjDTO encTextEntry : encTextEntryList) {
+                decTextEntryList.add(InformationFactory.decPreviewTextEntry(encTextEntry));
+            }
+        }
+        return Optional.ofNullable(decTextEntryList);
+    }
+
+    public static Optional<List<TextObjDTO>> getTextEntries(String tagSearchKey) {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        List<TextObjDTO> encTextEntryList = null;
+        List<TextObjDTO> decTextEntryList = null;
+
+        DataStore dataStore = DataStore.getInstance();
+        SecretKey key = (SecretKey) dataStore.getObject("default_key");
+
+        try {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<TextObjDTO> cq = cb.createQuery(TextObjDTO.class);
+            Root<TextObj> root = cq.from(TextObj.class);
+
+            String enctagSearchKey = EncryptionDecryption.encryptAESECB(tagSearchKey, key);
+
+            Predicate filter = cb.or(
+                    cb.like(cb.lower(root.get("tags")), "%" + enctagSearchKey + "%")
+            );
+            cq.where(filter);
+
+            cq.select(cb.construct(
+                    TextObjDTO.class,
+                    root.get("textId"),
+                    root.get("timeModified"),
+                    root.get("textTitle"),
+                    root.get("tags")
+            ));
+
+            TypedQuery<TextObjDTO> query = session.createQuery(cq);
+            encTextEntryList = query.getResultList();
+
+            if (transaction != null)
+                transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+        }
+
+        if ((encTextEntryList != null) && !encTextEntryList.isEmpty()) {
+            decTextEntryList = new ArrayList<>();
+            for (TextObjDTO encTextEntry : encTextEntryList) {
+                decTextEntryList.add(InformationFactory.decPreviewTextEntry(encTextEntry));
+            }
+        }
+        return Optional.ofNullable(decTextEntryList);
+    }
+
     public static boolean deleteAccount(AccountObj accountObj) {
         deleteChangeLogsByAccountId(accountObj.getAccountId());
         Session session = getSession();
@@ -253,6 +411,8 @@ public class DatabaseHandler {
             e.printStackTrace();
             transaction.rollback();
             return false;
+        } finally {
+            session.close();
         }
 
     }
@@ -267,11 +427,13 @@ public class DatabaseHandler {
         } catch (Exception e) {
             transaction.rollback();
             return false;
+        } finally {
+            session.close();
         }
 
     }
 
-    public static boolean deleteAllChangeLog(){
+    public static boolean deleteAllChangeLog() {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
         try {
@@ -284,6 +446,8 @@ public class DatabaseHandler {
             e.printStackTrace();
             transaction.rollback();
             return false;
+        } finally {
+            session.close();
         }
 
     }
@@ -304,6 +468,8 @@ public class DatabaseHandler {
             }
             e.printStackTrace();
             return false;
+        } finally {
+            session.close();
         }
     }
 }

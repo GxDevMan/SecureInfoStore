@@ -1,8 +1,11 @@
-package com.secinfostore.secureinfostore.controller;
+package com.secinfostore.secureinfostore.controller.components;
 
 import com.secinfostore.secureinfostore.SecureInformationStore;
+import com.secinfostore.secureinfostore.controller.interfaces.AddUpdateContract;
+import com.secinfostore.secureinfostore.controller.interfaces.UpdateDeleteViewConfirmContract;
 import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.model.TextObj;
+import com.secinfostore.secureinfostore.model.TextObjDTO;
 import com.secinfostore.secureinfostore.util.DataStore;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,23 +15,24 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import javax.crypto.SecretKey;
 import java.util.Optional;
 
 public class ComponentFactory {
 
-    public static AnchorPane accountPreviewComponent(AccountObj account, UpdateDeleteViewConfirmContract contract) throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AccountsPreviewComponent.fxml"));
+    public static AnchorPane textPreviewComponent(UpdateDeleteViewConfirmContract contract, TextObjDTO textObj) throws Exception {
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/TextEntryPreviewComponent.fxml"));
         AnchorPane anchorPane = loader.load();
 
-        AccountsPreviewComponentController controller = loader.getController();
-        controller.setAccountPreview(account, contract);
+        TextEntryUIComponentController controller = loader.getController();
+        controller.setTextEntryUIComponentController(contract, textObj);
 
         return anchorPane;
     }
 
     public static void addUpdateAccountUI(AddUpdateContract contract) throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateAccountUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/AddUpdateAccountUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
 
@@ -43,7 +47,7 @@ public class ComponentFactory {
     }
 
     public static void addUpdateAccountUI(AccountObj account, AddUpdateContract contract) throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateAccountUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/AddUpdateAccountUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
 
@@ -58,7 +62,7 @@ public class ComponentFactory {
     }
 
     public static void addUpdateTextUI(AddUpdateContract contract) throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateTextEntryUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/AddUpdateTextEntryUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
         stage.setScene(scene);
@@ -68,27 +72,27 @@ public class ComponentFactory {
         stage.initModality(Modality.APPLICATION_MODAL);
 
         AddUpdateTextEntryUIController controller = loader.getController();
-        controller.setAddUpdateTextEntryUIController(stage,contract);
+        controller.setAddUpdateTextEntryUIController(stage, contract);
         stage.show();
     }
 
     public static void addUpdateTextUI(AddUpdateContract contract, TextObj textObj) throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("AddUpdateTextEntryUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/AddUpdateTextEntryUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
         stage.setScene(scene);
 
-        setWindowsTitle(stage, "New Text Entry Information");
+        setWindowsTitle(stage, "Update Text Entry Information");
         setStageIcon(stage);
-        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initModality(Modality.WINDOW_MODAL);
 
         AddUpdateTextEntryUIController controller = loader.getController();
-        controller.setAddUpdateTextEntryUIController(stage,contract, textObj);
+        controller.setAddUpdateTextEntryUIController(stage, contract, textObj);
         stage.show();
     }
 
     public static void loadEncryptor() throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("TextENCDECUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/TextENCDECUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
 
@@ -101,7 +105,7 @@ public class ComponentFactory {
     }
 
     public static void loadEncryptor(SecretKey key) throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("TextENCDECUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/TextENCDECUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
 
@@ -117,7 +121,7 @@ public class ComponentFactory {
     }
 
     public static void settingsDisplay() throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("SettingsUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("Components/SettingsUI.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
         Stage stage = new Stage();
@@ -135,7 +139,7 @@ public class ComponentFactory {
     public static void settingsDisplaywithCharset() throws Exception {
         DataStore dataStore = DataStore.getInstance();
         String charSet = (String) dataStore.getObject("default_passwordCharSet");
-        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("SettingsUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(SecureInformationStore.class.getResource("Components/SettingsUI.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
         Stage stage = new Stage();
@@ -150,7 +154,7 @@ public class ComponentFactory {
         stage.show();
     }
 
-    public static boolean confirmAccountDeletion(AccountObj account){
+    public static boolean confirmAccountDeletion(AccountObj account) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Deletion");
         alert.setHeaderText("Are you sure you want to delete this account?");
@@ -173,7 +177,29 @@ public class ComponentFactory {
         return result == ButtonType.OK;
     }
 
-    public static Boolean showExportDialog(boolean json){
+    public static boolean confirmTextEntryDeletion(TextObjDTO textObjDTO) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Deletion");
+        alert.setHeaderText("Are you sure you want to delete this Text Entry?");
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        setStageIcon(stage);
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+
+        Label accountNameLabel = new Label("Text Title: " + textObjDTO.getTextTitle());
+        vbox.getChildren().addAll(accountNameLabel);
+
+        alert.getDialogPane().setContent(vbox);
+
+        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+        return result == ButtonType.OK;
+    }
+
+    public static Boolean showExportDialog(boolean json) {
         String fileFormat = json ? "Json" : "Txt";
         String encryptedOption = "Encrypted";
         String unencryptedOption = "Unencrypted";
@@ -188,7 +214,7 @@ public class ComponentFactory {
         dialogPane.getStylesheets().add(SecureInformationStore.class.getResource("styles/dark-theme.css").toExternalForm());
 
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        setWindowsTitle(stage, String.format("Exporting via %s",fileFormat));
+        setWindowsTitle(stage, String.format("Exporting via %s", fileFormat));
         setStageIcon(stage);
 
         Optional<String> result = dialog.showAndWait();
@@ -197,7 +223,7 @@ public class ComponentFactory {
     }
 
     public static VBox getPasswordComponent() throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("PasswordgenComponent.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/PasswordgenComponent.fxml"));
         VBox passwordgenComponent = loader.load();
         return passwordgenComponent;
     }
@@ -215,7 +241,7 @@ public class ComponentFactory {
         stage.setTitle(title);
     }
 
-    public static void setStageIcon(Stage stage){
+    public static void setStageIcon(Stage stage) {
         DataStore dataStore = DataStore.getInstance();
         Image icon = (Image) dataStore.getObject("default_icon");
         stage.getIcons().add(icon);

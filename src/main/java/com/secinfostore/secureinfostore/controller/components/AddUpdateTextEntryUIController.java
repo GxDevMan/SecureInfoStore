@@ -1,5 +1,7 @@
-package com.secinfostore.secureinfostore.controller;
+package com.secinfostore.secureinfostore.controller.components;
 
+import com.secinfostore.secureinfostore.controller.interfaces.AddUpdateContract;
+import com.secinfostore.secureinfostore.model.InformationFactory;
 import com.secinfostore.secureinfostore.model.TextObj;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,10 +31,11 @@ public class AddUpdateTextEntryUIController {
     private TextArea tagsEntryArea;
 
 
-
     public void setAddUpdateTextEntryUIController(Stage stage, AddUpdateContract contract) {
         this.contract = contract;
         this.stage = stage;
+
+        addUpdateBTN.setText("Add");
     }
 
     public void setAddUpdateTextEntryUIController(Stage stage, AddUpdateContract contract, TextObj textObj) {
@@ -43,13 +46,35 @@ public class AddUpdateTextEntryUIController {
         titleTextField.setText(textObj.getTextTitle());
         textEntryArea.setText(textObj.getTextInformation());
         tagsEntryArea.setText(textObj.getTags());
+        addUpdateBTN.setText("Update");
     }
 
     public void buttonClick(ActionEvent event) {
-        if (event.getSource().equals(addUpdateBTN)){
-            System.out.println("Adding");
-        } else if (event.getSource().equals(cancelBTN)){
+        if (event.getSource().equals(addUpdateBTN)) {
+            addRecordToDB();
+        } else if (event.getSource().equals(cancelBTN)) {
             stage.close();
         }
+    }
+
+    private void addRecordToDB() {
+
+        String title = titleTextField.getText().trim();
+        String textEntry = textEntryArea.getText().trim();
+        String tagsEntry = tagsEntryArea.getText().trim();
+
+        TextObj entityToSave = null;
+
+        if (this.textObj == null){
+            entityToSave = InformationFactory.newTextEntry(title,textEntry,tagsEntry);
+        } else {
+            this.textObj.setTextTitle(title);
+            this.textObj.setTextInformation(textEntry);
+            this.textObj.setTags(tagsEntry);
+            entityToSave = this.textObj;
+        }
+
+        this.contract.saveEntityToDB(entityToSave);
+        this.stage.close();
     }
 }

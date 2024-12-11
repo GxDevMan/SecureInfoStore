@@ -1,4 +1,4 @@
-package com.secinfostore.secureinfostore.controller;
+package com.secinfostore.secureinfostore.controller.components;
 
 import com.secinfostore.secureinfostore.customskin.KeyTextFieldSkin;
 import com.secinfostore.secureinfostore.util.ClipboardHandler;

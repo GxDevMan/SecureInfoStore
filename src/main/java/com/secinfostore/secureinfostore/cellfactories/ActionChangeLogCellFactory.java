@@ -1,6 +1,6 @@
 package com.secinfostore.secureinfostore.cellfactories;
 
-import com.secinfostore.secureinfostore.controller.ChangeLogContract;
+import com.secinfostore.secureinfostore.controller.interfaces.ChangeLogContract;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;

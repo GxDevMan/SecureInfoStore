@@ -17,4 +17,8 @@ module com.secinfostore.secureinfostore {
 
     exports com.secinfostore.secureinfostore;
     exports com.secinfostore.secureinfostore.controller;
+    exports com.secinfostore.secureinfostore.controller.interfaces;
+    opens com.secinfostore.secureinfostore.controller.interfaces;
+    exports com.secinfostore.secureinfostore.controller.components;
+    opens com.secinfostore.secureinfostore.controller.components;
 }

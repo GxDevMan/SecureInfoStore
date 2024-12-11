@@ -23,17 +23,34 @@ public class TextObj {
     public TextObj() {
     }
 
-    public TextObj(long textId, Timestamp timeModified, String textTitle, String textInformation) {
+    public TextObj(TextObj other) {
+        this.textId = other.textId;
+        this.timeModified = other.timeModified;
+        this.textTitle = other.textTitle;
+        this.textInformation = other.textInformation;
+        this.tags = other.tags;
+    }
+
+    public TextObj(long textId, Timestamp timeModified, String textTitle, String tags) {
+        this.textId = textId;
+        this.timeModified = timeModified;
+        this.textTitle = textTitle;
+        this.tags = tags;
+    }
+
+    public TextObj(long textId, Timestamp timeModified, String textTitle, String textInformation, String tags) {
         this.textId = textId;
         this.timeModified = timeModified;
         this.textTitle = textTitle;
         this.textInformation = textInformation;
+        this.tags = tags;
     }
 
-    public TextObj(Timestamp timeModified, String textTitle, String textInformation) {
+    public TextObj(Timestamp timeModified, String textTitle, String textInformation, String tags) {
         this.timeModified = timeModified;
         this.textTitle = textTitle;
         this.textInformation = textInformation;
+        this.tags = tags;
     }
 
     public long getTextId() {

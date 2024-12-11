@@ -1,5 +1,6 @@
-package com.secinfostore.secureinfostore.controller;
+package com.secinfostore.secureinfostore.controller.components;
 
+import com.secinfostore.secureinfostore.controller.interfaces.UpdateDeleteViewConfirmContract;
 import com.secinfostore.secureinfostore.customskin.KeyTextFieldSkin;
 import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.util.ClipboardHandler;
@@ -76,9 +77,9 @@ public class AccountsPreviewComponentController {
         } else if (event.getSource().equals(copyPasswordBTN)) {
             ClipboardHandler.pasteTextToClipboard(passwordTxtField.getText());
         } else if (event.getSource().equals(updateBTN)) {
-            this.contract.viewUpdateAccount(this.account);
+            this.contract.viewUpdateObj(this.account);
         } else if (event.getSource().equals(deleteBTN)) {
-            this.contract.confirmDeleteAccount(this.account);
+            this.contract.confirmDeleteObj(this.account);
         }
     }
 

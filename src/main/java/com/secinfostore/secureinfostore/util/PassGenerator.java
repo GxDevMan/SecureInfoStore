@@ -1,8 +1,9 @@
 package com.secinfostore.secureinfostore.util;
 
 import java.security.SecureRandom;
+
 public class PassGenerator {
-    public static String generatePassword(String Characters,int length){
+    public static String generatePassword(String Characters, int length) {
         StringBuilder password = new StringBuilder();
         SecureRandom random = new SecureRandom();
 

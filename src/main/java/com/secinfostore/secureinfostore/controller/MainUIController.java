@@ -4,6 +4,11 @@ import com.secinfostore.secureinfostore.cellfactories.ActionAccountsCellFactory;
 import com.secinfostore.secureinfostore.cellfactories.ImageLogoCellFactory;
 import com.secinfostore.secureinfostore.cellfactories.PasswordAccountCellFactory;
 import com.secinfostore.secureinfostore.cellfactories.TextCopyCellFactory;
+import com.secinfostore.secureinfostore.controller.components.ComponentFactory;
+import com.secinfostore.secureinfostore.controller.components.ErrorDialog;
+import com.secinfostore.secureinfostore.controller.components.FileLoadSaving;
+import com.secinfostore.secureinfostore.controller.interfaces.AddUpdateContract;
+import com.secinfostore.secureinfostore.controller.interfaces.UpdateDeleteViewConfirmContract;
 import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.util.*;
 import javafx.application.Platform;
@@ -272,7 +277,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
     }
 
     @Override
-    public void saveAccountToDB(AccountObj account) {
+    public void saveEntityToDB(AccountObj account) {
         Thread thread = new Thread(() -> {
             DatabaseHandler.saveAccount(account);
             Optional<List<AccountObj>> accountObjListOptional;
@@ -286,7 +291,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
     }
 
     @Override
-    public void viewUpdateAccount(AccountObj account) {
+    public void viewUpdateObj(AccountObj account) {
         try {
             ComponentFactory.addUpdateAccountUI(account, this);
         } catch (Exception e) {
@@ -295,7 +300,7 @@ public class MainUIController extends BaseController implements AddUpdateContrac
     }
 
     @Override
-    public void confirmDeleteAccount(AccountObj account) {
+    public void confirmDeleteObj(AccountObj account) {
         if (ComponentFactory.confirmAccountDeletion(account)) {
             Thread thread = new Thread(() -> {
                 DatabaseHandler.deleteAccount(account);

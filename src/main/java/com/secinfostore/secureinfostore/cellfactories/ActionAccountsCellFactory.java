@@ -1,5 +1,5 @@
 package com.secinfostore.secureinfostore.cellfactories;
-import com.secinfostore.secureinfostore.controller.UpdateDeleteViewConfirmContract;
+import com.secinfostore.secureinfostore.controller.interfaces.UpdateDeleteViewConfirmContract;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -24,14 +24,14 @@ public class ActionAccountsCellFactory<S> implements Callback<TableColumn<S, Voi
                 updateButton.setOnAction(event -> {
                     S rowData = getTableRow().getItem();
                     if (rowData != null) {
-                        contract.viewUpdateAccount(rowData);
+                        contract.viewUpdateObj(rowData);
                     }
                 });
 
                 deleteButton.setOnAction(event -> {
                     S rowData = getTableRow().getItem();
                     if (rowData != null) {
-                        contract.confirmDeleteAccount(rowData);
+                        contract.confirmDeleteObj(rowData);
                     }
                 });
             }

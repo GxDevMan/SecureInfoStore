@@ -1,4 +1,4 @@
-package com.secinfostore.secureinfostore.controller;
+package com.secinfostore.secureinfostore.controller.components;
 
 import com.secinfostore.secureinfostore.model.AccountObj;
 import com.secinfostore.secureinfostore.model.InformationFactory;

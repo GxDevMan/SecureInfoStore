@@ -1,6 +1,8 @@
 package com.secinfostore.secureinfostore.controller;
 
 import com.secinfostore.secureinfostore.SecureInformationStore;
+import com.secinfostore.secureinfostore.controller.components.ErrorDialog;
+import com.secinfostore.secureinfostore.controller.interfaces.WindowMediator;
 import com.secinfostore.secureinfostore.util.DataStore;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -1,4 +1,4 @@
-package com.secinfostore.secureinfostore.controller;
+package com.secinfostore.secureinfostore.controller.interfaces;
 
 public interface WindowMediator {
     void switchTo(String screenName, Object data);

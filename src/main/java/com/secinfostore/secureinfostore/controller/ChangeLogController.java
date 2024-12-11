@@ -4,6 +4,8 @@ import com.secinfostore.secureinfostore.SecureInformationStore;
 import com.secinfostore.secureinfostore.cellfactories.ActionChangeLogCellFactory;
 import com.secinfostore.secureinfostore.cellfactories.PasswordChangeLogCellFactory;
 import com.secinfostore.secureinfostore.cellfactories.TimeStampChangeLogCellFactory;
+import com.secinfostore.secureinfostore.controller.components.ComponentFactory;
+import com.secinfostore.secureinfostore.controller.interfaces.ChangeLogContract;
 import com.secinfostore.secureinfostore.model.ChangeLogObj;
 import com.secinfostore.secureinfostore.util.DatabaseHandler;
 import javafx.collections.FXCollections;
