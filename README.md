@@ -1,19 +1,29 @@
-## Secure Information Store Project
+# Secure Information Store Project
 
-This project is a complete rewrite of my previous project named "Account Logging",
-it expands on the previous project by including various additional features.
+
+This JavaFX project is a complete rewrite of my previous project named "accountLogging" repository,
+it expands on the previous project by including various additional features. The aim of this
+project is to make it easier to maintain and read by using design patterns. 
+
+
+Secure your accounts Information with an AES-GCM 256 key saved to a file. In addition to this, 
+secure sensitive information using the same key with the text entries feature. 
+Titles and Text Information is secured using GCM mode while tags are secured using ECB mode for
+searchability. The encryptor window of the app allows you to create different
+keys to secure different messages. Use the key to encrypt text which you can then save to
+text files or any other medium.
 
 Logo used is made by Maniprasanth
 
-
-### Design Patterns Used
+## Design Patterns Used
 
 - Factory
 - Mediator
 - Singleton
+- Observer
 
 
-### Features
+## Features
 
 
 - Platform Logos can be saved
@@ -31,18 +41,23 @@ Logo used is made by Maniprasanth
   
 
   - Unencrypted Fields
-    - Platform
+    - Platform Name
     - Platform Logo (byte Array)
 
 
 - Text Encryptor Window
   - Encryption/Decryption of Text via a loaded key
+  - Single Block or Multi Block Treatment of Text
 
 
 - Exporting of Accounts
   - Json Encrypted or Unencrypted
   - Txt Encrypted or Unencrypted
 
-### Requirements
+## Requirements
 
 -   Minimum JDK 14
+
+## Feature Ideas
+
+-   File Encryptor
