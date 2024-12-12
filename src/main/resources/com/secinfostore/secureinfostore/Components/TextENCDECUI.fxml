@@ -34,8 +34,18 @@
                <children>
                   <Button fx:id="pasteBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Text to Input" />
                   <Button fx:id="computeOutputBTN" mnemonicParsing="false" onAction="#buttonClick" text="Process" />
-                  <CheckBox fx:id="encCheckbox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Encrypt" />
-                  <CheckBox fx:id="decCheckbox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Decrypt" />
+                  <VBox>
+                     <children>
+                        <CheckBox fx:id="encCheckbox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Encrypt" />
+                        <CheckBox fx:id="decCheckbox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Decrypt" />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <CheckBox fx:id="singleBlockCheckBox" onAction="#checkBoxHandle" mnemonicParsing="false" text="Single Block" />
+                        <CheckBox fx:id="multiBlockCheckBox" onAction="#checkBoxHandle" mnemonicParsing="false" text="Multi Block" />
+                     </children>
+                  </VBox>
                </children>
             </HBox>
 

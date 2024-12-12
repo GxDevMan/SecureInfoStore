@@ -44,6 +44,12 @@ public class TextENCDECController {
     private CheckBox encCheckbox;
 
     @FXML
+    private CheckBox singleBlockCheckBox;
+
+    @FXML
+    private CheckBox multiBlockCheckBox;
+
+    @FXML
     private CheckBox revealKeyCheckBox;
 
     public void initialize() {
@@ -53,6 +59,9 @@ public class TextENCDECController {
         computeOutputBTN.setText("Decrypt");
         decCheckbox.setSelected(true);
         encCheckbox.setSelected(false);
+
+        singleBlockCheckBox.setSelected(true);
+        multiBlockCheckBox.setSelected(false);
     }
 
     public void setTextENCDECController(SecretKey key) {
@@ -115,6 +124,12 @@ public class TextENCDECController {
         } else if (event.getSource().equals(revealKeyCheckBox)) {
             keyTextFieldSkin.setReveal(revealKeyCheckBox.isSelected());
             keyFieldTxtField.setText(keyFieldTxtField.getText());
+        } else if (event.getSource().equals(singleBlockCheckBox)) {
+            singleBlockCheckBox.setSelected(true);
+            multiBlockCheckBox.setSelected(false);
+        } else if (event.getSource().equals(multiBlockCheckBox)) {
+            singleBlockCheckBox.setSelected(false);
+            multiBlockCheckBox.setSelected(true);
         }
     }
 
@@ -130,23 +145,64 @@ public class TextENCDECController {
         boolean decrypt = decCheckbox.isSelected();
         boolean encrypt = encCheckbox.isSelected();
 
+        boolean singleBlock = singleBlockCheckBox.isSelected();
+        boolean multiBlock = multiBlockCheckBox.isSelected();
+
+        String inputText = inputTextArea.getText();
         String textToDisplay = "";
 
         try {
-            if (decrypt && !encrypt) {
-                String encText = inputTextArea.getText().trim();
-                String decText = EncryptionDecryption.decryptAESGCM(encText, key);
-                textToDisplay = decText;
-            }
-            if (!decrypt && encrypt) {
-                String baseTxt = inputTextArea.getText().trim();
-                String encText = EncryptionDecryption.encryptAESGCM(baseTxt, key);
-                textToDisplay = encText;
+            if (decrypt ^ encrypt) {
+                if (singleBlock ^ multiBlock) {
+                    if (decrypt) {
+                        textToDisplay = singleBlock ? singleBlockDec(inputText, key) : multiBlockDec(inputText, key);
+                    } else {
+                        textToDisplay = singleBlock ? singleBlockEnc(inputText, key) : multiBlockEnc(inputText, key);
+                    }
+                }
             }
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(new Exception("DEC/ENC failed"), "DEC/ENC Failed", "There was a problem performing this action");
             return;
         }
         outputTextArea.setText(textToDisplay);
+    }
+
+    private String singleBlockDec (String encText, SecretKey key) throws Exception {
+        String decText = EncryptionDecryption.decryptAESGCM(encText.trim(), key);
+        return decText;
+    }
+
+    private String singleBlockEnc (String decText, SecretKey key) throws Exception {
+        String encText = EncryptionDecryption.encryptAESGCM(decText.trim(), key);
+        return encText;
+    }
+
+    private String multiBlockEnc (String decText, SecretKey key) throws Exception {
+        StringBuilder encryptedText = new StringBuilder();
+
+        // Matches one or more blank or whitespace-only lines
+        String[] paragraphs = decText.split("(\\r?\\n\\s*)+");
+        for (String paragraph : paragraphs) {
+            if (!paragraph.trim().isEmpty()) {
+                String encParagraph = EncryptionDecryption.encryptAESGCM(paragraph.trim(), key);
+                encryptedText.append(encParagraph).append("\n\n");
+            }
+        }
+        return encryptedText.toString().trim();
+    }
+
+    private String multiBlockDec (String encText, SecretKey key) throws Exception {
+        StringBuilder decryptedText = new StringBuilder();
+
+        String[] encryptedParagraphs = encText.split("(\\r?\\n\\s*)+");
+        for (String encParagraph : encryptedParagraphs) {
+            if (!encParagraph.trim().isEmpty()) {
+                String decParagraph = EncryptionDecryption.decryptAESGCM(encParagraph.trim(), key);
+                decryptedText.append(decParagraph).append("\n\n");
+            }
+        }
+
+        return decryptedText.toString().trim();
     }
 }
