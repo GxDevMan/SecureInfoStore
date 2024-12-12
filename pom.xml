@@ -86,7 +86,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.secinfostore.secureinfostore/com.secinfostore.secureinfostore.SecureInformationStore
+                                com.secinfostore.secureinfostore/com.secinfostore.SecureInformationStore
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

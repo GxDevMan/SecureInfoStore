@@ -10,15 +10,15 @@ module com.secinfostore.secureinfostore {
     requires java.naming;
     requires javafx.swing;
 
-    opens com.secinfostore.secureinfostore.controller;
-    opens com.secinfostore.secureinfostore.exception;
-    opens com.secinfostore.secureinfostore.model;
-    opens com.secinfostore.secureinfostore.util;
+    opens com.secinfostore.controller;
+    opens com.secinfostore.exception;
+    opens com.secinfostore.model;
+    opens com.secinfostore.util;
 
-    exports com.secinfostore.secureinfostore;
-    exports com.secinfostore.secureinfostore.controller;
-    exports com.secinfostore.secureinfostore.controller.interfaces;
-    opens com.secinfostore.secureinfostore.controller.interfaces;
-    exports com.secinfostore.secureinfostore.controller.components;
-    opens com.secinfostore.secureinfostore.controller.components;
+    exports com.secinfostore;
+    exports com.secinfostore.controller;
+    exports com.secinfostore.controller.interfaces;
+    opens com.secinfostore.controller.interfaces;
+    exports com.secinfostore.controller.components;
+    opens com.secinfostore.controller.components;
 }

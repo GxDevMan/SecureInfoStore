@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.secinfostore.controller.components.TextEntryUIComponentController">
+    <stylesheets>
+        <URL value="@../styles/dark-theme.css"/>
+    </stylesheets>
+    <children>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.leftAnchor="0.0">
+            <children>
+                <TitledPane text="Title" VBox.vgrow="ALWAYS">
+                    <content>
+                        <AnchorPane VBox.vgrow="ALWAYS">
+                            <children>
+                                <TextField
+                                        VBox.vgrow="ALWAYS"
+                                        fx:id="titleTextField" disable="true" AnchorPane.leftAnchor="0.0"
+                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                                           AnchorPane.bottomAnchor="0.0"/>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </TitledPane>
+                <Label fx:id="timeLBL" text="Last Edited: %s" VBox.vgrow="ALWAYS"/>
+                <TitledPane text="Tags" VBox.vgrow="ALWAYS">
+                    <content>
+                        <AnchorPane VBox.vgrow="ALWAYS">
+                            <children>
+                                <TextArea fx:id="tagsTextArea" disable="true" prefHeight="100.0" prefWidth="400.0"
+                                          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </TitledPane>
+                <HBox>
+                    <children>
+                        <Button fx:id="viewBTN" mnemonicParsing="false" onAction="#buttonClick" text="View"/>
+                        <Button fx:id="deleteBTN" mnemonicParsing="false" onAction="#buttonClick" text="Delete"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

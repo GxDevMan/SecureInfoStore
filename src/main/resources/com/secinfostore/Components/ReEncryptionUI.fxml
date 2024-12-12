@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.controller.components.ReEncryptionController">
+    <stylesheets>
+        <URL value="@../styles/dark-theme.css" />
+    </stylesheets>
+   <children>
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="DO NOT CLOSE!!" textFill="RED" VBox.vgrow="ALWAYS" />
+            <Label fx:id="statusLBL" text="Status: %s" VBox.vgrow="ALWAYS" />
+            <ProgressBar fx:id="progressBar" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+            <Button fx:id="closeBTN" disable="true" onAction="#buttonClick" text="Close" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

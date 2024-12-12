@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.secinfostore.controller.components.AccountsPreviewComponentController">
+    <stylesheets>
+        <URL value="@../styles/dark-theme.css"/>
+    </stylesheets>
+    <children>
+        <VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10">
+            <children>
+                <!-- Card Layout -->
+                <StackPane>
+                    <VBox spacing="15">
+                        <!-- Header Section -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <children>
+                                <ImageView fx:id="platformLogoView" fitHeight="50.0" fitWidth="50.0" preserveRatio="true"/>
+                                <Label fx:id="platformLBL"/>
+                            </children>
+                        </HBox>
+                        <!-- Details Section -->
+                        <TitledPane text="Account Details" expanded="true">
+                            <content>
+                                <VBox spacing="10" alignment="CENTER_LEFT">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="User Name:"/>
+                                        <Label fx:id="userNameLBL"/>
+                                        <Button fx:id="copyUsernameBTN" text="Copy" mnemonicParsing="false" onAction="#buttonClick"/>
+                                    </HBox>
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="Email:"/>
+                                        <Label fx:id="emailLBL"/>
+                                        <Button fx:id="copyEmailBTN" text="Copy" mnemonicParsing="false" onAction="#buttonClick"/>
+                                    </HBox>
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="Password:"/>
+                                        <PasswordField fx:id="passwordTxtField" disable="true" editable="false"/>
+                                        <CheckBox fx:id="revealPassCheckBox" text="Reveal" mnemonicParsing="false" onAction="#revealPass"/>
+                                        <Button fx:id="copyPasswordBTN" text="Copy" mnemonicParsing="false" onAction="#buttonClick"/>
+                                    </HBox>
+                                </VBox>
+                            </content>
+                        </TitledPane>
+                        <!-- Action Buttons -->
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <children>
+                                <Button fx:id="updateBTN" text="Update" mnemonicParsing="false" onAction="#buttonClick"/>
+                                <Button fx:id="deleteBTN" text="Delete" mnemonicParsing="false" onAction="#buttonClick" style="-fx-background-color: #ff5555; -fx-text-fill: #ffffff;"/>
+                            </children>
+                        </HBox>
+                    </VBox>
+                </StackPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
