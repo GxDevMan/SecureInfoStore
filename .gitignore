@@ -45,3 +45,6 @@ build/
 *.png
 *.key
 *.txt
+
+### White List ###
+!shield.png

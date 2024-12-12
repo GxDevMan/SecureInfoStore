@@ -29,7 +29,7 @@ public class SecureInformationStore extends Application {
     }
 
     public static void initializationCode() {
-        Image icon = new Image("F:\\Feivel\\Programming\\IntelliJ\\SecureInfoStore\\src\\main\\resources\\com\\secinfostore\\secureinfostore\\ico\\shield.png");
+        Image icon = new Image((SecureInformationStore.class.getResource("/com/secinfostore/secureinfostore/ico/shield.png").toExternalForm()));
 
         DataStore dataStore = DataStore.getInstance();
         Map<String, String> config = ConfigHandler.getConfig();
