@@ -50,7 +50,11 @@
             <artifactId>sqlite-dialect</artifactId>
             <version>0.1.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.nayuki</groupId>
+            <artifactId>qrcodegen</artifactId>
+            <version>1.8.0</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

@@ -41,8 +41,8 @@ public class InformationFactory {
         SecretKey key = getKey();
 
         try {
-            accountObj.setEmail(EncryptionDecryption.encryptAESGCM(accountObj.getEmail(), key));
-            accountObj.setPassword(EncryptionDecryption.encryptAESGCM(accountObj.getPassword(), key));
+            accountObj.setUserEmail(EncryptionDecryption.encryptAESGCM(accountObj.getUserEmail(), key));
+            accountObj.setUserPassword(EncryptionDecryption.encryptAESGCM(accountObj.getUserPassword(), key));
             accountObj.setUserName(EncryptionDecryption.encryptAESGCM(accountObj.getUserName(), key));
         } catch (Exception e) {
 
@@ -54,8 +54,8 @@ public class InformationFactory {
         SecretKey key = getKey();
         try {
             accountObj.setUserName(EncryptionDecryption.decryptAESGCM(accountObj.getUserName(), key));
-            accountObj.setEmail(EncryptionDecryption.decryptAESGCM(accountObj.getEmail(), key));
-            accountObj.setPassword(EncryptionDecryption.decryptAESGCM(accountObj.getPassword(), key));
+            accountObj.setUserEmail(EncryptionDecryption.decryptAESGCM(accountObj.getUserEmail(), key));
+            accountObj.setUserPassword(EncryptionDecryption.decryptAESGCM(accountObj.getUserPassword(), key));
         } catch (Exception e) {
 
         }
@@ -80,7 +80,7 @@ public class InformationFactory {
         try {
             title = EncryptionDecryption.encryptAESGCM(title, key);
             textInfo = EncryptionDecryption.encryptAESGCM(textInfo, key);
-            tags = tagEcbBlockENC(tags);
+            tags = tagEcbBlockENC(tags, key);
         } catch (Exception e) {
 
         }
@@ -93,7 +93,7 @@ public class InformationFactory {
         try {
             textObj.setTextInformation(EncryptionDecryption.decryptAESGCM(textObj.getTextInformation(), key));
             textObj.setTextTitle(EncryptionDecryption.decryptAESGCM(textObj.getTextTitle(), key));
-            textObj.setTags(tagEcbBlockDEC(textObj.getTags()));
+            textObj.setTags(tagEcbBlockDEC(textObj.getTags(), key));
         } catch (Exception e) {
 //            e.printStackTrace();
         }
@@ -106,7 +106,7 @@ public class InformationFactory {
             textObj.setTextTitle(EncryptionDecryption.decryptAESGCM(textObj.getTextTitle(), key));
 
             if (textObj.getTags() != null) {
-                textObj.setTags(tagEcbBlockDEC(textObj.getTags()));
+                textObj.setTags(tagEcbBlockDEC(textObj.getTags(), key));
             }
 
         } catch (Exception e) {
@@ -120,7 +120,7 @@ public class InformationFactory {
         try {
             textObj.setTextTitle(EncryptionDecryption.encryptAESGCM(textObj.getTextTitle(), key));
             textObj.setTextInformation(EncryptionDecryption.encryptAESGCM(textObj.getTextInformation(), key));
-            textObj.setTags(tagEcbBlockENC(textObj.getTags()));
+            textObj.setTags(tagEcbBlockENC(textObj.getTags(), key));
         } catch (Exception e) {
 
         }
@@ -130,8 +130,8 @@ public class InformationFactory {
     public static AccountObj reEncryptAccountObj(AccountObj accountObj, SecretKey newKey) {
         try {
             accountObj.setUserName(EncryptionDecryption.encryptAESGCM(accountObj.getUserName(), newKey));
-            accountObj.setPassword(EncryptionDecryption.encryptAESGCM(accountObj.getPassword(), newKey));
-            accountObj.setEmail(EncryptionDecryption.encryptAESGCM(accountObj.getEmail(), newKey));
+            accountObj.setUserPassword(EncryptionDecryption.encryptAESGCM(accountObj.getUserPassword(), newKey));
+            accountObj.setUserEmail(EncryptionDecryption.encryptAESGCM(accountObj.getUserEmail(), newKey));
         } catch (Exception e) {
 
         }
@@ -155,28 +155,14 @@ public class InformationFactory {
         try {
             textEntry.setTextTitle(EncryptionDecryption.encryptAESGCM(textEntry.getTextTitle(), newKey));
             textEntry.setTextInformation(EncryptionDecryption.encryptAESGCM(textEntry.getTextInformation(), newKey));
-            textEntry.setTags(tagEcbBlockENCNewKey(textEntry.getTags(),newKey));
+            textEntry.setTags(tagEcbBlockENC(textEntry.getTags(),newKey));
         } catch (Exception e) {
 //            e.printStackTrace();
         }
         return textEntry;
     }
 
-    public static String tagEcbBlockENCNewKey(String tags, SecretKey newkey) throws Exception {
-        StringBuilder compile = new StringBuilder();
-        String[] tagsArr =tags.split(" ");
-        for (String tag : tagsArr) {
-            compile.append(EncryptionDecryption.encryptAESECB(tag, newkey)).append(" ");
-        }
-
-        if (compile.length() > 0) {
-            compile.setLength(compile.length() - 1);
-        }
-        return compile.toString();
-    }
-
-    public static String tagEcbBlockENC(String tags) throws Exception {
-        SecretKey key = getKey();
+    public static String tagEcbBlockENC(String tags, SecretKey key) throws Exception {
         StringBuilder compile = new StringBuilder();
         String[] tagsArr =tags.split(" ");
         for (String tag : tagsArr) {
@@ -190,8 +176,7 @@ public class InformationFactory {
     }
 
 
-    public static String tagEcbBlockDEC(String tags) throws Exception {
-        SecretKey key = getKey();
+    public static String tagEcbBlockDEC(String tags, SecretKey key) throws Exception {
         StringBuilder compile = new StringBuilder();
         String[] tagsArr = tags.split(" ");
         for (String tag : tagsArr) {
@@ -205,7 +190,7 @@ public class InformationFactory {
     }
 
     public static ChangeLogObj newChangeLog(AccountObj account) {
-        return new ChangeLogObj(account, getNowDate(), account.getPlatformName(), account.getUserName(), account.getEmail(), account.getPassword());
+        return new ChangeLogObj(account, getNowDate(), account.getUserPlatform(), account.getUserName(), account.getUserEmail(), account.getUserPassword());
     }
 
     private static SecretKey getKey() {

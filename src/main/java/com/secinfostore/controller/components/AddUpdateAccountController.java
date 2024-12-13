@@ -84,10 +84,10 @@ public class AddUpdateAccountController {
         this.contract = contract;
         this.stage = stage;
         accountObj = account;
-        platformTxtField.setText(accountObj.getPlatformName());
+        platformTxtField.setText(accountObj.getUserPlatform());
         usernameTxtField.setText(accountObj.getUserName());
-        emailTxtField.setText(account.getEmail());
-        passwordField.setText(accountObj.getPassword());
+        emailTxtField.setText(account.getUserEmail());
+        passwordField.setText(accountObj.getUserPassword());
         addUpdateBTN.setText("Update");
 
         byte[] thumbnailByte = accountObj.getPlatformThumbnail();
@@ -155,9 +155,9 @@ public class AddUpdateAccountController {
 
     private void addorUpdateAccountToDB() {
         if (this.accountObj != null) {
-            this.accountObj.setPlatformName(platformTxtField.getText().trim());
-            this.accountObj.setPassword(passwordField.getText().trim());
-            this.accountObj.setEmail(emailTxtField.getText().trim());
+            this.accountObj.setUserPlatform(platformTxtField.getText().trim());
+            this.accountObj.setUserPassword(passwordField.getText().trim());
+            this.accountObj.setUserEmail(emailTxtField.getText().trim());
             this.accountObj.setUserName(usernameTxtField.getText().trim());
 
             Image image = this.thumbnailImage.getImage();

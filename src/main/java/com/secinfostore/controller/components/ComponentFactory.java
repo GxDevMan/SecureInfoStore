@@ -61,6 +61,20 @@ public class ComponentFactory {
         stage.show();
     }
 
+    public static void displayQRCode(Image image) throws Exception {
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/ImageViewUI.fxml"));
+        Scene scene = new Scene(loader.load());
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.initModality(Modality.WINDOW_MODAL);
+
+        setWindowsTitle(stage, "QR Code");
+        setStageIcon(stage);
+
+        ImageViewUIController controller = loader.getController();
+        controller.setImageViewUIController(image, stage);
+    }
+
     public static void addUpdateTextUI(AddUpdateContract contract) throws Exception {
         FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/AddUpdateTextEntryUI.fxml"));
         Scene scene = new Scene(loader.load());
@@ -182,7 +196,7 @@ public class ComponentFactory {
         vbox.setSpacing(10);
 
         Label accountNameLabel = new Label("Account User Name: " + account.getUserName());
-        Label accountEmailLabel = new Label("Account Email: " + account.getEmail());
+        Label accountEmailLabel = new Label("Account Email: " + account.getUserEmail());
         vbox.getChildren().addAll(accountNameLabel, accountEmailLabel);
 
         alert.getDialogPane().setContent(vbox);

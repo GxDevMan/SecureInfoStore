@@ -13,7 +13,7 @@ public class AccountObj {
     private long accountId;
 
     @JsonView(Views.Public.class)
-    private String platformName;
+    private String userPlatform;
 
     @Column(columnDefinition = "TEXT")
     @JsonView(Views.Public.class)
@@ -22,12 +22,12 @@ public class AccountObj {
 
     @Column(columnDefinition = "TEXT")
     @JsonView(Views.Public.class)
-    private String email;
+    private String userEmail;
 
 
     @Column(columnDefinition = "TEXT")
     @JsonView(Views.Public.class)
-    private String password;
+    private String userPassword;
 
     private byte[] platformThumbnail;
 
@@ -37,20 +37,20 @@ public class AccountObj {
     public AccountObj() {
     }
 
-    public AccountObj(String platformName, String userName, String email, String password, byte[] platformThumbnail) {
-        this.platformName = platformName;
+    public AccountObj(String userPlatform, String userName, String userEmail, String userPassword, byte[] platformThumbnail) {
+        this.userPlatform = userPlatform;
         this.userName = userName;
-        this.email = email;
-        this.password = password;
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
         this.platformThumbnail = platformThumbnail;
     }
 
-    public AccountObj(long accountId, String platformName, String userName, String email, String password, byte[] platformThumbnail) {
+    public AccountObj(long accountId, String userPlatform, String userName, String userEmail, String userPassword, byte[] platformThumbnail) {
         this.accountId = accountId;
-        this.platformName = platformName;
+        this.userPlatform = userPlatform;
         this.userName = userName;
-        this.email = email;
-        this.password = password;
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
         this.platformThumbnail = platformThumbnail;
     }
 
@@ -62,12 +62,12 @@ public class AccountObj {
         this.accountId = accountId;
     }
 
-    public String getPlatformName() {
-        return platformName;
+    public String getUserPlatform() {
+        return userPlatform;
     }
 
-    public void setPlatformName(String platformName) {
-        this.platformName = platformName;
+    public void setUserPlatform(String userPlatform) {
+        this.userPlatform = userPlatform;
     }
 
     public String getUserName() {
@@ -78,20 +78,20 @@ public class AccountObj {
         this.userName = userName;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUserPassword() {
+        return userPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
     public byte[] getPlatformThumbnail() {
@@ -114,9 +114,9 @@ public class AccountObj {
     public String toString() {
         return "AccountObj{" +
                 "accountId=" + accountId +
-                ", platformName='" + platformName + '\'' +
+                ", platformName='" + userPlatform + '\'' +
                 ", userName='" + userName + '\'' +
-                ", email='" + email + '\'' +
+                ", email='" + userEmail + '\'' +
                 ", changeLogSize=" + (changeLog != null ? changeLog.size() : 0) +
                 '}';
     }

@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
-public class DataExporterHandler {
+public class DataExporterImporterHandler {
 
     public static void writeToJsonToFile(List<AccountObj> accountsToExport, File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

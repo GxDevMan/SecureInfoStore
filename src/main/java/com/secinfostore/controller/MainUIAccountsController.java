@@ -102,16 +102,16 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
     public void initialize() {
         TextCopyCellFactory<AccountObj> textCopyCellFactory = new TextCopyCellFactory<>();
 
-        this.userPlatformColumn.setCellValueFactory(new PropertyValueFactory<>("platformName"));
+        this.userPlatformColumn.setCellValueFactory(new PropertyValueFactory<>("userPlatform"));
         this.userPlatformColumn.setCellFactory(textCopyCellFactory);
 
         this.userNameColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
         this.userNameColumn.setCellFactory(textCopyCellFactory);
 
-        this.userEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        this.userEmailColumn.setCellValueFactory(new PropertyValueFactory<>("userEmail"));
         this.userEmailColumn.setCellFactory(textCopyCellFactory);
 
-        this.userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
+        this.userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("userPassword"));
         PasswordAccountCellFactory<AccountObj> passwordCellfactory = new PasswordAccountCellFactory<>();
         this.userPasswordColumn.setCellFactory(passwordCellfactory);
 
@@ -217,7 +217,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
             return;
 
         try {
-            Optional<List<AccountObj>> importedAccountsOpt = DataExporterHandler.getAccountsFromJson(selectedJSON);
+            Optional<List<AccountObj>> importedAccountsOpt = DataExporterImporterHandler.getAccountsFromJson(selectedJSON);
             if (importedAccountsOpt.isEmpty()) {
                 return;
             }

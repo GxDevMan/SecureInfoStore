@@ -9,6 +9,7 @@ module com.secinfostore.secureinfostore {
     requires com.fasterxml.jackson.databind;
     requires java.naming;
     requires javafx.swing;
+    requires io.nayuki.qrcodegen;
 
     opens com.secinfostore.controller;
     opens com.secinfostore.exception;

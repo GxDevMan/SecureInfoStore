@@ -2,7 +2,7 @@ package com.secinfostore.controller.components;
 
 import com.secinfostore.model.AccountObj;
 import com.secinfostore.model.InformationFactory;
-import com.secinfostore.util.DataExporterHandler;
+import com.secinfostore.util.DataExporterImporterHandler;
 import com.secinfostore.util.DatabaseHandler;
 import com.secinfostore.util.EncryptionDecryption;
 import com.secinfostore.util.HibernateUtil;
@@ -67,9 +67,9 @@ public class FileLoadSaving {
         }
 
         if(json){
-            DataExporterHandler.writeToJsonToFile(accountList,file);
+            DataExporterImporterHandler.writeToJsonToFile(accountList,file);
         } else{
-            DataExporterHandler.writeAccountsToTextFile(accountList,file);
+            DataExporterImporterHandler.writeAccountsToTextFile(accountList,file);
         }
 
     }

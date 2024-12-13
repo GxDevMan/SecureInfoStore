@@ -158,7 +158,7 @@ public class DatabaseHandler {
         int i = 0;
         try {
             for (AccountObj account : accountList) {
-                AccountObj newAccount = InformationFactory.newAccount(account.getPlatformName(), account.getUserName(), account.getEmail(), account.getPassword(), null);
+                AccountObj newAccount = InformationFactory.newAccount(account.getUserPlatform(), account.getUserName(), account.getUserEmail(), account.getUserPassword(), null);
                 session.save(newAccount);
                 ChangeLogObj changeLogObj = InformationFactory.newChangeLog(newAccount);
                 session.save(changeLogObj);
@@ -192,10 +192,10 @@ public class DatabaseHandler {
             cq.select(cb.construct(
                     AccountObj.class,
                     root.get("accountId"),
-                    root.get("platformName"),
+                    root.get("userPlatform"),
                     root.get("userName"),
-                    root.get("email"),
-                    root.get("password"),
+                    root.get("userEmail"),
+                    root.get("userPassword"),
                     root.get("platformThumbnail")
             ));
 
@@ -238,10 +238,10 @@ public class DatabaseHandler {
             cq.select(cb.construct(
                     AccountObj.class,
                     root.get("accountId"),
-                    root.get("platformName"),
+                    root.get("userPlatform"),
                     root.get("userName"),
-                    root.get("email"),
-                    root.get("password"),
+                    root.get("userEmail"),
+                    root.get("userPassword"),
                     root.get("platformThumbnail")
             ));
 
@@ -374,7 +374,8 @@ public class DatabaseHandler {
             CriteriaQuery<TextObjDTO> cq = cb.createQuery(TextObjDTO.class);
             Root<TextObj> root = cq.from(TextObj.class);
 
-            String enctagSearchKey = InformationFactory.tagEcbBlockENC(tagSearchKey);
+            SecretKey secretKey = (SecretKey) DataStore.getInstance().getObject("default_key");
+            String enctagSearchKey = InformationFactory.tagEcbBlockENC(tagSearchKey, secretKey);
 
             if (ascending) {
                 cq.orderBy(cb.desc(root.get("timeModified")));

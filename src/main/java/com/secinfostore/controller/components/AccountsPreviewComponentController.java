@@ -59,10 +59,10 @@ public class AccountsPreviewComponentController {
     public void setAccountPreview(AccountObj accountObj, UpdateDeleteViewConfirmContract contract) {
         this.account = accountObj;
         this.contract = contract;
-        platformLBL.setText(account.getPlatformName());
+        platformLBL.setText(account.getUserPlatform());
         userNameLBL.setText(account.getUserName());
-        passwordTxtField.setText(account.getPassword());
-        emailLBL.setText(account.getEmail());
+        passwordTxtField.setText(account.getUserPassword());
+        emailLBL.setText(account.getUserEmail());
 
         if (account.getPlatformThumbnail() != null) {
             platformLogoView.setImage(ImageConversion.byteArraytoImage(account.getPlatformThumbnail()));
