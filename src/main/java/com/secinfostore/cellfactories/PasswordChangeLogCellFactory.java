@@ -8,7 +8,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
-
 public class PasswordChangeLogCellFactory<T> implements Callback<TableColumn<T, String>, TableCell<T, String>> {
     @Override
     public TableCell<T, String> call(TableColumn<T, String> column) {

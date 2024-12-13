@@ -5,10 +5,7 @@ import com.secinfostore.model.Validation;
 import com.secinfostore.controller.components.ComponentFactory;
 import com.secinfostore.controller.components.FileLoadSaving;
 import com.secinfostore.customskin.KeyTextFieldSkin;
-import com.secinfostore.util.DataStore;
-import com.secinfostore.util.DatabaseHandler;
-import com.secinfostore.util.EncryptionDecryption;
-import com.secinfostore.util.HibernateUtil;
+import com.secinfostore.util.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,6 +16,7 @@ import javafx.stage.FileChooser;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.Optional;
 
 public class EntryUIController extends BaseController {
@@ -208,8 +206,16 @@ public class EntryUIController extends BaseController {
             hibernateUtil.shutdown();
             return;
         }
+        loadConfigToSingleton();
         this.mediator.switchTo(uiSelected, null);
 
+    }
+
+    private void loadConfigToSingleton(){
+        Map<String, String> config = ConfigHandler.getConfig();
+        DataStore.getInstance().insertObject("default_sorting", config.get("default_sorting"));
+        DataStore.getInstance().insertObject("default_pagesize", Integer.parseInt(config.get("default_pagesize")));
+        DataStore.getInstance().insertObject("default_passwordCharSet", config.get("default_passwordCharSet"));
     }
 
     private void goToEncryptor() {

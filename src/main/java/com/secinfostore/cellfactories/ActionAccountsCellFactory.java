@@ -3,7 +3,6 @@ import com.secinfostore.controller.interfaces.UpdateDeleteViewConfirmContract;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 

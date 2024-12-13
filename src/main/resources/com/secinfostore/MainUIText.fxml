@@ -4,15 +4,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.secinfostore.controller.MainUITextController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.controller.MainUITextController">
     <stylesheets>
-        <URL value="@styles/dark-theme.css"/>
+        <URL value="@styles/dark-theme.css" />
     </stylesheets>
     <children>
-        <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <content>
                 <VBox>
                     <children>
@@ -22,10 +19,8 @@
                                     <children>
                                         <HBox>
                                             <children>
-                                                <Button fx:id="goToEntryUIBTN" mnemonicParsing="false"
-                                                        onAction="#buttonClick" text="Go to Entry UI"/>
-                                                <Button fx:id="goToAccountsBTN" mnemonicParsing="false"
-                                                        onAction="#buttonClick" text="Go To Accounts"/>
+                                                <Button fx:id="goToEntryUIBTN" mnemonicParsing="false" onAction="#buttonClick" text="Go to Entry UI" />
+                                                <Button fx:id="goToAccountsBTN" mnemonicParsing="false" onAction="#buttonClick" text="Go To Accounts" />
                                             </children>
                                         </HBox>
                                     </children>
@@ -38,22 +33,18 @@
                                     <children>
                                         <HBox>
                                             <children>
-                                                <Button fx:id="clearSearchBTN" mnemonicParsing="false"
-                                                        onAction="#buttonClick" text="Clear Search"/>
+                                                <Button fx:id="clearSearchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Clear Search" />
 
-                                                <Button fx:id="searchBTN" mnemonicParsing="false"
-                                                        onAction="#buttonClick" text="Search"/>
-                                                <TextField fx:id="searchTagsTextField" HBox.hgrow="ALWAYS"/>
+                                                <Button fx:id="searchBTN" mnemonicParsing="false" onAction="#buttonClick" text="Search" />
+                                                <TextField fx:id="searchTagsTextField" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>
                                         <HBox>
                                             <children>
-                                                <Button fx:id="addTextEntryBTN" mnemonicParsing="false"
-                                                        onAction="#buttonClick" text="Add Text Entry"/>
-                                                <Button fx:id="resetBTN" mnemonicParsing="false" onAction="#buttonClick"
-                                                        text="Reset"/>
-                                                <Button fx:id="reEncryptBTN" mnemonicParsing="false"
-                                                        onAction="#buttonClick" text="Re Encrypt"/>
+                                    <Button fx:id="settingsBTN" layoutX="282.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Settings" />
+                                                <Button fx:id="addTextEntryBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add Text Entry" />
+                                                <Button fx:id="resetBTN" mnemonicParsing="false" onAction="#buttonClick" text="Reset" />
+                                                <Button fx:id="reEncryptBTN" mnemonicParsing="false" onAction="#buttonClick" text="Re Encrypt" />
                                             </children>
                                         </HBox>
                                     </children>
@@ -62,19 +53,20 @@
                         </TitledPane>
                         <TitledPane text="Text Entries">
                             <content>
-                                <AnchorPane>
+                                <VBox>
                                     <children>
-                                        <ScrollPane
-                                                fx:id="scrollPane"
-                                                fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0"
-                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                AnchorPane.topAnchor="0.0">
-                                            <content>
-                                                <TilePane fx:id="textEntriesTile"/>
-                                            </content>
-                                        </ScrollPane>
+                                        <AnchorPane>
+                                            <children>
+                                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                    <content>
+                                                        <TilePane fx:id="textEntriesTile" />
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                        </AnchorPane>
+                                          <Pagination fx:id="textEntryPagination" maxPageIndicatorCount="5" VBox.vgrow="NEVER" />
                                     </children>
-                                </AnchorPane>
+                                </VBox>
                             </content>
                         </TitledPane>
                     </children>

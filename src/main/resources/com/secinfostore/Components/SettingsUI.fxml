@@ -12,7 +12,7 @@
     <children>
         <HBox spacing="10.0">
             <children>
-                <TextField HBox.hgrow="ALWAYS" fx:id="charsetField" prefWidth="400.0" promptText="enter charset" />
+                <TextField fx:id="charsetField" prefWidth="400.0" promptText="enter charset" HBox.hgrow="ALWAYS" />
             </children>
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -29,6 +29,25 @@
                   <Button fx:id="clearcharBTN" mnemonicParsing="false" onAction="#buttonClick" text="Clear" />
                </children>
             </HBox>
+         </content>
+      </TitledPane>
+      <TitledPane text="Text Pagination Settings">
+         <content>
+            <VBox>
+               <children>
+                  <HBox>
+                     <children>
+                        <Label text="Time Sort:" />
+                        <ChoiceBox fx:id="choiceBoxSort" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label text="Page Size:" />
+                        <Spinner fx:id="pageSizeSPN" />
+                     </children></HBox>
+               </children>
+            </VBox>
          </content>
       </TitledPane>
       <TitledPane text="Closing Actions">

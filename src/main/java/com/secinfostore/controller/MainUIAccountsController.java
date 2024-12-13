@@ -127,7 +127,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
             addAccount();
         } else if (event.getSource().equals(resetBTN)) {
             searchTxtField.setText("");
-            displayAccounts(DatabaseHandler.getAccounts());
+            displayAccounts(DatabaseHandler.getAllAccounts());
         } else if (event.getSource().equals(clearsearchBTN)) {
             searchTxtField.setText("");
         } else if (event.getSource().equals(searchBTN)) {
@@ -183,7 +183,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
         Task<Optional<List<AccountObj>>> task = new Task<>() {
             @Override
             protected Optional<List<AccountObj>> call() {
-                return DatabaseHandler.getAccounts();
+                return DatabaseHandler.getAllAccounts();
             }
         };
 
@@ -222,7 +222,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
             }
             Thread thread = new Thread(() -> {
                 saveImportedAccountsToDB(importedAccountsOpt.get());
-                Optional<List<AccountObj>> refreshedObjList = DatabaseHandler.getAccounts();
+                Optional<List<AccountObj>> refreshedObjList = DatabaseHandler.getAllAccounts();
                 Platform.runLater(() -> {
                     displayAccounts(refreshedObjList);
                 });
@@ -246,7 +246,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
         AtomicReference<Optional<List<AccountObj>>> accountObjListOptional = new AtomicReference<>(Optional.empty());
         Thread thread = new Thread(() -> {
             DatabaseHandler.saveAccount(accountList);
-            accountObjListOptional.set(DatabaseHandler.getAccounts());
+            accountObjListOptional.set(DatabaseHandler.getAllAccounts());
             Platform.runLater(() -> {
                 displayAccounts(accountObjListOptional.get());
             });
@@ -295,7 +295,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
         Thread thread = new Thread(() -> {
             DatabaseHandler.saveAccount(account);
             Optional<List<AccountObj>> accountObjListOptional;
-            accountObjListOptional = DatabaseHandler.getAccounts();
+            accountObjListOptional = DatabaseHandler.getAllAccounts();
             Optional<List<AccountObj>> finalAccountObjListOptional = accountObjListOptional;
             Platform.runLater(() -> {
                 displayAccounts(finalAccountObjListOptional);
@@ -319,7 +319,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
             Thread thread = new Thread(() -> {
                 DatabaseHandler.deleteAccount(account);
                 Optional<List<AccountObj>> accountObjListOptional;
-                accountObjListOptional = DatabaseHandler.getAccounts();
+                accountObjListOptional = DatabaseHandler.getAllAccounts();
                 Optional<List<AccountObj>> finalAccountObjListOptional = accountObjListOptional;
                 Platform.runLater(() -> {
                     displayAccounts(finalAccountObjListOptional);
@@ -340,7 +340,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
 
         Thread thread = new Thread(() -> {
             Optional<List<AccountObj>> accountObjListOptional;
-            accountObjListOptional = DatabaseHandler.getAccounts();
+            accountObjListOptional = DatabaseHandler.getAllAccounts();
             Optional<List<AccountObj>> finalAccountObjListOptional = accountObjListOptional;
             Platform.runLater(() -> {
                 displayAccounts(finalAccountObjListOptional);

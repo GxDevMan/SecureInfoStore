@@ -14,9 +14,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
 
@@ -57,6 +55,12 @@ public class MainUITextController extends BaseController implements AddUpdateCon
     @FXML
     private ScrollPane scrollPane;
 
+    @FXML
+    private Pagination textEntryPagination;
+
+    @FXML
+    private Button settingsBTN;
+
 
     public void buttonClick(ActionEvent event) {
         if (event.getSource().equals(goToEntryUIBTN)) {
@@ -73,6 +77,16 @@ public class MainUITextController extends BaseController implements AddUpdateCon
             resetEntriesList();
         } else if (event.getSource().equals(reEncryptBTN)) {
             reEncrypt();
+        } else if (event.getSource().equals(settingsBTN)) {
+            checkSettings();
+        }
+    }
+
+    private void checkSettings() {
+        try {
+            ComponentFactory.settingsDisplaywithCharset();
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML Load Error", "There was an Error loading settings");
         }
     }
 
@@ -84,12 +98,55 @@ public class MainUITextController extends BaseController implements AddUpdateCon
         }
     }
 
+    private void resetEntriesList() {
+        int totalPageSize = (int) DataStore.getInstance().getObject("default_pagesize");
+
+        textEntryPagination.setPageCount(DatabaseHandler.calculateTotalPagesTextEntry(totalPageSize));
+        textEntryPagination.setPageFactory(pageIndex -> {
+            updatePage(pageIndex);
+            return new Label("");
+        });
+        textEntryPagination.setCurrentPageIndex(0);
+
+    }
+
     private void searchEntryTags() {
+        int totalPageSize = (int) DataStore.getInstance().getObject("default_pagesize");
         String searchKey = searchTagsTextField.getText().trim();
+        DataStore.getInstance().insertObject("search_key", searchKey);
+
+        textEntryPagination.setPageCount(DatabaseHandler.calculateTotalPagesTextEntry(totalPageSize, searchKey));
+        textEntryPagination.setPageFactory(pageIndex -> {
+            updatePageSearch(pageIndex);
+            return new Label("");
+        });
+    }
+
+    private void updatePage(int pageIndex) {
+        int totalPageSize = (int) DataStore.getInstance().getObject("default_pagesize");
+        String ascending = (String) DataStore.getInstance().getObject("default_sorting");
+        boolean ascendingBool = ascending.equals("Ascending");
+
         Thread thread = new Thread(() -> {
-            Optional<List<TextObjDTO>> textObjListOptional = DatabaseHandler.getTextEntries(searchKey);
+            Optional<List<TextObjDTO>> textObjListOptional = DatabaseHandler.getTextEntries(pageIndex + 1, totalPageSize, ascendingBool);
             Platform.runLater(() -> {
                 displayTextEntries(textObjListOptional);
+            });
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void updatePageSearch(int pageIndex) {
+        int totalPageSize = (int) DataStore.getInstance().getObject("default_pagesize");
+        String ascending = (String) DataStore.getInstance().getObject("default_sorting");
+        String searchKey = (String) DataStore.getInstance().getObject("search_key");
+        boolean ascendingBool = ascending.equals("Ascending");
+
+        Thread thread = new Thread(() -> {
+            Optional<List<TextObjDTO>> textEntryListOptional = DatabaseHandler.getTextEntries(pageIndex + 1, totalPageSize, ascendingBool, searchKey);
+            Platform.runLater(() -> {
+                displayTextEntries(textEntryListOptional);
             });
         });
         thread.setDaemon(true);
@@ -164,17 +221,6 @@ public class MainUITextController extends BaseController implements AddUpdateCon
         }
     }
 
-    private void resetEntriesList() {
-        Thread thread = new Thread(() -> {
-            Optional<List<TextObjDTO>> textEntryListOptional = DatabaseHandler.getTextEntries();
-            Platform.runLater(() -> {
-                displayTextEntries(textEntryListOptional);
-            });
-        });
-        thread.setDaemon(true);
-        thread.start();
-    }
-
     private void reEncrypt() {
         boolean confirmation = ComponentFactory.confirmReEncryption();
         if (!confirmation) {
@@ -184,19 +230,18 @@ public class MainUITextController extends BaseController implements AddUpdateCon
         try {
             ComponentFactory.loadReEncryptionWindow();
         } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e,"FXML loading Error", "Error loading Re Encryption Window");
+            ErrorDialog.showErrorDialog(e, "FXML loading Error", "Error loading Re Encryption Window");
         }
     }
 
     private void displayTextEntries(Optional<List<TextObjDTO>> textEntriesOptional) {
+        textEntriesTile.getChildren().clear();
         if (!textEntriesOptional.isPresent()) {
-            textEntriesTile.getChildren().clear();
             return;
         }
-        List<TextObjDTO> textEntryList = textEntriesOptional.get();
 
+        List<TextObjDTO> textEntryList = textEntriesOptional.get();
         if (textEntryList.isEmpty()) {
-            textEntriesTile.getChildren().clear();
             return;
         }
 

@@ -178,7 +178,7 @@ public class DatabaseHandler {
         return true;
     }
 
-    public static Optional<List<AccountObj>> getAccounts() {
+    public static Optional<List<AccountObj>> getAllAccounts() {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
         List<AccountObj> encAccountList = null;
@@ -215,31 +215,6 @@ public class DatabaseHandler {
             }
         }
         return Optional.ofNullable(decAccountList);
-    }
-
-    public static Optional<List<ChangeLogObj>> getChangeLogs() {
-        Session session = getSession();
-        Transaction transaction = session.beginTransaction();
-        List<ChangeLogObj> decChangeLogList = null;
-        try {
-            CriteriaQuery<ChangeLogObj> criteriaQuery = session.getCriteriaBuilder().createQuery(ChangeLogObj.class);
-            criteriaQuery.from(ChangeLogObj.class);
-
-            Query query = session.createQuery(criteriaQuery);
-            List<ChangeLogObj> objList = query.getResultList();
-            transaction.commit();
-
-            if (objList != null && !(objList.isEmpty())) {
-                decChangeLogList = new LinkedList<>();
-                for (ChangeLogObj eachChangeLog : objList) {
-                    decChangeLogList.add(InformationFactory.decChangeLog(eachChangeLog));
-                }
-            }
-            return Optional.ofNullable(decChangeLogList);
-        } catch (Exception e) {
-            transaction.rollback();
-            return Optional.empty();
-        }
     }
 
     public static Optional<List<AccountObj>> getAccounts(String searchQuery) {
@@ -286,6 +261,31 @@ public class DatabaseHandler {
         return Optional.ofNullable(decAccountList);
     }
 
+    public static Optional<List<ChangeLogObj>> getChangeLogs() {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        List<ChangeLogObj> decChangeLogList = null;
+        try {
+            CriteriaQuery<ChangeLogObj> criteriaQuery = session.getCriteriaBuilder().createQuery(ChangeLogObj.class);
+            criteriaQuery.from(ChangeLogObj.class);
+
+            Query query = session.createQuery(criteriaQuery);
+            List<ChangeLogObj> objList = query.getResultList();
+            transaction.commit();
+
+            if (objList != null && !(objList.isEmpty())) {
+                decChangeLogList = new LinkedList<>();
+                for (ChangeLogObj eachChangeLog : objList) {
+                    decChangeLogList.add(InformationFactory.decChangeLog(eachChangeLog));
+                }
+            }
+            return Optional.ofNullable(decChangeLogList);
+        } catch (Exception e) {
+            transaction.rollback();
+            return Optional.empty();
+        }
+    }
+
     public static Optional<TextObj> getTextEntryById(long id) {
         Session session = getSession();
         Transaction transaction = null;
@@ -310,7 +310,7 @@ public class DatabaseHandler {
         return Optional.ofNullable(textObj);
     }
 
-    public static Optional<List<TextObjDTO>> getTextEntries() {
+    public static Optional<List<TextObjDTO>> getTextEntries(int pageNumber, int pageSize, boolean ascending) {
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
         List<TextObjDTO> encTextEntryList = null;
@@ -321,6 +321,10 @@ public class DatabaseHandler {
             CriteriaQuery<TextObjDTO> cq = cb.createQuery(TextObjDTO.class);
             Root<TextObj> root = cq.from(TextObj.class);
 
+            if (ascending) {
+                cq.orderBy(cb.desc(root.get("timeModified")));
+            }
+
             cq.select(cb.construct(
                     TextObjDTO.class,
                     root.get("textId"),
@@ -330,6 +334,9 @@ public class DatabaseHandler {
             ));
 
             TypedQuery<TextObjDTO> query = session.createQuery(cq);
+            query.setFirstResult((pageNumber - 1) * pageSize);
+            query.setMaxResults(pageSize);
+
             encTextEntryList = query.getResultList();
 
             if (transaction != null)
@@ -342,6 +349,61 @@ public class DatabaseHandler {
 
         if ((encTextEntryList != null) && !encTextEntryList.isEmpty()) {
             decTextEntryList = new LinkedList<>();
+            for (TextObjDTO encTextEntry : encTextEntryList) {
+                decTextEntryList.add(InformationFactory.decPreviewTextEntry(encTextEntry));
+            }
+        }
+        return Optional.ofNullable(decTextEntryList);
+    }
+
+    public static Optional<List<TextObjDTO>> getTextEntries(int pageNumber, int pageSize, boolean ascending, String tagSearchKey) {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        List<TextObjDTO> encTextEntryList = null;
+        List<TextObjDTO> decTextEntryList = null;
+
+        DataStore dataStore = DataStore.getInstance();
+        SecretKey key = (SecretKey) dataStore.getObject("default_key");
+
+        try {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<TextObjDTO> cq = cb.createQuery(TextObjDTO.class);
+            Root<TextObj> root = cq.from(TextObj.class);
+
+            String enctagSearchKey = EncryptionDecryption.encryptAESECB(tagSearchKey, key);
+
+            if (ascending) {
+                cq.orderBy(cb.desc(root.get("timeModified")));
+            }
+
+            Predicate filter = cb.or(
+                    cb.like(cb.lower(root.get("tags")), "%" + enctagSearchKey + "%")
+            );
+            cq.where(filter);
+
+            cq.select(cb.construct(
+                    TextObjDTO.class,
+                    root.get("textId"),
+                    root.get("timeModified"),
+                    root.get("textTitle"),
+                    root.get("tags")
+            ));
+
+            TypedQuery<TextObjDTO> query = session.createQuery(cq);
+            query.setFirstResult((pageNumber - 1) * pageSize);
+            query.setMaxResults(pageSize);
+            encTextEntryList = query.getResultList();
+
+            if (transaction != null)
+                transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+        }
+
+        if ((encTextEntryList != null) && !encTextEntryList.isEmpty()) {
+            decTextEntryList = new ArrayList<>();
             for (TextObjDTO encTextEntry : encTextEntryList) {
                 decTextEntryList.add(InformationFactory.decPreviewTextEntry(encTextEntry));
             }
@@ -373,55 +435,6 @@ public class DatabaseHandler {
             decTextEntryList = new LinkedList<>();
             for (TextObj encTextEntry : encTextEntryList) {
                 decTextEntryList.add(InformationFactory.decTextEntry(encTextEntry));
-            }
-        }
-        return Optional.ofNullable(decTextEntryList);
-    }
-
-    public static Optional<List<TextObjDTO>> getTextEntries(String tagSearchKey) {
-        Session session = getSession();
-        Transaction transaction = session.beginTransaction();
-        List<TextObjDTO> encTextEntryList = null;
-        List<TextObjDTO> decTextEntryList = null;
-
-        DataStore dataStore = DataStore.getInstance();
-        SecretKey key = (SecretKey) dataStore.getObject("default_key");
-
-        try {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<TextObjDTO> cq = cb.createQuery(TextObjDTO.class);
-            Root<TextObj> root = cq.from(TextObj.class);
-
-            String enctagSearchKey = EncryptionDecryption.encryptAESECB(tagSearchKey, key);
-
-            Predicate filter = cb.or(
-                    cb.like(cb.lower(root.get("tags")), "%" + enctagSearchKey + "%")
-            );
-            cq.where(filter);
-
-            cq.select(cb.construct(
-                    TextObjDTO.class,
-                    root.get("textId"),
-                    root.get("timeModified"),
-                    root.get("textTitle"),
-                    root.get("tags")
-            ));
-
-            TypedQuery<TextObjDTO> query = session.createQuery(cq);
-            encTextEntryList = query.getResultList();
-
-            if (transaction != null)
-                transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        } finally {
-            session.close();
-        }
-
-        if ((encTextEntryList != null) && !encTextEntryList.isEmpty()) {
-            decTextEntryList = new ArrayList<>();
-            for (TextObjDTO encTextEntry : encTextEntryList) {
-                decTextEntryList.add(InformationFactory.decPreviewTextEntry(encTextEntry));
             }
         }
         return Optional.ofNullable(decTextEntryList);
@@ -556,6 +569,43 @@ public class DatabaseHandler {
         return totalRecords;
     }
 
+    public static int calculateTotalPagesTextEntry(long pageSize) {
+        long totalRecords = totalTextEntryRecords();
+        return (int) Math.ceil((double) totalRecords / pageSize);
+    }
+
+    public static int calculateTotalPagesTextEntry(long pageSize, String searchKey) {
+        long totalRecords = 0;
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+
+        DataStore dataStore = DataStore.getInstance();
+        SecretKey key = (SecretKey) dataStore.getObject("default_key");
+
+        try {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<TextObj> root = countQuery.from(TextObj.class);
+
+            String enctagSearchKey = EncryptionDecryption.encryptAESECB(searchKey, key);
+
+            Predicate filter = cb.or(
+                    cb.like(cb.lower(root.get("tags")), "%" + enctagSearchKey + "%")
+            );
+            countQuery.select(cb.count(root)).where(filter);
+            totalRecords = session.createQuery(countQuery).getSingleResult();
+
+            if (transaction != null)
+                transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        } finally {
+            session.close();
+        }
+
+        return (int) Math.ceil((double) totalRecords / pageSize);
+    }
+
     public static boolean reEncryption(ProgressObserver observer, SecretKey newKey) {
         long totalRecords = 0;
         long totalRecordsProcessed = 0;
@@ -610,7 +660,7 @@ public class DatabaseHandler {
         }
 
         observer.updateStatus("Re Encrypting Accounts");
-        Optional<List<AccountObj>> accountObjListOptional = getAccounts();
+        Optional<List<AccountObj>> accountObjListOptional = getAllAccounts();
         if (accountObjListOptional.isPresent()) {
             Session session = getSession();
             Transaction transaction = session.beginTransaction();
