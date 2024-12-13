@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.util.Optional;
 
 public class TextENCDECController {
@@ -26,6 +27,12 @@ public class TextENCDECController {
 
     @FXML
     private Button createKeyBTN;
+
+    @FXML
+    private Button qrInputBTN;
+
+    @FXML
+    private Button qrOutputBTN;
 
     @FXML
     private PasswordField keyFieldTxtField;
@@ -82,19 +89,23 @@ public class TextENCDECController {
             inputTextArea.setText(ClipboardHandler.getTextFromClipboard());
         } else if (event.getSource().equals(createKeyBTN)) {
             createKeyAction();
+        } else if (event.getSource().equals(qrInputBTN)) {
+            qrCodeDisp(inputTextArea.getText().trim());
+        } else if (event.getSource().equals(qrOutputBTN)) {
+            qrCodeDisp(outputTextArea.getText().trim());
         }
     }
 
     private void createKeyAction() {
         try {
             Optional<SecretKey> keyOptional = FileLoadSaving.createKeyFile();
-            if(keyOptional.isEmpty())
+            if (keyOptional.isEmpty())
                 return;
 
             String base64Txt = EncryptionDecryption.keyToBase64Text(keyOptional.get());
             keyFieldTxtField.setText(base64Txt);
         } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "Key Creation Error","Error Creating AES KEY");
+            ErrorDialog.showErrorDialog(e, "Key Creation Error", "Error Creating AES KEY");
         }
     }
 
@@ -133,6 +144,16 @@ public class TextENCDECController {
         }
     }
 
+    private void qrCodeDisp(String text) {
+        try {
+            ComponentFactory.displayQRCode(text);
+        }catch (IOException e) {
+            ErrorDialog.showErrorDialog(e, "Error making QR CODE", "Password QR Code generation error");
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML loading error", "Error Loading Password QR View");
+        }
+    }
+
     private void computeOutput() {
         SecretKey key;
         try {
@@ -168,17 +189,17 @@ public class TextENCDECController {
         outputTextArea.setText(textToDisplay);
     }
 
-    private String singleBlockDec (String encText, SecretKey key) throws Exception {
+    private String singleBlockDec(String encText, SecretKey key) throws Exception {
         String decText = EncryptionDecryption.decryptAESGCM(encText.trim(), key);
         return decText;
     }
 
-    private String singleBlockEnc (String decText, SecretKey key) throws Exception {
+    private String singleBlockEnc(String decText, SecretKey key) throws Exception {
         String encText = EncryptionDecryption.encryptAESGCM(decText.trim(), key);
         return encText;
     }
 
-    private String multiBlockEnc (String decText, SecretKey key) throws Exception {
+    private String multiBlockEnc(String decText, SecretKey key) throws Exception {
         StringBuilder encryptedText = new StringBuilder();
 
         // Matches one or more blank or whitespace-only lines
@@ -192,7 +213,7 @@ public class TextENCDECController {
         return encryptedText.toString().trim();
     }
 
-    private String multiBlockDec (String encText, SecretKey key) throws Exception {
+    private String multiBlockDec(String encText, SecretKey key) throws Exception {
         StringBuilder decryptedText = new StringBuilder();
 
         String[] encryptedParagraphs = encText.split("(\\r?\\n\\s*)+");

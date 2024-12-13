@@ -47,7 +47,7 @@
                             <!-- Paste Password Button -->
                             <Button fx:id="pastecopiedBTN" mnemonicParsing="false" onAction="#buttonClick" text="Paste Copied Password"/>
                             <!-- Thumbnail Section -->
-                            <TitledPane text="Thumbnail" expanded="true">
+                            <TitledPane text="Thumbnail" expanded="false">
                                 <content>
                                     <VBox spacing="10" alignment="CENTER">
                                         <!-- Thumbnail Image -->

@@ -41,6 +41,7 @@
                                         </HBox>
                                         <HBox>
                                             <children>
+                                    <Button fx:id="encryptorBTN" layoutX="235.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Encryptor" />
                                     <Button fx:id="settingsBTN" layoutX="282.0" layoutY="20.0" mnemonicParsing="false" onAction="#buttonClick" text="Settings" />
                                                 <Button fx:id="addTextEntryBTN" mnemonicParsing="false" onAction="#buttonClick" text="Add Text Entry" />
                                                 <Button fx:id="resetBTN" mnemonicParsing="false" onAction="#buttonClick" text="Reset" />

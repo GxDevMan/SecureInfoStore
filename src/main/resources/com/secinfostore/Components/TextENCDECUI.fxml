@@ -42,10 +42,11 @@
                   </VBox>
                   <VBox>
                      <children>
-                        <CheckBox fx:id="singleBlockCheckBox" onAction="#checkBoxHandle" mnemonicParsing="false" text="Single Block" />
-                        <CheckBox fx:id="multiBlockCheckBox" onAction="#checkBoxHandle" mnemonicParsing="false" text="Multi Block" />
+                        <CheckBox fx:id="singleBlockCheckBox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Single Block" />
+                        <CheckBox fx:id="multiBlockCheckBox" mnemonicParsing="false" onAction="#checkBoxHandle" text="Multi Block" />
                      </children>
                   </VBox>
+                  <Button fx:id="qrInputBTN" onAction="#buttonClick" mnemonicParsing="false" text="QR Input" />
                </children>
             </HBox>
 
@@ -60,6 +61,7 @@
             <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                <children>
                   <Button fx:id="copyOutputBTN" mnemonicParsing="false" onAction="#buttonClick" text="Copy Output" />
+                  <Button fx:id="qrOutputBTN" onAction="#buttonClick" mnemonicParsing="false" text="QR Output" />
                </children>
             </HBox>
          </children>

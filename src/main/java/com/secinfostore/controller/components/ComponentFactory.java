@@ -7,9 +7,13 @@ import com.secinfostore.controller.interfaces.UpdateDeleteViewConfirmContract;
 import com.secinfostore.model.AccountObj;
 import com.secinfostore.model.TextObj;
 import com.secinfostore.util.DataStore;
+import com.secinfostore.util.ImageConversion;
+import com.secinfostore.util.ImageNormalizer;
+import io.nayuki.qrcodegen.QrCode;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -17,6 +21,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 public class ComponentFactory {
@@ -61,7 +67,11 @@ public class ComponentFactory {
         stage.show();
     }
 
-    public static void displayQRCode(Image image) throws Exception {
+    public static void displayQRCode(String textToQR) throws Exception {
+        QrCode qrCode = QrCode.encodeText(textToQR.trim(), QrCode.Ecc.LOW);
+        BufferedImage qrImage = ImageNormalizer.toQRImage(qrCode, 4, 10, Color.BLACK.getRGB(), Color.WHITE.getRGB());
+        Image qrImageDisplay = ImageConversion.convertBufferedImageToImage(qrImage);
+
         FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/ImageViewUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
@@ -72,7 +82,7 @@ public class ComponentFactory {
         setStageIcon(stage);
 
         ImageViewUIController controller = loader.getController();
-        controller.setImageViewUIController(image, stage);
+        controller.setImageViewUIController(qrImageDisplay, stage);
     }
 
     public static void addUpdateTextUI(AddUpdateContract contract) throws Exception {
@@ -266,8 +276,7 @@ public class ComponentFactory {
 
     public static VBox getPasswordComponent() throws Exception {
         FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/PasswordgenComponent.fxml"));
-        VBox passwordgenComponent = loader.load();
-        return passwordgenComponent;
+        return loader.load();
     }
 
     public static void setWindowsTitle(Stage stage) {

@@ -46,12 +46,8 @@ public class PasswordAccountCellFactory<T> implements Callback<TableColumn<T, St
                     });
 
                     qrCodeButton.setOnAction(event -> {
-                        QrCode qrCode = QrCode.encodeText(passwordField.getText().trim(), QrCode.Ecc.LOW);
-                        BufferedImage qrImage = ImageNormalizer.toQRImage(qrCode, 4, 10, Color.BLACK.getRGB(), Color.WHITE.getRGB());
-
                         try {
-                            Image qrImageDisplay = ImageConversion.convertBufferedImageToImage(qrImage);
-                            ComponentFactory.displayQRCode(qrImageDisplay);
+                            ComponentFactory.displayQRCode(passwordField.getText().trim());
                         } catch (IOException e) {
                             ErrorDialog.showErrorDialog(e, "Error making QR CODE", "Password QR Code generation error");
                         } catch (Exception e) {

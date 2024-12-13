@@ -48,6 +48,9 @@ public class MainUITextController extends BaseController implements AddUpdateCon
     private Button reEncryptBTN;
 
     @FXML
+    private Button encryptorBTN;
+
+    @FXML
     private TextField searchTagsTextField;
 
     @FXML
@@ -80,6 +83,8 @@ public class MainUITextController extends BaseController implements AddUpdateCon
             reEncrypt();
         } else if (event.getSource().equals(settingsBTN)) {
             checkSettings();
+        } else if (event.getSource().equals(encryptorBTN)) {
+            showEncryptor();
         }
     }
 
@@ -88,6 +93,14 @@ public class MainUITextController extends BaseController implements AddUpdateCon
             ComponentFactory.settingsDisplaywithCharset();
         } catch (Exception e) {
             ErrorDialog.showErrorDialog(e, "FXML Load Error", "There was an Error loading settings");
+        }
+    }
+
+    private void showEncryptor() {
+        try {
+            ComponentFactory.loadEncryptor((SecretKey) DataStore.getInstance().getObject("default_key"));
+        } catch (Exception e) {
+            ErrorDialog.showErrorDialog(e, "FXML Load Error", "There was an error loading Encryptor");
         }
     }
 

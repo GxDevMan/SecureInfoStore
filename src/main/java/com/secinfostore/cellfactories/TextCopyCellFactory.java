@@ -40,17 +40,13 @@ public class TextCopyCellFactory<T> implements Callback<TableColumn<T, String>, 
                     });
 
                     qrButton.setOnAction(event -> {
-                        QrCode qrCode = QrCode.encodeText(textLabel.getText().trim(), QrCode.Ecc.LOW);
-                        BufferedImage qrImage = ImageNormalizer.toQRImage(qrCode, 4, 10, Color.BLACK.getRGB(), Color.WHITE.getRGB());
                         try {
-                            Image qrImageDisplay = ImageConversion.convertBufferedImageToImage(qrImage);
-                            ComponentFactory.displayQRCode(qrImageDisplay);
+                            ComponentFactory.displayQRCode(textLabel.getText().trim());
                         } catch (IOException e) {
                             ErrorDialog.showErrorDialog(e, "Error making QR CODE", "Text QR Code generation error");
                         } catch (Exception e) {
                             ErrorDialog.showErrorDialog(e, "FXML loading error", "Text Error Loading QR View");
                         }
-
                     });
 
                     HBox hboxButtons = new HBox(copyButton, qrButton);
