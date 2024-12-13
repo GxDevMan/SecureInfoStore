@@ -80,7 +80,7 @@ public class DatabaseHandler {
             return true;
         } catch (Exception e) {
             transaction.rollback();
-            e.printStackTrace();
+//            e.printStackTrace();
             return false;
         } finally {
             session.close();
@@ -99,7 +99,7 @@ public class DatabaseHandler {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+//            e.printStackTrace();
             return false;
         } finally {
             session.close();
@@ -206,6 +206,8 @@ public class DatabaseHandler {
                 transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
+        } finally {
+            session.close();
         }
 
         if ((encAccountList != null) && !encAccountList.isEmpty()) {
@@ -250,6 +252,8 @@ public class DatabaseHandler {
                 transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
+        } finally {
+            session.close();
         }
 
         if ((encAccountList != null) && !encAccountList.isEmpty()) {
@@ -283,6 +287,8 @@ public class DatabaseHandler {
         } catch (Exception e) {
             transaction.rollback();
             return Optional.empty();
+        } finally {
+            session.close();
         }
     }
 
@@ -299,6 +305,7 @@ public class DatabaseHandler {
 
             textObj = InformationFactory.decTextEntry(textObj);
         } catch (Exception e) {
+//            e.printStackTrace();
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -362,15 +369,12 @@ public class DatabaseHandler {
         List<TextObjDTO> encTextEntryList = null;
         List<TextObjDTO> decTextEntryList = null;
 
-        DataStore dataStore = DataStore.getInstance();
-        SecretKey key = (SecretKey) dataStore.getObject("default_key");
-
         try {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<TextObjDTO> cq = cb.createQuery(TextObjDTO.class);
             Root<TextObj> root = cq.from(TextObj.class);
 
-            String enctagSearchKey = EncryptionDecryption.encryptAESECB(tagSearchKey, key);
+            String enctagSearchKey = InformationFactory.tagEcbBlockENC(tagSearchKey);
 
             if (ascending) {
                 cq.orderBy(cb.desc(root.get("timeModified")));
@@ -426,7 +430,7 @@ public class DatabaseHandler {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+//            e.printStackTrace();
         } finally {
             session.close();
         }
@@ -450,7 +454,7 @@ public class DatabaseHandler {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             transaction.rollback();
             return false;
         } finally {
@@ -485,7 +489,7 @@ public class DatabaseHandler {
             transaction.commit();
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             transaction.rollback();
             return false;
         } finally {
@@ -721,7 +725,7 @@ public class DatabaseHandler {
 
             for (TextObj textObj : textObjListOptional.get()) {
                 try {
-                    //System.out.println("Re-encrypting Text Entry: " + textObj.getTextId());
+//                    System.out.println("Re-encrypting Text Entry: " + textObj.getTextId());
                     textObj = InformationFactory.reEncryptTextEntry(textObj, newKey);
                     session.saveOrUpdate(textObj);
                     totalRecordsProcessed++;
@@ -729,15 +733,15 @@ public class DatabaseHandler {
                         observer.updateProgress((double) totalRecordsProcessed / totalRecords);
                     }
                 } catch (Exception e) {
-                    //System.err.println("Error re-encrypting Text Entry: " + textObj.getTextId());
-                    //e.printStackTrace();
+//                    System.err.println("Error re-encrypting Text Entry: " + textObj.getTextId());
+//                    e.printStackTrace();
                 }
             }
 
             transaction.commit();
             session.close();
         } else {
-            //System.err.println("Text Entries data not found.");
+//            System.err.println("Text Entries data not found.");
         }
 
         // Store the new key in DataStore

@@ -31,7 +31,7 @@ public class InformationFactory {
             email = EncryptionDecryption.encryptAESGCM(email, key);
             password = EncryptionDecryption.encryptAESGCM(password, key);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
 
         return new AccountObj(platformName, userName, email, password, thumbByte);
@@ -45,7 +45,7 @@ public class InformationFactory {
             accountObj.setPassword(EncryptionDecryption.encryptAESGCM(accountObj.getPassword(), key));
             accountObj.setUserName(EncryptionDecryption.encryptAESGCM(accountObj.getUserName(), key));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
         return accountObj;
     }
@@ -57,7 +57,7 @@ public class InformationFactory {
             accountObj.setEmail(EncryptionDecryption.decryptAESGCM(accountObj.getEmail(), key));
             accountObj.setPassword(EncryptionDecryption.decryptAESGCM(accountObj.getPassword(), key));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
         return accountObj;
     }
@@ -69,7 +69,7 @@ public class InformationFactory {
             changeLogObj.setEmail(EncryptionDecryption.decryptAESGCM(changeLogObj.getEmail(), key));
             changeLogObj.setPassword(EncryptionDecryption.decryptAESGCM(changeLogObj.getPassword(), key));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
         return changeLogObj;
     }
@@ -80,20 +80,9 @@ public class InformationFactory {
         try {
             title = EncryptionDecryption.encryptAESGCM(title, key);
             textInfo = EncryptionDecryption.encryptAESGCM(textInfo, key);
-
-            StringBuilder compile = new StringBuilder();
-            String[] tagsArr = tags.split(" ");
-            for (String tag : tagsArr) {
-                compile.append(EncryptionDecryption.encryptAESECB(tag, key)).append(" ");
-            }
-
-            if (compile.length() > 0) {
-                compile.setLength(compile.length() - 1);
-            }
-
-            tags = compile.toString();
+            tags = tagEcbBlockENC(tags);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
 
         return new TextObj(nowTime, title, textInfo, tags);
@@ -104,20 +93,9 @@ public class InformationFactory {
         try {
             textObj.setTextInformation(EncryptionDecryption.decryptAESGCM(textObj.getTextInformation(), key));
             textObj.setTextTitle(EncryptionDecryption.decryptAESGCM(textObj.getTextTitle(), key));
-
-            StringBuilder compile = new StringBuilder();
-            String[] tagsArr = textObj.getTags().split(" ");
-            for (String tag : tagsArr) {
-                compile.append(EncryptionDecryption.decryptAESECB(tag.trim(), key)).append(" ");
-            }
-
-            if (compile.length() > 0) {
-                compile.setLength(compile.length() - 1);
-            }
-
-            textObj.setTags(compile.toString());
+            textObj.setTags(tagEcbBlockDEC(textObj.getTags()));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+//            e.printStackTrace();
         }
         return textObj;
     }
@@ -128,17 +106,7 @@ public class InformationFactory {
             textObj.setTextTitle(EncryptionDecryption.decryptAESGCM(textObj.getTextTitle(), key));
 
             if (textObj.getTags() != null) {
-                StringBuilder compile = new StringBuilder();
-                String[] tagsArr = textObj.getTags().split(" ");
-                for (String tag : tagsArr) {
-                    compile.append(EncryptionDecryption.decryptAESECB(tag, key)).append(" ");
-                }
-
-                if (compile.length() > 0) {
-                    compile.setLength(compile.length() - 1);
-                }
-
-                textObj.setTags(compile.toString());
+                textObj.setTags(tagEcbBlockDEC(textObj.getTags()));
             }
 
         } catch (Exception e) {
@@ -152,19 +120,9 @@ public class InformationFactory {
         try {
             textObj.setTextTitle(EncryptionDecryption.encryptAESGCM(textObj.getTextTitle(), key));
             textObj.setTextInformation(EncryptionDecryption.encryptAESGCM(textObj.getTextInformation(), key));
-
-            StringBuilder compile = new StringBuilder();
-            String[] tagsArr = textObj.getTags().split(" ");
-            for (String tag : tagsArr) {
-                compile.append(EncryptionDecryption.encryptAESECB(tag, key)).append(" ");
-            }
-
-            if (compile.length() > 0) {
-                compile.setLength(compile.length() - 1);
-            }
-            textObj.setTags(compile.toString());
+            textObj.setTags(tagEcbBlockENC(textObj.getTags()));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
         return textObj;
     }
@@ -175,7 +133,7 @@ public class InformationFactory {
             accountObj.setPassword(EncryptionDecryption.encryptAESGCM(accountObj.getPassword(), newKey));
             accountObj.setEmail(EncryptionDecryption.encryptAESGCM(accountObj.getEmail(), newKey));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
         return accountObj;
     }
@@ -188,33 +146,62 @@ public class InformationFactory {
             changeLogObj.setEmail(EncryptionDecryption.encryptAESGCM(changeLogObj.getEmail(), newKey));
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
         return changeLogObj;
     }
 
     public static TextObj reEncryptTextEntry(TextObj textEntry, SecretKey newKey) {
         try {
-
             textEntry.setTextTitle(EncryptionDecryption.encryptAESGCM(textEntry.getTextTitle(), newKey));
             textEntry.setTextInformation(EncryptionDecryption.encryptAESGCM(textEntry.getTextInformation(), newKey));
-
-            StringBuilder compile = new StringBuilder();
-            String[] tagsArr = textEntry.getTags().split(" ");
-            for (String tag : tagsArr) {
-                tag = EncryptionDecryption.encryptAESECB(tag, newKey);
-                compile.append(tag).append(" ");
-            }
-
-            if (compile.length() > 0) {
-                compile.setLength(compile.length() - 1);
-            }
-
-            textEntry.setTags(compile.toString());
+            textEntry.setTags(tagEcbBlockENCNewKey(textEntry.getTags(),newKey));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+//            e.printStackTrace();
         }
         return textEntry;
+    }
+
+    public static String tagEcbBlockENCNewKey(String tags, SecretKey newkey) throws Exception {
+        StringBuilder compile = new StringBuilder();
+        String[] tagsArr =tags.split(" ");
+        for (String tag : tagsArr) {
+            compile.append(EncryptionDecryption.encryptAESECB(tag, newkey)).append(" ");
+        }
+
+        if (compile.length() > 0) {
+            compile.setLength(compile.length() - 1);
+        }
+        return compile.toString();
+    }
+
+    public static String tagEcbBlockENC(String tags) throws Exception {
+        SecretKey key = getKey();
+        StringBuilder compile = new StringBuilder();
+        String[] tagsArr =tags.split(" ");
+        for (String tag : tagsArr) {
+            compile.append(EncryptionDecryption.encryptAESECB(tag, key)).append(" ");
+        }
+
+        if (compile.length() > 0) {
+            compile.setLength(compile.length() - 1);
+        }
+        return compile.toString();
+    }
+
+
+    public static String tagEcbBlockDEC(String tags) throws Exception {
+        SecretKey key = getKey();
+        StringBuilder compile = new StringBuilder();
+        String[] tagsArr = tags.split(" ");
+        for (String tag : tagsArr) {
+            compile.append(EncryptionDecryption.decryptAESECB(tag, key)).append(" ");
+        }
+
+        if (compile.length() > 0) {
+            compile.setLength(compile.length() - 1);
+        }
+        return compile.toString();
     }
 
     public static ChangeLogObj newChangeLog(AccountObj account) {

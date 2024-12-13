@@ -4,6 +4,7 @@ import com.secinfostore.customskin.KeyTextFieldSkin;
 import com.secinfostore.util.ClipboardHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
@@ -42,6 +43,9 @@ public class PasswordAccountCellFactory<T> implements Callback<TableColumn<T, St
                     }));
 
                     HBox hBox = new HBox(passwordField, revealCheckBox);
+                    HBox.setHgrow(passwordField, Priority.ALWAYS);
+                    passwordField.setMaxWidth(Double.MAX_VALUE);
+
                     VBox vBox = new VBox(10, hBox, copyButton);
                     setGraphic(vBox);
                 }

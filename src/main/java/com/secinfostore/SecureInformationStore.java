@@ -1,5 +1,6 @@
 package com.secinfostore;
 import com.secinfostore.controller.AppMediator;
+import com.secinfostore.controller.components.ComponentFactory;
 import com.secinfostore.util.ConfigHandler;
 import com.secinfostore.util.DataStore;
 import com.secinfostore.util.EncryptionDecryption;
@@ -17,6 +18,8 @@ public class SecureInformationStore extends Application {
         Image icon = new Image((SecureInformationStore.class.getResource("/com/secinfostore/ico/shield.png").toExternalForm()));
         DataStore dataStore = DataStore.getInstance();
         dataStore.insertObject("default_icon", icon);
+
+        ComponentFactory.setWindowsTitle(stage);
 
         stage.getIcons().add(icon);
         AppMediator mediator = new AppMediator(stage);

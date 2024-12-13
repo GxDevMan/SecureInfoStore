@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
+import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
@@ -64,7 +65,7 @@ public class MainUITextController extends BaseController implements AddUpdateCon
 
     public void buttonClick(ActionEvent event) {
         if (event.getSource().equals(goToEntryUIBTN)) {
-            goToEntryUI();
+            goToEntryUI(event);
         } else if (event.getSource().equals(goToAccountsBTN)) {
             mediator.switchTo("mainUIAccount", null);
         } else if (event.getSource().equals(addTextEntryBTN)) {
@@ -153,7 +154,7 @@ public class MainUITextController extends BaseController implements AddUpdateCon
         thread.start();
     }
 
-    private void goToEntryUI() {
+    private void goToEntryUI(ActionEvent event) {
         HibernateUtil hibernateUtil = HibernateUtil.getInstance();
         hibernateUtil.shutdown();
         DataStore dataStore = DataStore.getInstance();
@@ -169,6 +170,9 @@ public class MainUITextController extends BaseController implements AddUpdateCon
         }
         dataStore.deleteObject("default_key");
         dataStore.deleteObject("default_db");
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        ComponentFactory.setWindowsTitle(stage);
         mediator.switchTo("entryUI", null);
     }
 

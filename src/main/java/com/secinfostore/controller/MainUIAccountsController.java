@@ -17,10 +17,12 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 import java.io.File;
@@ -109,12 +111,11 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
         this.userEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         this.userEmailColumn.setCellFactory(textCopyCellFactory);
 
-        this.userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("platformName"));
-        this.logoColumn.setCellValueFactory(new PropertyValueFactory<>("platformThumbnail"));
-
+        this.userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
         PasswordAccountCellFactory<AccountObj> passwordCellfactory = new PasswordAccountCellFactory<>();
         this.userPasswordColumn.setCellFactory(passwordCellfactory);
 
+        this.logoColumn.setCellValueFactory(new PropertyValueFactory<>("platformThumbnail"));
         ImageLogoCellFactory<AccountObj> imageLogoCellFactory = new ImageLogoCellFactory<>();
         this.logoColumn.setCellFactory(imageLogoCellFactory);
 
@@ -141,7 +142,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
         } else if (event.getSource().equals(gotoChangelogBTN)) {
             mediator.switchTo("changeLogUI", null);
         } else if (event.getSource().equals(goTouiSelectorBTN)) {
-            goToEntryUI();
+            goToEntryUI(event);
         } else if (event.getSource().equals(settingsBTN)) {
             goToSettings();
         } else if (event.getSource().equals(exportToTxtBTN)) {
@@ -263,7 +264,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
         }
     }
 
-    private void goToEntryUI() {
+    private void goToEntryUI(ActionEvent event) {
         HibernateUtil hibernateUtil = HibernateUtil.getInstance();
         hibernateUtil.shutdown();
         DataStore dataStore = DataStore.getInstance();
@@ -279,6 +280,9 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
         }
         dataStore.deleteObject("default_key");
         dataStore.deleteObject("default_db");
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        ComponentFactory.setWindowsTitle(stage);
         mediator.switchTo("entryUI", null);
     }
 

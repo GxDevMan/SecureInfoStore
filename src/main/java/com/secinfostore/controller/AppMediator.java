@@ -13,7 +13,6 @@ import java.util.Map;
 public class AppMediator implements WindowMediator {
     private final Stage primaryStage;
     private final Map<String, String> controllerMap = new HashMap<>();
-    private DataStore dataStore = DataStore.getInstance();
 
     public AppMediator(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -27,7 +26,6 @@ public class AppMediator implements WindowMediator {
                 FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource(fxmlName));
                 primaryStage.setScene(new Scene(loader.load()));
 
-                primaryStage.setTitle((String) dataStore.getObject("default_title"));
                 BaseController controller = loader.getController();
 
                 controller.setMediator(this);

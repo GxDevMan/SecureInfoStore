@@ -8,10 +8,12 @@ import com.secinfostore.customskin.KeyTextFieldSkin;
 import com.secinfostore.util.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import javax.crypto.SecretKey;
 import java.io.File;
@@ -53,7 +55,6 @@ public class EntryUIController extends BaseController {
 
     @FXML
     private Button encryptorBTN;
-
 
 
     @FXML
@@ -104,7 +105,7 @@ public class EntryUIController extends BaseController {
             ErrorDialog.showErrorDialog(e, "Key Write Error", "Something went wrong writing the key");
             return;
         }
-        if(keyOptional.isEmpty()){
+        if (keyOptional.isEmpty()) {
             return;
         }
         boolean dbCreated = FileLoadSaving.createDatabase(keyOptional.get());
@@ -206,12 +207,16 @@ public class EntryUIController extends BaseController {
             hibernateUtil.shutdown();
             return;
         }
+
         loadConfigToSingleton();
+        String dbName = (String) DataStore.getInstance().getObject("db_name");
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        ComponentFactory.setWindowsTitle(stage, dbName);
         this.mediator.switchTo(uiSelected, null);
 
     }
 
-    private void loadConfigToSingleton(){
+    private void loadConfigToSingleton() {
         Map<String, String> config = ConfigHandler.getConfig();
         DataStore.getInstance().insertObject("default_sorting", config.get("default_sorting"));
         DataStore.getInstance().insertObject("default_pagesize", Integer.parseInt(config.get("default_pagesize")));
