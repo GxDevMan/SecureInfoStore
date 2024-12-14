@@ -8,6 +8,7 @@ import com.secinfostore.cellfactories.PasswordChangeLogCellFactory;
 import com.secinfostore.cellfactories.TimeStampChangeLogCellFactory;
 import com.secinfostore.controller.interfaces.ChangeLogContract;
 import com.secinfostore.util.DatabaseHandler;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -71,7 +72,9 @@ public class ChangeLogController extends BaseController implements ChangeLogCont
         alert.showAndWait().ifPresent(buttonType -> {
             if (buttonType == confirmButton) {
                 if (DatabaseHandler.deleteAllChangeLog()) {
-                    refreshTable(DatabaseHandler.getChangeLogs());
+                    Platform.runLater(() -> {
+                        refreshTable(DatabaseHandler.getChangeLogs());
+                    });
                 }
             }
         });
@@ -82,11 +85,11 @@ public class ChangeLogController extends BaseController implements ChangeLogCont
     }
 
     private void refreshTable(Optional<List<ChangeLogObj>> changeLogObjOptional){
-        if(changeLogObjOptional.isEmpty())
-            return;
-
         databaseTable.getItems().clear();
         databaseTable.refresh();
+
+        if(changeLogObjOptional.isEmpty())
+            return;
 
         List<ChangeLogObj> changeLogObjList = changeLogObjOptional.get();
         ObservableList<ChangeLogObj> changeLogObjsObservable = FXCollections.observableList(changeLogObjList);

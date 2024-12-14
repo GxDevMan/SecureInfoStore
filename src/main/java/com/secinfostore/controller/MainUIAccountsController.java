@@ -260,7 +260,7 @@ public class MainUIAccountsController extends BaseController implements AddUpdat
             DataStore dataStore = DataStore.getInstance();
             ComponentFactory.loadEncryptor((SecretKey) dataStore.getObject("default_key"));
         } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading TextENCDECUI.fxml");
+            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading EncryptionDecryptionUI.fxml");
         }
     }
 

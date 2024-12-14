@@ -227,7 +227,7 @@ public class EntryUIController extends BaseController {
         try {
             ComponentFactory.loadEncryptor();
         } catch (Exception e) {
-            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading TextENCDECUI.fxml");
+            ErrorDialog.showErrorDialog(e, "FXML loading error", "There was an error loading EncryptionDecryptionUI.fxml");
         }
     }
 }

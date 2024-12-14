@@ -6,6 +6,7 @@ import com.secinfostore.util.DataExporterImporterHandler;
 import com.secinfostore.util.DatabaseHandler;
 import com.secinfostore.util.EncryptionDecryption;
 import com.secinfostore.util.HibernateUtil;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -72,6 +73,34 @@ public class FileLoadSaving {
             DataExporterImporterHandler.writeAccountsToTextFile(accountList,file);
         }
 
+    }
+
+    public static Optional<File> loadFolderforDestination() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        String currentDir = System.getProperty("user.dir");
+        directoryChooser.setInitialDirectory(new File(currentDir));
+
+        File selectedFile = directoryChooser.showDialog(null);
+
+        if(selectedFile != null) {
+            return Optional.ofNullable(selectedFile);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<File> loadFileforEncDec() {
+        FileChooser directoryChooser = new FileChooser();
+        String currentDir = System.getProperty("user.dir");
+        directoryChooser.setInitialDirectory(new File(currentDir));
+
+        File selectedFile = directoryChooser.showOpenDialog(null);
+
+        if(selectedFile != null) {
+            return Optional.ofNullable(selectedFile);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public static Optional<SecretKey> loadKey() throws Exception {

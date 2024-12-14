@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secinfostore.controller.components.EncDecUIController">
+   <stylesheets>
+      <URL value="@../styles/dark-theme.css" />
+   </stylesheets>
+   <children>
+      <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="Text Encryptor">
+            <content>
+              <AnchorPane>
+                     <children>
+                        <!-- Root container with responsive resizing -->
+                        <VBox alignment="TOP_CENTER" spacing="15" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                           <children>
+                              <!-- Key Load and Reveal Section -->
+                              <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Button fx:id="createKeyTextBTN" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#textbuttonClick" text="Create Key" />
+                                    <Button fx:id="loadKeyTextBTN" mnemonicParsing="false" onAction="#textbuttonClick" text="Load Key" />
+                                    <PasswordField fx:id="keyFieldTxtField" promptText="Enter Key" HBox.hgrow="ALWAYS" />
+                                    <CheckBox fx:id="revealKeyTextCheckBox" mnemonicParsing="false" onAction="#checkBoxTextHandle" text="Reveal" />
+                                 </children>
+                              </HBox>
+                  
+                              <!-- Input Text Area Section -->
+                              <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <TextArea fx:id="inputTextArea" prefHeight="200" promptText="Enter text to encrypt/decrypt" wrapText="true" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                  
+                              <!-- Buttons and Checkboxes Section -->
+                              <HBox alignment="CENTER_LEFT" spacing="15" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Button fx:id="pasteTextBTN" mnemonicParsing="false" onAction="#textbuttonClick" text="Paste Text to Input" />
+                                    <Button fx:id="computeOutputTextBTN" mnemonicParsing="false" onAction="#textbuttonClick" text="Process" />
+                                    <VBox>
+                                       <children>
+                                          <CheckBox fx:id="encTextCheckbox" mnemonicParsing="false" onAction="#checkBoxTextHandle" text="Encrypt" />
+                                          <CheckBox fx:id="decTextCheckbox" mnemonicParsing="false" onAction="#checkBoxTextHandle" text="Decrypt" />
+                                       </children>
+                                    </VBox>
+                                    <VBox>
+                                       <children>
+                                          <CheckBox fx:id="singleBlockTextCheckBox" mnemonicParsing="false" onAction="#checkBoxTextHandle" text="Single Block" />
+                                          <CheckBox fx:id="multiBlockTextCheckBox" mnemonicParsing="false" onAction="#checkBoxTextHandle" text="Multi Block" />
+                                       </children>
+                                    </VBox>
+                                    <Button fx:id="qrInputTextBTN" mnemonicParsing="false" onAction="#textbuttonClick" text="QR Input" />
+                                 </children>
+                              </HBox>
+                  
+                              <!-- Output Text Area Section -->
+                              <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <TextArea fx:id="outputTextArea" editable="false" prefHeight="200" promptText="Processed Output" wrapText="true" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                  
+                              <!-- Copy Output Button -->
+                              <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Button fx:id="copyOutputTextBTN" mnemonicParsing="false" onAction="#textbuttonClick" text="Copy Output" />
+                                    <Button fx:id="qrOutputTextBTN" mnemonicParsing="false" onAction="#textbuttonClick" text="QR Output" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="File Encryptor">
+            <content>
+              <AnchorPane>
+                     <children>
+                        <VBox alignment="TOP_CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <HBox VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Button fx:id="createKeyFileBTN" mnemonicParsing="false" onAction="#filebuttonClick" text="Create Key" />
+                                    <Button fx:id="loadKeyFileBTN" mnemonicParsing="false" onAction="#filebuttonClick" text="Load Key" />
+                                    <PasswordField fx:id="keyFieldTxtFieldFile" HBox.hgrow="ALWAYS" />
+                                    <CheckBox fx:id="revealCheckboxFile" mnemonicParsing="false" onAction="#checkboxFileHandle" text="Reveal" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Button fx:id="loadFilePointerBTN" mnemonicParsing="false" onAction="#filebuttonClick" text="Load File" />
+                                    <TextField fx:id="filePointerTextField" disable="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Label fx:id="encdecFileLBL" text="Encryption/Decryption Progress:" />
+                                    <ProgressBar fx:id="fileEncryptionProgress" prefWidth="300.0" progress="0.0" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="statusFILELBL" text="Status: " />
+                              <HBox>
+                                 <children>
+                                    <Button fx:id="cancelEncDecBTN" mnemonicParsing="false" onAction="#filebuttonClick" text="Cancel" />
+                                    <Button fx:id="startencdecFileBTN" mnemonicParsing="false" onAction="#filebuttonClick" text="Start Encrypt/Decrypt" />
+                                    <CheckBox fx:id="decFileCheckBox" mnemonicParsing="false" onAction="#checkboxFileHandle" text="Decrypt" />
+                                    <CheckBox fx:id="encFileCheckbox" mnemonicParsing="false" onAction="#checkboxFileHandle" text="Encrypt" />
+                                 </children>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <Button fx:id="setFileDestinationBTN" mnemonicParsing="false" onAction="#filebuttonClick" text="Set Destination" />
+                                    <TextField fx:id="destinationPointerFileTextField" disable="true" HBox.hgrow="ALWAYS" />
+                                    <CheckBox fx:id="sameSourceFileCheckbox" mnemonicParsing="false" text="Same as Source" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

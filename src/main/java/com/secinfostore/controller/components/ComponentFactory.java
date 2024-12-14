@@ -116,7 +116,7 @@ public class ComponentFactory {
     }
 
     public static void loadEncryptor() throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/TextENCDECUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/EncryptionDecryptionUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
 
@@ -129,7 +129,7 @@ public class ComponentFactory {
     }
 
     public static void loadEncryptor(SecretKey key) throws Exception {
-        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/TextENCDECUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(SecureInformationStore.class.getResource("Components/EncryptionDecryptionUI.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = new Stage();
 
@@ -138,7 +138,7 @@ public class ComponentFactory {
         setStageIcon(stage);
         stage.initModality(Modality.WINDOW_MODAL);
 
-        TextENCDECController controller = loader.getController();
+        EncDecUIController controller = loader.getController();
         controller.setTextENCDECController(key);
         stage.show();
     }
