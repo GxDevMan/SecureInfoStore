@@ -231,7 +231,7 @@ public class DatabaseHandler {
             Root<AccountObj> root = cq.from(AccountObj.class);
 
             Predicate filter = cb.or(
-                    cb.like(cb.lower(root.get("platformName")), "%" + searchQuery + "%")
+                    cb.like(cb.lower(root.get("userPlatform")), "%" + searchQuery + "%")
             );
             cq.where(filter);
 
