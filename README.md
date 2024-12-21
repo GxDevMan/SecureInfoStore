@@ -15,7 +15,7 @@ using AES-GCM for robust security, while tags employ AES-ECB to
 enable efficient searchability. The app’s encryptor window allows you to 
 generate multiple keys for securing different messages. 
 These keys can encrypt text, which can then be saved to text files or other storage media.
-dditionally, the project offers file encryption, providing a reliable way to securely store your files.
+Additionally, the project offers file encryption, providing a reliable way to securely store your files.
 
 
 Logo used is made by Maniprasanth
